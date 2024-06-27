@@ -19,7 +19,8 @@ final class TabBarController: UITabBarController {
         separationLine()
                 
         let trackerViewController = TrackerViewController()
-        trackerViewController.tabBarItem = UITabBarItem(
+        let navigationViewController = UINavigationController(rootViewController: trackerViewController)
+        navigationViewController.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(named: "TrackerBar"),
             selectedImage: nil
@@ -35,7 +36,7 @@ final class TabBarController: UITabBarController {
         tabBar.backgroundColor = .white
         tabBar.isTranslucent = false
         
-        self.viewControllers = [trackerViewController, statisticsViewController]
+        self.viewControllers = [navigationViewController, statisticsViewController]
     }
     
     private func separationLine() {

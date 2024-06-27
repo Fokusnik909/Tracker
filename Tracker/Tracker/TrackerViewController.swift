@@ -10,6 +10,24 @@ import UIKit
 
 final class TrackerViewController: UIViewController {
     
+    private lazy var addBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: UIImage(named: "addButton"),
+            style: .plain,
+            target: self,
+            action: #selector(addButton)
+        )
+        button.tintColor = .black
+        return button
+    }()
+    
+    private lazy var datePicker: UIDatePicker = {
+       let datePicker = UIDatePicker()
+        datePicker.locale = .current
+        datePicker.datePickerMode = .date
+        return datePicker
+    }()
+    
     private let imageStar: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "MainStar")
@@ -29,6 +47,24 @@ final class TrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         layout()
+        setupNavigationBar()
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = addBarButton
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+        navigationItem.title = "Трекеры"
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Поиск"
+        navigationItem.searchController = searchController
+        
+    }
+    
+    @objc private func addButton() {
+        print(#function)
     }
     
     private func layout() {
