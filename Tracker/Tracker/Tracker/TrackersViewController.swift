@@ -26,7 +26,7 @@ final class TrackersViewController: UIViewController{
             target: self,
             action: #selector(addButton)
         )
-        button.tintColor = .black
+        button.tintColor = .ypBlack
         return button
     }()
     
@@ -47,7 +47,7 @@ final class TrackersViewController: UIViewController{
     private let logoLabel: UILabel = {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.font = UIFont.systemFont(ofSize: 12)
         return label
     }()
@@ -103,7 +103,7 @@ final class TrackersViewController: UIViewController{
         navigationItem.leftBarButtonItem = addBarButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         navigationItem.title = "Трекеры"
-        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.ypBlack]
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let searchController = UISearchController(searchResultsController: nil)
@@ -117,7 +117,7 @@ final class TrackersViewController: UIViewController{
     }
     
     private func layout() {
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         for view in subView {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)

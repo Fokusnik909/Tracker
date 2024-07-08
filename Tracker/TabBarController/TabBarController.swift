@@ -33,7 +33,7 @@ final class TabBarController: UITabBarController {
             selectedImage: nil
         )
         
-        tabBar.backgroundColor = .white
+        tabBar.backgroundColor = .ypWhite
         tabBar.isTranslucent = false
         
         self.viewControllers = [navigationViewController, statisticsViewController]
@@ -41,7 +41,7 @@ final class TabBarController: UITabBarController {
     
     private func separationLine() {
         let separatorView = UIView()
-        separatorView.backgroundColor = .lightGray
+        separatorView.backgroundColor = .ypLightGray
         tabBar.addSubview(separatorView)
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         

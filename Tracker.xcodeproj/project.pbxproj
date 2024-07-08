@@ -22,6 +22,7 @@
 		C8A3CC722C39AAFA0012CC42 /* NewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC712C39AAFA0012CC42 /* NewHabitViewController.swift */; };
 		C8A3CC752C39B3A30012CC42 /* NewHabitCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC742C39B3A30012CC42 /* NewHabitCell.swift */; };
 		C8A3CC782C3A45F90012CC42 /* TrackType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC772C3A45F90012CC42 /* TrackType.swift */; };
+		C8A3CC7B2C3C69300012CC42 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC7A2C3C69300012CC42 /* CustomTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		C8A3CC712C39AAFA0012CC42 /* NewHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitViewController.swift; sourceTree = "<group>"; };
 		C8A3CC742C39B3A30012CC42 /* NewHabitCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitCell.swift; sourceTree = "<group>"; };
 		C8A3CC772C3A45F90012CC42 /* TrackType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackType.swift; sourceTree = "<group>"; };
+		C8A3CC7A2C3C69300012CC42 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 		C869D94C2C2AD764000DB992 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				C8A3CC792C3C68DE0012CC42 /* Helper */,
 				C869D9612C2AE216000DB992 /* TabBarController */,
 				C869D9642C2AE457000DB992 /* Tracker */,
 				C869D9652C2AE483000DB992 /* Statistics */,
@@ -174,6 +177,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		C8A3CC792C3C68DE0012CC42 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				C8A3CC7A2C3C69300012CC42 /* CustomTextField.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -244,6 +255,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8A3CC7B2C3C69300012CC42 /* CustomTextField.swift in Sources */,
 				C869D9672C2AE49E000DB992 /* TrackersViewController.swift in Sources */,
 				C8A3CC722C39AAFA0012CC42 /* NewHabitViewController.swift in Sources */,
 				C8A3CC6F2C3997D40012CC42 /* Colors.swift in Sources */,

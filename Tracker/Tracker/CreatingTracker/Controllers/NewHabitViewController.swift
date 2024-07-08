@@ -13,6 +13,8 @@ final class NewHabitViewController: UIViewController {
     var countRows = [String]()
     
     //MARK: - Private properties UI
+    private let customTextField: CustomTextField
+    
     private let cancelButton: UIButton = {
        let button = UIButton()
         button.setTitle("Отменить", for: .normal)
@@ -45,11 +47,12 @@ final class NewHabitViewController: UIViewController {
     private let tableView: UITableView = .init()
     
     //MARK: - Init
-    
     init(trackType: TrackType) {
         self.trackType = trackType
+        self.customTextField = .init(placeholder: "Категория")
+
         super.init(nibName: nil, bundle: nil)
-        
+
         switch trackType {
         case .regular:
             countRows = ["Категория", "Расписание"]
@@ -65,33 +68,17 @@ final class NewHabitViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        layout()
+        setupView()
         
         tableView.dataSource = self
-        
-        navigationItem.title = "Новая привычка"
-        navigationItem.setHidesBackButton(true, animated: true)
         tableView.register(NewHabitCell.self, forCellReuseIdentifier: NewHabitCell.newHabitCell)
+        customTextField.addTarget(self, action: #selector(habitTextField), for: .editingChanged)
     }
     
-    private func layout() {
-        view.backgroundColor = .ypWhite
-        view.addSubview(hStack)
-        view.addSubview(tableView)
-        hStack.addArrangedSubview(cancelButton)
-        hStack.addArrangedSubview(createButton)
+    @objc private func habitTextField() {
         
-        [hStack, cancelButton, createButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        NSLayoutConstraint.activate([
-            hStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            hStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            hStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
-            hStack.heightAnchor.constraint(equalToConstant: 60)
-        ])
     }
+    
 }
 
 extension NewHabitViewController: UITableViewDataSource {
@@ -116,6 +103,41 @@ extension NewHabitViewController: UITableViewDataSource {
         
         return cell
     }
+
+}
+
+//MARK: - Setting Views
+private extension NewHabitViewController {
+    func setupView() {
+        addSubViews()
+        setupLayout()
+        view.backgroundColor = .ypWhite
+        navigationItem.title = "Новая привычка"
+        navigationItem.setHidesBackButton(true, animated: true)
+    }
     
+    func addSubViews() {
+        view.addSubview(customTextField)
+        view.addSubview(tableView)
+        view.addSubview(hStack)
+        hStack.addArrangedSubview(cancelButton)
+        hStack.addArrangedSubview(createButton)
+    }
     
+    func setupLayout() {
+        [customTextField, hStack, cancelButton, createButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        NSLayoutConstraint.activate([
+            customTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            customTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            customTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            hStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            hStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            hStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
+            hStack.heightAnchor.constraint(equalToConstant: 60)
+        ])
+    }
 }
