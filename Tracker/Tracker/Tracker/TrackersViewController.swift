@@ -7,14 +7,8 @@
 
 import UIKit
 
-public protocol TrackerViewProtocol {
-    var presenter: TrackerPresenterProtocol? { get set }
-}
 
-final class TrackerView: UIViewController, TrackerViewProtocol {
-    
-    var presenter: TrackerPresenterProtocol?
-    
+final class TrackersViewController: UIViewController{
     //MARK: - Private properties
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
@@ -69,7 +63,9 @@ final class TrackerView: UIViewController, TrackerViewProtocol {
     
     //MARK: - Private Methods
     @objc private func addButton() {
-        print(#function)
+        let newTrackerViewController = NewCreateTrackerViewController()
+        let navigationController = UINavigationController(rootViewController: newTrackerViewController)
+        present(navigationController, animated: true)
     }
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -117,7 +113,7 @@ final class TrackerView: UIViewController, TrackerViewProtocol {
     }
     
     private func setupCollectionView() {
-        collectionView.register(TrackerView.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(TrackersViewController.self, forCellWithReuseIdentifier: "cell")
     }
     
     private func layout() {

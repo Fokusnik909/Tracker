@@ -18,7 +18,7 @@ final class TabBarController: UITabBarController {
     private func config() {
         separationLine()
                 
-        let trackerViewController = TrackerView()
+        let trackerViewController = TrackersViewController()
         let navigationViewController = UINavigationController(rootViewController: trackerViewController)
         navigationViewController.tabBarItem = UITabBarItem(
             title: "Трекеры",
