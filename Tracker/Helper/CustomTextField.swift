@@ -15,6 +15,7 @@ final class CustomTextField: UITextField {
     init(placeholder: String) {
         super.init(frame: .zero)
         setupTextField(placeholder: placeholder)
+        self.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -44,5 +45,16 @@ final class CustomTextField: UITextField {
         
         font = .systemFont(ofSize: 17)
         heightAnchor.constraint(equalToConstant: 75).isActive = true
+    }
+}
+
+
+//MARK: - UITextFieldDelegate
+extension CustomTextField: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        return updatedText.count <= 38
     }
 }

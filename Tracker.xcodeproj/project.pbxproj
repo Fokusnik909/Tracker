@@ -23,6 +23,10 @@
 		C8A3CC752C39B3A30012CC42 /* NewHabitCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC742C39B3A30012CC42 /* NewHabitCell.swift */; };
 		C8A3CC782C3A45F90012CC42 /* TrackType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC772C3A45F90012CC42 /* TrackType.swift */; };
 		C8A3CC7B2C3C69300012CC42 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC7A2C3C69300012CC42 /* CustomTextField.swift */; };
+		C8A3CC7E2C3D51030012CC42 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC7D2C3D51030012CC42 /* ScheduleViewController.swift */; };
+		C8A3CC802C3D56960012CC42 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC7F2C3D56960012CC42 /* Schedule.swift */; };
+		C8A3CC842C3D581F0012CC42 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */; };
+		C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +48,10 @@
 		C8A3CC742C39B3A30012CC42 /* NewHabitCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewHabitCell.swift; sourceTree = "<group>"; };
 		C8A3CC772C3A45F90012CC42 /* TrackType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackType.swift; sourceTree = "<group>"; };
 		C8A3CC7A2C3C69300012CC42 /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
+		C8A3CC7D2C3D51030012CC42 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
+		C8A3CC7F2C3D56960012CC42 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
+		C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
+		C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +109,7 @@
 		C869D9642C2AE457000DB992 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				C8A3CC7C2C3D50EE0012CC42 /* Schedule */,
 				C89E1BFD2C3989D800B4289F /* CreatingTracker */,
 				C89E1BFC2C39894D00B4289F /* Tracker */,
 				C869D9D22C2FDBB4000DB992 /* Models */,
@@ -120,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				C869D9D32C2FDBCA000DB992 /* Tracker.swift */,
+				C8A3CC7F2C3D56960012CC42 /* Schedule.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -181,8 +191,34 @@
 			isa = PBXGroup;
 			children = (
 				C8A3CC7A2C3C69300012CC42 /* CustomTextField.swift */,
+				C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */,
 			);
 			path = Helper;
+			sourceTree = "<group>";
+		};
+		C8A3CC7C2C3D50EE0012CC42 /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				C8A3CC812C3D57C60012CC42 /* Controllers */,
+				C8A3CC822C3D57D40012CC42 /* Cells */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		C8A3CC812C3D57C60012CC42 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				C8A3CC7D2C3D51030012CC42 /* ScheduleViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		C8A3CC822C3D57D40012CC42 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -255,10 +291,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8A3CC7E2C3D51030012CC42 /* ScheduleViewController.swift in Sources */,
 				C8A3CC7B2C3C69300012CC42 /* CustomTextField.swift in Sources */,
 				C869D9672C2AE49E000DB992 /* TrackersViewController.swift in Sources */,
+				C8A3CC802C3D56960012CC42 /* Schedule.swift in Sources */,
 				C8A3CC722C39AAFA0012CC42 /* NewHabitViewController.swift in Sources */,
+				C8A3CC842C3D581F0012CC42 /* ScheduleCell.swift in Sources */,
 				C8A3CC6F2C3997D40012CC42 /* Colors.swift in Sources */,
+				C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */,
 				C869D9522C2AD764000DB992 /* ViewController.swift in Sources */,
 				C869D9632C2AE22D000DB992 /* TabBarController.swift in Sources */,
 				C869D94E2C2AD764000DB992 /* AppDelegate.swift in Sources */,

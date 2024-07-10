@@ -11,31 +11,14 @@ final class NewHabitViewController: UIViewController {
     
     var trackType: TrackType
     var countRows = [String]()
+    private var heightTableView: CGFloat = 0
     
     //MARK: - Private properties UI
-    private let customTextField: CustomTextField
+    private var customTextField: CustomTextField
     
-    private let cancelButton: UIButton = {
-       let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.ypRed, for: .normal)
-        button.layer.borderColor = UIColor.ypRed.cgColor
-        button.backgroundColor = .ypWhite
-        button.layer.cornerRadius = 16
-        button.layer.borderWidth = 1
-        return button
-    }()
-    
-    private let createButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Создать", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.layer.cornerRadius = 16
-        button.backgroundColor = .ypGray
-        return button
-    }()
-    
+    private lazy var cancelButton = CustomButton(title: "Отменить", titleColor: .ypRed, backgroundColor: .ypWhite, borderColor: .ypRed)
+    private lazy var createButton = CustomButton(title: "Создать", titleColor: .ypWhite, backgroundColor: .ypGray)
+
     private let hStack: UIStackView = {
        let stack = UIStackView()
         stack.axis = .horizontal
@@ -49,16 +32,11 @@ final class NewHabitViewController: UIViewController {
     //MARK: - Init
     init(trackType: TrackType) {
         self.trackType = trackType
-        self.customTextField = .init(placeholder: "Категория")
+        self.customTextField = .init(placeholder: "Введите название трекера")
 
         super.init(nibName: nil, bundle: nil)
 
-        switch trackType {
-        case .regular:
-            countRows = ["Категория", "Расписание"]
-        case .notRegular:
-            countRows = ["Категория"]
-        }
+        configureRows(for: trackType)
     }
     
     required init?(coder: NSCoder) {
@@ -69,18 +47,29 @@ final class NewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        
-        tableView.dataSource = self
-        tableView.register(NewHabitCell.self, forCellReuseIdentifier: NewHabitCell.newHabitCell)
         customTextField.addTarget(self, action: #selector(habitTextField), for: .editingChanged)
+
     }
     
     @objc private func habitTextField() {
         
     }
     
+    //MARK: - Private Methods
+    private func configureRows(for trackType: TrackType) {
+        switch trackType {
+        case .regular:
+            countRows = ["Категория", "Расписание"]
+            heightTableView = 150
+        case .notRegular:
+            countRows = ["Категория"]
+            heightTableView = 75
+        }
+    }
+    
 }
 
+//MARK: - UITableViewDataSource
 extension NewHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         countRows.count
@@ -91,19 +80,37 @@ extension NewHabitViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        switch indexPath.row {
-        case 0 :
-            cell.textLabel?.text = "Kaтегория"
-            cell.accessoryType = .disclosureIndicator
-        case 1:
-            cell.textLabel?.text = "Расписаниее"
-            cell.accessoryType = .disclosureIndicator
-        default : break
-        }
+        let text = countRows[indexPath.row]
+        cell.configure(with: text)
+        cell.accessoryType = .disclosureIndicator
         
         return cell
     }
 
+}
+
+//MARK: - UITableViewDelegate
+extension NewHabitViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        75
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        if countRows[indexPath.row] == "Расписание" {
+            let scheduleVC = ScheduleViewController()
+            navigationController?.pushViewController(scheduleVC, animated: true)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == countRows.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
+    }
 }
 
 //MARK: - Setting Views
@@ -111,6 +118,7 @@ private extension NewHabitViewController {
     func setupView() {
         addSubViews()
         setupLayout()
+        setupTableView()
         view.backgroundColor = .ypWhite
         navigationItem.title = "Новая привычка"
         navigationItem.setHidesBackButton(true, animated: true)
@@ -124,8 +132,18 @@ private extension NewHabitViewController {
         hStack.addArrangedSubview(createButton)
     }
     
+    private func setupTableView() {
+        tableView.layer.cornerRadius = 16
+        tableView.layer.masksToBounds = true
+        tableView.backgroundColor = .ypBackground
+        tableView.isScrollEnabled = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(NewHabitCell.self, forCellReuseIdentifier: NewHabitCell.newHabitCell)
+    }
+    
     func setupLayout() {
-        [customTextField, hStack, cancelButton, createButton].forEach {
+        [customTextField, tableView, hStack, cancelButton, createButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -133,6 +151,11 @@ private extension NewHabitViewController {
             customTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             customTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             customTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            tableView.topAnchor.constraint(equalTo: customTextField.bottomAnchor, constant: 24),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.heightAnchor.constraint(equalToConstant: heightTableView),
             
             hStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             hStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

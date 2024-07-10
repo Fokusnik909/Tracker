@@ -75,6 +75,7 @@ final class NewCreateTrackerViewController: UIViewController {
     }
     
     @objc private func notRegularEventButtonPressed() {
-        
+        let newHabit = NewHabitViewController(trackType: .notRegular)
+        navigationController?.pushViewController(newHabit, animated: true)
     }
 }
