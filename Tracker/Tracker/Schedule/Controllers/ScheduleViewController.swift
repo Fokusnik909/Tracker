@@ -11,7 +11,15 @@ final class ScheduleViewController: UIViewController {
     
     private var weekDays = WeekDay.allCases.map { WeekDayModel(day: $0, isSelected: false)}
     
+    private var trackerService: TrackerService?
     var didSelectWeekDays: ( ([WeekDay]) -> Void)?
+    var selectedWeekDays: [WeekDay] = [] {
+        didSet {
+            for (index, weekDay) in weekDays.enumerated() {
+                weekDays[index].isSelected = selectedWeekDays.contains(weekDay.day)
+            }
+        }
+    }
     
     private let tableView: UITableView = .init()
     private let doneButton = CustomButton(title: "Готово", titleColor: .ypWhite, backgroundColor: .ypBlack)
@@ -19,24 +27,14 @@ final class ScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        doneButton.addTarget(nil, action: #selector(doneButtonTapped), for: .touchUpInside)
     }
     
-    @objc private func doneButtonTapped() {
+    @objc func doneButtonTapped() {
         let selectedDays = weekDays.filter { $0.isSelected }.map { $0.day }
         didSelectWeekDays?(selectedDays)
         navigationController?.popViewController(animated: true)
-        print(#function)
     }
-//    @objc func switchChanged(_ sender: UISwitch) {
-//        let day = weekDays[sender.tag]
-//        
-//        if sender.isOn {
-//            
-//        } else {
-//            
-//        }
-//    }
     
 
 }
@@ -55,6 +53,8 @@ extension ScheduleViewController: UITableViewDataSource {
         cell.switchChanged = { [weak self] isOn in
             self?.weekDays[indexPath.row].isSelected = isOn
         }
+        print(weekDays)
+        print("--------------")
         return cell
     }
 }

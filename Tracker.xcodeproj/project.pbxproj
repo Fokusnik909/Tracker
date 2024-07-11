@@ -27,6 +27,7 @@
 		C8A3CC802C3D56960012CC42 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC7F2C3D56960012CC42 /* Schedule.swift */; };
 		C8A3CC842C3D581F0012CC42 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */; };
 		C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */; };
+		C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		C8A3CC7F2C3D56960012CC42 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 			children = (
 				C869D9D32C2FDBCA000DB992 /* Tracker.swift */,
 				C8A3CC7F2C3D56960012CC42 /* Schedule.swift */,
+				C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 				C869D9502C2AD764000DB992 /* SceneDelegate.swift in Sources */,
 				C8A3CC782C3A45F90012CC42 /* TrackType.swift in Sources */,
 				C869D9D42C2FDBCA000DB992 /* Tracker.swift in Sources */,
+				C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */,
 				C8A3CC752C39B3A30012CC42 /* NewHabitCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

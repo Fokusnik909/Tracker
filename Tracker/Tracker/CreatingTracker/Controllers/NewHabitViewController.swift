@@ -11,7 +11,10 @@ final class NewHabitViewController: UIViewController {
     
     var trackType: TrackType
     var countRows = [String]()
+    
     private var heightTableView: CGFloat = 0
+    private var selectedWeekDays: [WeekDay] = []
+    private let scheduleLabel = "Расписание"
     
     //MARK: - Private properties UI
     private var customTextField: CustomTextField
@@ -67,6 +70,18 @@ final class NewHabitViewController: UIViewController {
         }
     }
     
+    private func updateScheduleLabel() {
+        guard let index = countRows.firstIndex(of: scheduleLabel) else { return }
+        let indexPath = IndexPath(row: index, section: 0)
+        
+        let daysString = selectedWeekDays.map { $0.shortName }.joined(separator: ", ")
+        let isAllDays = selectedWeekDays.count == 7 ? "Каждый день" : daysString
+        
+        if let cell = tableView.cellForRow(at: indexPath) as? NewHabitCell {
+            cell.configure(with: scheduleLabel, detailText: isAllDays)
+        }
+    }
+    
 }
 
 //MARK: - UITableViewDataSource
@@ -81,7 +96,13 @@ extension NewHabitViewController: UITableViewDataSource {
         }
         
         let text = countRows[indexPath.row]
-        cell.configure(with: text)
+        if text == scheduleLabel {
+            let daysString = selectedWeekDays.map { $0.shortName }.joined(separator: ", ")
+            cell.configure(with: text, detailText: daysString)
+        } else {
+            cell.configure(with: text)
+        }
+        
         cell.accessoryType = .disclosureIndicator
         
         return cell
@@ -98,8 +119,13 @@ extension NewHabitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if countRows[indexPath.row] == "Расписание" {
+        if countRows[indexPath.row] == scheduleLabel {
             let scheduleVC = ScheduleViewController()
+            scheduleVC.selectedWeekDays = selectedWeekDays
+            scheduleVC.didSelectWeekDays = { [weak self] selectedDays in
+                self?.selectedWeekDays = selectedDays
+                self?.updateScheduleLabel()
+            }
             navigationController?.pushViewController(scheduleVC, animated: true)
         }
     }
