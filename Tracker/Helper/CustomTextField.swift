@@ -45,6 +45,7 @@ final class CustomTextField: UITextField {
         
         font = .systemFont(ofSize: 17)
         heightAnchor.constraint(equalToConstant: 75).isActive = true
+        clearButtonMode = .always
     }
 }
 

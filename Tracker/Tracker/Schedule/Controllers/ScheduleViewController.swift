@@ -14,12 +14,12 @@ final class ScheduleViewController: UIViewController {
     private var trackerService: TrackerService?
     var didSelectWeekDays: ( ([WeekDay]) -> Void)?
     var selectedWeekDays: [WeekDay] = [] {
-        didSet {
-            for (index, weekDay) in weekDays.enumerated() {
-                weekDays[index].isSelected = selectedWeekDays.contains(weekDay.day)
+            didSet {
+                for (index, weekDay) in weekDays.enumerated() {
+                    weekDays[index].isSelected = selectedWeekDays.contains(weekDay.day)
+                }
             }
         }
-    }
     
     private let tableView: UITableView = .init()
     private let doneButton = CustomButton(title: "Готово", titleColor: .ypWhite, backgroundColor: .ypBlack)

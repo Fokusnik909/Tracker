@@ -10,15 +10,15 @@ import UIKit
  
 struct Tracker: Identifiable {
     let id: UUID
-    let name: String
+    var name: String
     let color: UIColor
     let emoji: String
-    let schedule: [String]
+    let schedule: [WeekDay]
 }
 
 struct TrackerCategory {
     let title: String
-    let trackers: [Tracker]
+    var trackers: [Tracker]
 }
 
 struct TrackerRecord: Identifiable {
@@ -26,3 +26,10 @@ struct TrackerRecord: Identifiable {
     let date: Date
 }
 
+struct Emojis {
+    static func randomEmoji() -> String {
+        let emojis = [ "🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥬", "🥦", "🧄", "🧅", "🍄"]
+        
+        return emojis.randomElement()!
+    }
+}

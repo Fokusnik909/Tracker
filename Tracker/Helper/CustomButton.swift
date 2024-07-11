@@ -50,6 +50,7 @@ class CustomButton: UIButton {
         layer.cornerRadius = cornerRadius
         translatesAutoresizingMaskIntoConstraints = false
         
+        
         if let borderColor = borderColor {
             layer.borderColor = borderColor.cgColor
             layer.borderWidth = 1

@@ -11,17 +11,40 @@ final class NewHabitViewController: UIViewController {
     
     var trackType: TrackType
     var countRows = [String]()
+    var regularTracker: Tracker?
     
     private var heightTableView: CGFloat = 0
     private var selectedWeekDays: [WeekDay] = []
     private let scheduleLabel = "Расписание"
     
-    //MARK: - Private properties UI
-    private var customTextField: CustomTextField
+    var category: String = ""
     
-    private lazy var cancelButton = CustomButton(title: "Отменить", titleColor: .ypRed, backgroundColor: .ypWhite, borderColor: .ypRed)
-    private lazy var createButton = CustomButton(title: "Создать", titleColor: .ypWhite, backgroundColor: .ypGray)
-
+    //MARK: - Private properties UI
+    private var customTextField: CustomTextField = {
+        let textField = CustomTextField(placeholder: "Введите название трекера")
+        return textField
+    }()
+    
+    private lazy var cancelButton: UIButton = {
+        let button = CustomButton(
+            title: "Отменить",
+            titleColor: .ypRed,
+            backgroundColor: .ypWhite,
+            borderColor: .ypRed
+        )
+        return button
+    }()
+    
+    
+    private lazy var createButton: CustomButton = {
+        let button = CustomButton(
+            title: "Создать",
+            titleColor: .ypWhite,
+            backgroundColor: .ypGray
+        )
+        return button
+    }()
+    
     private let hStack: UIStackView = {
        let stack = UIStackView()
         stack.axis = .horizontal
@@ -35,7 +58,6 @@ final class NewHabitViewController: UIViewController {
     //MARK: - Init
     init(trackType: TrackType) {
         self.trackType = trackType
-        self.customTextField = .init(placeholder: "Введите название трекера")
 
         super.init(nibName: nil, bundle: nil)
 
@@ -50,12 +72,18 @@ final class NewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        customTextField.addTarget(self, action: #selector(habitTextField), for: .editingChanged)
-
     }
     
-    @objc private func habitTextField() {
-        
+    @objc private func habitTextField(_ textField: UITextField) {
+        validateForm()
+    }
+    
+    @objc private func createButtonPressed() {
+        print("creat")
+    }
+    
+    @objc private func cancelButtonPressed() {
+        dismiss(animated: true)
     }
     
     //MARK: - Private Methods
@@ -70,6 +98,19 @@ final class NewHabitViewController: UIViewController {
         }
     }
     
+    private func validateForm(){
+        let isFormValid: Bool
+        
+        switch trackType {
+        case .regular:
+            isFormValid = customTextField.text != "" && !selectedWeekDays.isEmpty
+        case .notRegular:
+            isFormValid = customTextField.text != ""
+        }
+        
+        updateCreateButtonState(isFormValid)
+    }
+    
     private func updateScheduleLabel() {
         guard let index = countRows.firstIndex(of: scheduleLabel) else { return }
         let indexPath = IndexPath(row: index, section: 0)
@@ -80,6 +121,25 @@ final class NewHabitViewController: UIViewController {
         if let cell = tableView.cellForRow(at: indexPath) as? NewHabitCell {
             cell.configure(with: scheduleLabel, detailText: isAllDays)
         }
+    }
+    
+    private func switchingAnotherController(_ selectedСell: String) {
+        if selectedСell == scheduleLabel {
+            let scheduleVC = ScheduleViewController()
+            scheduleVC.selectedWeekDays = selectedWeekDays
+            scheduleVC.didSelectWeekDays = { [weak self] selectedDays in
+                guard let self else { return }
+                self.selectedWeekDays = selectedDays
+                self.updateScheduleLabel()
+                self.validateForm()
+            }
+            navigationController?.pushViewController(scheduleVC, animated: true)
+        }
+    }
+    
+    private func updateCreateButtonState(_ isValid: Bool) {
+        createButton.isEnabled = isValid
+        createButton.backgroundColor = isValid ? .ypBlack : .ypGray
     }
     
 }
@@ -119,15 +179,8 @@ extension NewHabitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if countRows[indexPath.row] == scheduleLabel {
-            let scheduleVC = ScheduleViewController()
-            scheduleVC.selectedWeekDays = selectedWeekDays
-            scheduleVC.didSelectWeekDays = { [weak self] selectedDays in
-                self?.selectedWeekDays = selectedDays
-                self?.updateScheduleLabel()
-            }
-            navigationController?.pushViewController(scheduleVC, animated: true)
-        }
+        let selectedСell = countRows[indexPath.row]
+        switchingAnotherController(selectedСell)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -145,6 +198,7 @@ private extension NewHabitViewController {
         addSubViews()
         setupLayout()
         setupTableView()
+        settingEventButton()
         view.backgroundColor = .ypWhite
         navigationItem.title = "Новая привычка"
         navigationItem.setHidesBackButton(true, animated: true)
@@ -166,6 +220,12 @@ private extension NewHabitViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(NewHabitCell.self, forCellReuseIdentifier: NewHabitCell.newHabitCell)
+    }
+    
+    func settingEventButton() {
+        customTextField.addTarget(self, action: #selector(habitTextField), for: .editingChanged)
+        createButton.addTarget(self, action: #selector(createButtonPressed), for: .touchUpInside)
+        cancelButton.addTarget(self, action: #selector(cancelButtonPressed), for: .touchUpInside)
     }
     
     func setupLayout() {
