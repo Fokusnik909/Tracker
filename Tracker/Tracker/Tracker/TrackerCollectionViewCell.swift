@@ -10,6 +10,10 @@ import UIKit
 final class TrackerCollectionViewCell: UICollectionViewCell {
     static let identifier = "TrackerCell"
     
+    private var tracker: Tracker?
+    private var isComplete = false
+    private var calendarDate = Date()
+    
     private let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -43,13 +47,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     private let completeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "plus"), for: .normal)
-        button.tintColor = .white
+        button.setImage(UIImage(named: "addButton"), for: .normal)
+        button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    var completionHandler: (() -> Void)?
+    var completionHandler: ((Tracker, Bool)->Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,12 +67,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupViews() {
-//        contentView.addSubview(containerView)
-//        containerView.addSubview(emojiLabel)
-//        containerView.addSubview(titleLabel)
-//        contentView.addSubview(daysLabel)
-//        contentView.addSubview(completeButton)
-        
         contentView.addSubview(containerView)
         contentView.addSubview(emojiLabel)
         contentView.addSubview(titleLabel)
@@ -106,16 +104,47 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         completeButton.layer.cornerRadius = sizeButton / 2
     }
     
-    func configure(with tracker: Tracker, isCompleted: Bool, completionCount: Int) {
+    func configure(with tracker: Tracker, isCompleted: Bool, completionCount: Int, calendar: Date) {
+        self.isComplete = isCompleted
+        self.calendarDate = calendar
+        self.tracker = tracker
+        
+        completeButton.isSelected = isCompleted
+        isSelectedButton(completeButton)
+        
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
         completeButton.backgroundColor = tracker.color
         containerView.backgroundColor = tracker.color
-        completeButton.setImage(UIImage(systemName: isCompleted ? "checkmark.circle.fill" : "plus"), for: .normal)
         daysLabel.text = "\(completionCount) день"
     }
     
-    @objc private func completeButtonTapped() {
-        completionHandler?()
+    private func isSelectedButton(_ sender: UIButton) {
+        if sender.isSelected {
+//            sender.setImage(UIImage(named: "done"), for: .normal)
+//            sender.alpha = 0.3
+            completeButton.setImage(UIImage(named: "done"), for: .normal)
+            completeButton.alpha = 0.3
+        } else {
+//            sender.setImage(UIImage(named: "addButton"), for: .normal)
+//            sender.alpha = 1.0
+            completeButton.setImage(UIImage(named: "addButton"), for: .normal)
+            completeButton.alpha = 1.0
+        }
+        
+    }
+    
+    @objc private func completeButtonTapped(_ sender: UIButton) {
+        guard calendarDate < Date() else { return }
+        
+        guard let tracker else { return }
+        
+        sender.isSelected = !sender.isSelected
+        
+        isSelectedButton(sender)
+        
+        let buttonStatus = sender.isSelected
+        
+        completionHandler?(tracker, buttonStatus)
     }
 }

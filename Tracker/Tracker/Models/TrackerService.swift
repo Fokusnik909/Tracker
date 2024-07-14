@@ -18,6 +18,7 @@ final class TrackerService {
         TrackerCategory(title: "Домашний уют!", trackers: [] )
     ]
     
+    
     var completedTrackers: [TrackerRecord] = []
     
     func append(_ tracker: Tracker) {

@@ -82,11 +82,15 @@ final class NewHabitViewController: UIViewController {
     @objc private func createButtonPressed() {
         guard let name = customTextField.text, !name.isEmpty else { return }
         
+        
+        
         let emoji = Emojis.randomEmoji()
         let color = UIColor.red
         
         let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: selectedWeekDays)
         trackerService.append(tracker)
+        NotificationCenter.default.post(name: Notification.Name("UpdateTrackersEvent"), object: nil, userInfo: nil)
+        dismiss(animated: true)
     }
     
     @objc private func cancelButtonPressed() {

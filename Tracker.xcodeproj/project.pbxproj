@@ -30,6 +30,7 @@
 		C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */; };
 		C8A3CC8A2C43F55F0012CC42 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */; };
 		C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */; };
+		C8A3CC8F2C444C520012CC42 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC8E2C444C520012CC42 /* CategoryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerService.swift; sourceTree = "<group>"; };
 		C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerHeader.swift; sourceTree = "<group>"; };
+		C8A3CC8E2C444C520012CC42 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 		C869D9642C2AE457000DB992 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				C8A3CC8D2C444C330012CC42 /* Category */,
 				C89E1BFC2C39894D00B4289F /* Tracker */,
 				C89E1BFD2C3989D800B4289F /* CreatingTracker */,
 				C8A3CC7C2C3D50EE0012CC42 /* Schedule */,
@@ -230,6 +233,14 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		C8A3CC8D2C444C330012CC42 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				C8A3CC8E2C444C520012CC42 /* CategoryViewController.swift */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -320,6 +331,7 @@
 				C869D9D42C2FDBCA000DB992 /* Tracker.swift in Sources */,
 				C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */,
 				C8A3CC752C39B3A30012CC42 /* NewHabitCell.swift in Sources */,
+				C8A3CC8F2C444C520012CC42 /* CategoryViewController.swift in Sources */,
 				C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -11,14 +11,10 @@ final class TrackersViewController: UIViewController {
     //MARK: - Private properties
     private var params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
     private var categories: [TrackerCategory] = []
+    private let trackerService = TrackerService.shared
     private var completedTrackers: [TrackerRecord] = []
-    private var visibleCategories: [TrackerCategory] = [
-        TrackerCategory(title: "Домащний уют", trackers: [Tracker(id: UUID(), name: "Поливать растения", color: .systemGreen, emoji: "❤️", schedule: [.friday, .monday, .wednesday] )] ),
-        TrackerCategory(title: "Радостные мелочи", trackers: [Tracker(id: UUID(), name: "Кошка заслонила камеру на созвоне", color: .orange, emoji: "😻", schedule: [.friday]),
-                                                              Tracker(id: UUID(), name: "Бабушка прислала открытку в вотсапе", color: .red, emoji: "🌺", schedule: [.monday]),
-                                                              Tracker(id: UUID(), name: "Свидания в апреле", color: .blue, emoji: "❤️", schedule: [.sunday])
-                                                             ])
-    ]
+    private var visibleCategories: [TrackerCategory] = []
+    private var currentDate: Date = Date()
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -67,6 +63,7 @@ final class TrackersViewController: UIViewController {
         layout()
         setupNavigationBar()
         setupCollectionView()
+        NotificationCenter.default.addObserver(self, selector: #selector(update), name: Notification.Name("UpdateTrackersEvent"), object: nil)
     }
     
     //MARK: - Private Methods
@@ -81,7 +78,29 @@ final class TrackersViewController: UIViewController {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
         let formattedDate = dateFormatter.string(from: selectedDate)
+        currentDate = sender.date
+        collectionView.reloadData()
         print("Выбранная дата: \(formattedDate)")
+    }
+    
+    @objc func update() {
+        fetchTrackers()
+        collectionView.reloadData()
+    }
+    
+    func fetchTrackers() {
+        visibleCategories = trackerService.categories
+        completedTrackers = trackerService.completedTrackers
+        
+        if visibleCategories.isEmpty {
+            imageStar.isHidden = false
+            logoLabel.isHidden = false
+        } else {
+            imageStar.isHidden = true
+            logoLabel.isHidden = true
+        }
+        
+        collectionView.reloadData()
     }
     
     private func setupNavigationBar() {
@@ -109,14 +128,6 @@ final class TrackersViewController: UIViewController {
         for view in subView {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
-        }
-        
-        if visibleCategories.isEmpty {
-            imageStar.isHidden = false
-            logoLabel.isHidden = false
-        } else {
-            imageStar.isHidden = true
-            logoLabel.isHidden = true
         }
         
         NSLayoutConstraint.activate([
@@ -155,10 +166,27 @@ extension TrackersViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
+        cell.completionHandler = { [weak self] tracker, completeStatus in
+            guard let self else { return }
+            
+            if completeStatus == true {
+                let trackerRecord = TrackerRecord(id: tracker.id, date: self.currentDate)
+                self.completedTrackers.append(trackerRecord)
+                print("add ->", self.completedTrackers)
+            } else {
+                self.completedTrackers.removeAll { $0.id == tracker.id && $0.date == self.currentDate }
+                print("remove ->", self.completedTrackers)
+            }
+            
+            collectionView.reloadData()
+        }
+        
         let trackerCategory = visibleCategories[indexPath.section]
         let tracker = trackerCategory.trackers[indexPath.row]
+        let counter = completedTrackers.filter { $0.id == tracker.id }.count
+        let isComplete = completedTrackers.filter { $0.id == tracker.id && $0.date == currentDate }.count > 0
         
-        cell.configure(with: tracker, isCompleted: false, completionCount: 5)
+        cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate)
         
         return cell
     }
