@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum WeekDay: Int, CaseIterable {
+enum Weekdays: Int, CaseIterable {
     case monday = 0
     case tuesday
     case wednesday
@@ -42,6 +42,6 @@ enum WeekDay: Int, CaseIterable {
 }
 
 struct WeekDayModel {
-    let day: WeekDay
+    let day: Weekdays
     var isSelected: Bool
 }

@@ -13,7 +13,7 @@ struct Tracker: Identifiable {
     var name: String
     let color: UIColor
     let emoji: String
-    let schedule: [WeekDay]
+    let schedule: [Weekdays]
 }
 
 struct TrackerCategory {

@@ -13,8 +13,9 @@ final class NewHabitViewController: UIViewController {
     var countRows = [String]()
     var regularTracker: Tracker?
     
+    private var trackerService = TrackerService.shared
     private var heightTableView: CGFloat = 0
-    private var selectedWeekDays: [WeekDay] = []
+    private var selectedWeekDays: [Weekdays] = []
     private let scheduleLabel = "Расписание"
     
     var category: String = ""
@@ -79,7 +80,13 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func createButtonPressed() {
-        print("creat")
+        guard let name = customTextField.text, !name.isEmpty else { return }
+        
+        let emoji = Emojis.randomEmoji()
+        let color = UIColor.red
+        
+        let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: selectedWeekDays)
+        trackerService.append(tracker)
     }
     
     @objc private func cancelButtonPressed() {

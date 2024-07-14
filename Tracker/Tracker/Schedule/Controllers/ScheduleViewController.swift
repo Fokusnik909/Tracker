@@ -9,11 +9,11 @@ import UIKit
 
 final class ScheduleViewController: UIViewController {
     
-    private var weekDays = WeekDay.allCases.map { WeekDayModel(day: $0, isSelected: false)}
+    private var weekDays = Weekdays.allCases.map { WeekDayModel(day: $0, isSelected: false)}
     
     private var trackerService: TrackerService?
-    var didSelectWeekDays: ( ([WeekDay]) -> Void)?
-    var selectedWeekDays: [WeekDay] = [] {
+    var didSelectWeekDays: ( ([Weekdays]) -> Void)?
+    var selectedWeekDays: [Weekdays] = [] {
             didSet {
                 for (index, weekDay) in weekDays.enumerated() {
                     weekDays[index].isSelected = selectedWeekDays.contains(weekDay.day)

@@ -28,6 +28,7 @@
 		C8A3CC842C3D581F0012CC42 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */; };
 		C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */; };
 		C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */; };
+		C8A3CC8A2C43F55F0012CC42 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerService.swift; sourceTree = "<group>"; };
+		C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,9 +113,9 @@
 		C869D9642C2AE457000DB992 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				C8A3CC7C2C3D50EE0012CC42 /* Schedule */,
-				C89E1BFD2C3989D800B4289F /* CreatingTracker */,
 				C89E1BFC2C39894D00B4289F /* Tracker */,
+				C89E1BFD2C3989D800B4289F /* CreatingTracker */,
+				C8A3CC7C2C3D50EE0012CC42 /* Schedule */,
 				C869D9D22C2FDBB4000DB992 /* Models */,
 			);
 			path = Tracker;
@@ -140,8 +142,8 @@
 		C89E1BFC2C39894D00B4289F /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				C869D9D52C32C035000DB992 /* TrackerCollectionViewCell.swift */,
 				C869D9662C2AE49E000DB992 /* TrackersViewController.swift */,
+				C869D9D52C32C035000DB992 /* TrackerCollectionViewCell.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -195,6 +197,7 @@
 			children = (
 				C8A3CC7A2C3C69300012CC42 /* CustomTextField.swift */,
 				C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */,
+				C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				C8A3CC722C39AAFA0012CC42 /* NewHabitViewController.swift in Sources */,
 				C8A3CC842C3D581F0012CC42 /* ScheduleCell.swift in Sources */,
 				C8A3CC6F2C3997D40012CC42 /* Colors.swift in Sources */,
+				C8A3CC8A2C43F55F0012CC42 /* GeometricParams.swift in Sources */,
 				C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */,
 				C869D9522C2AD764000DB992 /* ViewController.swift in Sources */,
 				C869D9632C2AE22D000DB992 /* TabBarController.swift in Sources */,
