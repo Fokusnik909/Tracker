@@ -29,6 +29,7 @@
 		C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */; };
 		C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */; };
 		C8A3CC8A2C43F55F0012CC42 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */; };
+		C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerService.swift; sourceTree = "<group>"; };
 		C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
+		C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerHeader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 			children = (
 				C869D9662C2AE49E000DB992 /* TrackersViewController.swift */,
 				C869D9D52C32C035000DB992 /* TrackerCollectionViewCell.swift */,
+				C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 				C869D9D42C2FDBCA000DB992 /* Tracker.swift in Sources */,
 				C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */,
 				C8A3CC752C39B3A30012CC42 /* NewHabitCell.swift in Sources */,
+				C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

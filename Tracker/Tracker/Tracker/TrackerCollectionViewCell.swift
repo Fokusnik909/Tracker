@@ -27,8 +27,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
-        label.textAlignment = .left
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = .ypWhite
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -63,9 +63,15 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupViews() {
+//        contentView.addSubview(containerView)
+//        containerView.addSubview(emojiLabel)
+//        containerView.addSubview(titleLabel)
+//        contentView.addSubview(daysLabel)
+//        contentView.addSubview(completeButton)
+        
         contentView.addSubview(containerView)
-        containerView.addSubview(emojiLabel)
-        containerView.addSubview(titleLabel)
+        contentView.addSubview(emojiLabel)
+        contentView.addSubview(titleLabel)
         contentView.addSubview(daysLabel)
         contentView.addSubview(completeButton)
         
@@ -84,10 +90,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             emojiLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
             emojiLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             
-            titleLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 44),
+            titleLabel.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
-            titleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 12),
+            titleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12),
             
             daysLabel.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 16),
             daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
