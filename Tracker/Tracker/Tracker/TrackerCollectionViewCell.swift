@@ -59,11 +59,16 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    //    Или в данной ситуации лучше было использовать замыкание вместо делагатов?
+    
+    //    var completionHandler: ((Tracker, Bool)->Void)?
+    //MARK: - Init()
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setupViews()
         setupLayout()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -119,7 +124,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
         containerView.backgroundColor = tracker.color
-        daysLabel.text = "\(completionCount) день"
+        daysLabel.text = "\(completionCount) \(completionCount == 1 ? "день" : "дня")"
     }
     
     private func isSelectedButton(_ sender: UIButton, trackerColor: UIColor) {

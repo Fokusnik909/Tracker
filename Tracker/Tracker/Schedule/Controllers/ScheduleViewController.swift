@@ -16,8 +16,6 @@ final class ScheduleViewController: UIViewController {
     weak var delegate: ScheduleViewControllerDelegate?
     
     private var weekDays = Weekdays.allCases.map { WeekDayModel(day: $0, isSelected: false)}
-    private var trackerService: TrackerService?
-//    var didSelectWeekDays: ( ([Weekdays]) -> Void)?
     var selectedWeekDays: [Weekdays] = [] {
             didSet {
                 for (index, weekDay) in weekDays.enumerated() {

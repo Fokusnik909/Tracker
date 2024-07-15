@@ -62,6 +62,9 @@ final class TrackersViewController: UIViewController {
         layout()
         setupNavigationBar()
         setupCollectionView()
+        // MOCK DATA
+        createMockData()
+        
 //        NotificationCenter.default.addObserver(self, selector: #selector(update), name: Notification.Name("UpdateTrackersEvent"), object: nil)
     }
     
@@ -123,27 +126,6 @@ final class TrackersViewController: UIViewController {
         }
         return result
     }
-    
-//    @objc func update() {
-//        fetchTrackers()
-//        collectionView.reloadData()
-//    }
-    
-//    func fetchTrackers() {
-//        visibleCategories = trackerService.categories
-//        completedTrackers = trackerService.completedTrackers
-//        print(visibleCategories)
-//        
-//        if visibleCategories.isEmpty {
-//            imageStar.isHidden = false
-//            logoLabel.isHidden = false
-//        } else {
-//            imageStar.isHidden = true
-//            logoLabel.isHidden = true
-//        }
-//        
-//        collectionView.reloadData()
-//    }
     
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = addBarButton
@@ -262,10 +244,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - NewCreateTrackerDelegate
 extension TrackersViewController: NewHabitDelegate {
     func didCreateNewTracker(_ tracker: Tracker, category: String) {
-        
-        print("New tracker created: \(tracker)")
-        print("Category: \(category)")
-        
+
         // Находим индекс категории
         if let index = categories.firstIndex(where: { $0.title == category }) {
             // Обновляем категорию с добавленным трекером
@@ -279,11 +258,8 @@ extension TrackersViewController: NewHabitDelegate {
             categories.append(newCategory)
         }
         
-        print("Updated categories: \(categories)")
-        
         updateVisibleCategories()
         collectionView.reloadData()
-        print("Visible categories: \(visibleCategories)")
         
     }
 }
@@ -291,15 +267,66 @@ extension TrackersViewController: NewHabitDelegate {
 //MARK: - TrackerCollectionViewCellDelegate
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func didTapCompleteButton(tracker: Tracker, isCompleted: Bool) {
-        func didTapCompleteButton(tracker: Tracker, isCompleted: Bool) {
-            if isCompleted {
-                let trackerRecord = TrackerRecord(id: tracker.id, date: currentDate)
-                completedTrackers.append(trackerRecord)
-            } else {
-                completedTrackers.removeAll { $0.id == tracker.id && $0.date == currentDate }
+        if isCompleted {
+            let trackerRecord = TrackerRecord(id: tracker.id, date: currentDate)
+            completedTrackers.append(trackerRecord)
+        } else {
+            completedTrackers.removeAll { $0.id == tracker.id && $0.date == currentDate }
+        }
+        
+        updateCellForTracker(tracker)
+    }
+    
+    private func updateCellForTracker(_ tracker: Tracker) {
+        for section in 0..<visibleCategories.count {
+            if let row = visibleCategories[section].trackers.firstIndex(where: { $0.id == tracker.id }) {
+                let indexPath = IndexPath(row: row, section: section)
+                collectionView.reloadItems(at: [indexPath])
+                break
             }
-            collectionView.reloadData()
         }
     }
+}
 
+
+
+extension TrackersViewController {
+    func createMockData() {
+        let plantWatering = Tracker(
+            id: UUID(),
+            name: "Поливать растения",
+            color: UIColor.green, emoji: "❤️",
+            schedule: Weekdays.allCases
+        )
+        
+        let cat = Tracker(
+            id: UUID(),
+            name: "Кошка заслонила камеру на созвоне",
+            color: UIColor.orange,
+            emoji: "❤️",
+            schedule: Weekdays.allCases
+        )
+        
+        let whatsApp = Tracker(
+            id: UUID(),
+            name: "Бабушка прислала открытку в вотсапе",
+            color: UIColor.red,
+            emoji: "❤️",
+            schedule: Weekdays.allCases
+        )
+        
+        let aprilDraw = Tracker(
+            id: UUID(),
+            name: "Свидания в апреле",
+            color: UIColor.blue,
+            emoji: "❤️",
+            schedule: Weekdays.allCases
+        )
+        
+        let homeComfort = TrackerCategory(title: "Домашний уют", trackers: [plantWatering])
+        let joyfulLittleThings = TrackerCategory(title: "Радостные мелочи", trackers: [cat, whatsApp, aprilDraw])
+        
+        categories = [homeComfort, joyfulLittleThings]
+        updateVisibleCategories()
+    }
 }

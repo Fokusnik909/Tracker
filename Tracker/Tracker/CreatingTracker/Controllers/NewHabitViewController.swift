@@ -19,7 +19,6 @@ final class NewHabitViewController: UIViewController {
     var countRows = [String]()
     var regularTracker: Tracker?
     
-    private var trackerService = TrackerService.shared
     private var heightTableView: CGFloat = 0
     private var selectedWeekDays: [Weekdays] = []
     private let scheduleLabel = "Расписание"
