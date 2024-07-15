@@ -11,7 +11,6 @@ final class TrackersViewController: UIViewController {
     //MARK: - Private properties
     private var params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
     private var categories: [TrackerCategory] = []
-    private let trackerService = TrackerService.shared
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate: Date = Date()
@@ -63,12 +62,13 @@ final class TrackersViewController: UIViewController {
         layout()
         setupNavigationBar()
         setupCollectionView()
-        NotificationCenter.default.addObserver(self, selector: #selector(update), name: Notification.Name("UpdateTrackersEvent"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(update), name: Notification.Name("UpdateTrackersEvent"), object: nil)
     }
     
     //MARK: - Private Methods
     @objc private func addButton() {
         let newTrackerViewController = NewCreateTrackerViewController()
+        newTrackerViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: newTrackerViewController)
         present(navigationController, animated: true)
     }
@@ -79,30 +79,71 @@ final class TrackersViewController: UIViewController {
         dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
         let formattedDate = dateFormatter.string(from: selectedDate)
         currentDate = sender.date
+        updateVisibleCategories()
         collectionView.reloadData()
         print("Выбранная дата: \(formattedDate)")
     }
     
-    @objc func update() {
-        fetchTrackers()
-        collectionView.reloadData()
+    private func updateVisibleCategories() {
+        visibleCategories = getVisibleCategories()
+        if visibleCategories.isEmpty {
+            showEmptyState()
+        } else {
+            hideEmptyState()
+        }
+    }
+
+    private func showEmptyState() {
+        imageStar.isHidden = false
+        logoLabel.isHidden = false
+    }
+
+    private func hideEmptyState() {
+        imageStar.isHidden = true
+        logoLabel.isHidden = true
     }
     
-    func fetchTrackers() {
-        visibleCategories = trackerService.categories
-        completedTrackers = trackerService.completedTrackers
-        print(visibleCategories)
-        
-        if visibleCategories.isEmpty {
-            imageStar.isHidden = false
-            logoLabel.isHidden = false
+    private func getVisibleCategories() -> [TrackerCategory] {
+        var result: [TrackerCategory] = []
+        if let currentDayOfWeek = Weekdays.from(date: currentDate) {
+            print("Current day of week: \(currentDayOfWeek)")
+            for category in categories {
+                var trackers: [Tracker] = []
+                for tracker in category.trackers {
+                    if tracker.schedule.contains(currentDayOfWeek) {
+                        trackers.append(tracker)
+                    }
+                }
+                if !trackers.isEmpty {
+                    result.append(TrackerCategory(title: category.title, trackers: trackers))
+                }
+            }
         } else {
-            imageStar.isHidden = true
-            logoLabel.isHidden = true
+            print("Error: could not determine current day of week")
         }
-        
-        collectionView.reloadData()
+        return result
     }
+    
+//    @objc func update() {
+//        fetchTrackers()
+//        collectionView.reloadData()
+//    }
+    
+//    func fetchTrackers() {
+//        visibleCategories = trackerService.categories
+//        completedTrackers = trackerService.completedTrackers
+//        print(visibleCategories)
+//        
+//        if visibleCategories.isEmpty {
+//            imageStar.isHidden = false
+//            logoLabel.isHidden = false
+//        } else {
+//            imageStar.isHidden = true
+//            logoLabel.isHidden = true
+//        }
+//        
+//        collectionView.reloadData()
+//    }
     
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = addBarButton
@@ -167,20 +208,7 @@ extension TrackersViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        cell.completionHandler = { [weak self] tracker, completeStatus in
-            guard let self else { return }
-            
-            if completeStatus == true {
-                let trackerRecord = TrackerRecord(id: tracker.id, date: self.currentDate)
-                self.completedTrackers.append(trackerRecord)
-                print("add ->", self.completedTrackers)
-            } else {
-                self.completedTrackers.removeAll { $0.id == tracker.id && $0.date == self.currentDate }
-                print("remove ->", self.completedTrackers)
-            }
-            
-            collectionView.reloadData()
-        }
+        cell.delegate = self
         
         let trackerCategory = visibleCategories[indexPath.section]
         let tracker = trackerCategory.trackers[indexPath.row]
@@ -229,4 +257,49 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.frame.width, height: 18)
     }
     
+}
+
+//MARK: - NewCreateTrackerDelegate
+extension TrackersViewController: NewHabitDelegate {
+    func didCreateNewTracker(_ tracker: Tracker, category: String) {
+        
+        print("New tracker created: \(tracker)")
+        print("Category: \(category)")
+        
+        // Находим индекс категории
+        if let index = categories.firstIndex(where: { $0.title == category }) {
+            // Обновляем категорию с добавленным трекером
+            let updatedCategory = categories[index]
+            var updatedTrackers = updatedCategory.trackers
+            updatedTrackers.append(tracker)
+            categories[index] = TrackerCategory(title: updatedCategory.title, trackers: updatedTrackers)
+        } else {
+            // Если категории не существует, создаем новую
+            let newCategory = TrackerCategory(title: category, trackers: [tracker])
+            categories.append(newCategory)
+        }
+        
+        print("Updated categories: \(categories)")
+        
+        updateVisibleCategories()
+        collectionView.reloadData()
+        print("Visible categories: \(visibleCategories)")
+        
+    }
+}
+
+//MARK: - TrackerCollectionViewCellDelegate
+extension TrackersViewController: TrackerCollectionViewCellDelegate {
+    func didTapCompleteButton(tracker: Tracker, isCompleted: Bool) {
+        func didTapCompleteButton(tracker: Tracker, isCompleted: Bool) {
+            if isCompleted {
+                let trackerRecord = TrackerRecord(id: tracker.id, date: currentDate)
+                completedTrackers.append(trackerRecord)
+            } else {
+                completedTrackers.removeAll { $0.id == tracker.id && $0.date == currentDate }
+            }
+            collectionView.reloadData()
+        }
+    }
+
 }

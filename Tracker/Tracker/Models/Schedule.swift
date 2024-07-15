@@ -8,7 +8,24 @@
 import Foundation
 
 enum Weekdays: Int, CaseIterable {
-    case monday = 0
+    
+    static func from(date: Date) -> Weekdays? {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: date)
+        
+        switch weekday {
+        case 1: return .sunday
+        case 2: return .monday
+        case 3: return .tuesday
+        case 4: return .wednesday
+        case 5: return .thursday
+        case 6: return .friday
+        case 7: return .saturday
+        default: return nil
+        }
+    }
+    
+    case monday 
     case tuesday
     case wednesday
     case thursday

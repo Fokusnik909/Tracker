@@ -7,12 +7,17 @@
 
 import UIKit
 
+protocol ScheduleViewControllerDelegate: AnyObject {
+    func didSelectWeekDays(_ selectedDays: [Weekdays])
+}
+
 final class ScheduleViewController: UIViewController {
     
-    private var weekDays = Weekdays.allCases.map { WeekDayModel(day: $0, isSelected: false)}
+    weak var delegate: ScheduleViewControllerDelegate?
     
+    private var weekDays = Weekdays.allCases.map { WeekDayModel(day: $0, isSelected: false)}
     private var trackerService: TrackerService?
-    var didSelectWeekDays: ( ([Weekdays]) -> Void)?
+//    var didSelectWeekDays: ( ([Weekdays]) -> Void)?
     var selectedWeekDays: [Weekdays] = [] {
             didSet {
                 for (index, weekDay) in weekDays.enumerated() {
@@ -27,16 +32,25 @@ final class ScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        loadSelectedDays()
         doneButton.addTarget(nil, action: #selector(doneButtonTapped), for: .touchUpInside)
     }
     
     @objc func doneButtonTapped() {
         let selectedDays = weekDays.filter { $0.isSelected }.map { $0.day }
-        didSelectWeekDays?(selectedDays)
+//        didSelectWeekDays?(selectedDays)
+        delegate?.didSelectWeekDays(selectedDays)
         navigationController?.popViewController(animated: true)
     }
     
-
+    private func loadSelectedDays() {
+        for selectedDay in selectedWeekDays {
+            if let index = weekDays.firstIndex(where: { $0.day == selectedDay }) {
+                weekDays[index].isSelected = true
+            }
+        }
+    }
+    
 }
 
 extension ScheduleViewController: UITableViewDataSource {

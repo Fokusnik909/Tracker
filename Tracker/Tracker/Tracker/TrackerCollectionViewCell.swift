@@ -7,8 +7,14 @@
 
 import UIKit
 
+protocol TrackerCollectionViewCellDelegate: AnyObject {
+    func didTapCompleteButton(tracker: Tracker, isCompleted: Bool)
+}
+
 final class TrackerCollectionViewCell: UICollectionViewCell {
     static let identifier = "TrackerCell"
+    
+    weak var delegate: TrackerCollectionViewCellDelegate?
     
     private var tracker: Tracker?
     private var isComplete = false
@@ -52,8 +58,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
-    var completionHandler: ((Tracker, Bool)->Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -108,43 +112,48 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         self.isComplete = isCompleted
         self.calendarDate = calendar
         self.tracker = tracker
-        
+
         completeButton.isSelected = isCompleted
-        isSelectedButton(completeButton)
-        
+        isSelectedButton(completeButton, trackerColor: tracker.color)
+
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
-        completeButton.backgroundColor = tracker.color
         containerView.backgroundColor = tracker.color
         daysLabel.text = "\(completionCount) день"
     }
     
-    private func isSelectedButton(_ sender: UIButton) {
-        if sender.isSelected {
-//            sender.setImage(UIImage(named: "done"), for: .normal)
-//            sender.alpha = 0.3
-            completeButton.setImage(UIImage(named: "done"), for: .normal)
-            completeButton.alpha = 0.3
-        } else {
-//            sender.setImage(UIImage(named: "addButton"), for: .normal)
-//            sender.alpha = 1.0
-            completeButton.setImage(UIImage(named: "addButton"), for: .normal)
-            completeButton.alpha = 1.0
+    private func isSelectedButton(_ sender: UIButton, trackerColor: UIColor) {
+        guard calendarDate < Date() else {
+            sender.layer.opacity = 0.3
+            return
         }
         
+        if sender.isSelected {
+            sender.setImage(UIImage(named: "done"), for: .normal)
+            sender.tintColor = trackerColor
+            sender.layer.opacity = 0.3
+        } else {
+            sender.setImage(UIImage(named: "addButton"), for: .normal)
+            sender.tintColor = .white
+            sender.backgroundColor = trackerColor
+            sender.layer.opacity = 1
+        }
     }
     
     @objc private func completeButtonTapped(_ sender: UIButton) {
         guard calendarDate < Date() else { return }
-        
+
         guard let tracker else { return }
-        
+
         completeButton.isSelected = !sender.isSelected
-        
-        isSelectedButton(sender)
-        
+
+        isSelectedButton(sender, trackerColor: tracker.color)
+
         let buttonStatus = sender.isSelected
-        
-        completionHandler?(tracker, buttonStatus)
+
+        completeButton.layer.cornerRadius = completeButton.frame.size.width / 2
+        completeButton.layer.masksToBounds = true
+
+        delegate?.didTapCompleteButton(tracker: tracker, isCompleted: buttonStatus)
     }
 }

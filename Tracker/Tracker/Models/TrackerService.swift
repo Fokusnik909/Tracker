@@ -23,7 +23,7 @@ final class TrackerService {
     func append(_ tracker: Tracker) {
             if let index = categories.firstIndex(where: { $0.trackers.contains(where: { $0.id == tracker.id }) }) {
                 // Категория с трекером найдена, обновляем трекер в этой категории
-                var category = categories[index]
+                let category = categories[index]
                 var trackers = category.trackers
                 if let trackerIndex = trackers.firstIndex(where: { $0.id == tracker.id }) {
                     trackers[trackerIndex] = tracker
@@ -40,7 +40,7 @@ final class TrackerService {
                     categories.append(newCategory)
                 } else {
                     // Если категории есть, добавляем трекер в первую категорию
-                    var category = categories[0]
+                    let category = categories[0]
                     var trackers = category.trackers
                     trackers.append(tracker)
                     let updatedCategory = TrackerCategory(title: category.title, trackers: trackers)

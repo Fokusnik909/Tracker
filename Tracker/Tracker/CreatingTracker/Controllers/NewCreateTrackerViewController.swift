@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol NewCreateTrackerDelegate: AnyObject {
+    func didCreateNewTracker(_ tracker: Tracker, category: String)
+}
+
 final class NewCreateTrackerViewController: UIViewController {
+    weak var delegate: NewHabitDelegate?
+    
     //MARK: - Private properties UI
     private let habitButton: UIButton = {
         let button = UIButton()
@@ -71,11 +77,20 @@ final class NewCreateTrackerViewController: UIViewController {
     //MARK: - Event methods
     @objc private func habitButtonPressed() {
         let newHabit = NewHabitViewController(trackType: .regular)
+        newHabit.delegate = delegate
         navigationController?.pushViewController(newHabit, animated: true)
     }
     
     @objc private func notRegularEventButtonPressed() {
         let newHabit = NewHabitViewController(trackType: .notRegular)
+        newHabit.delegate = delegate
         navigationController?.pushViewController(newHabit, animated: true)
     }
 }
+
+//MARK: - NewHabitDelegate
+//extension NewCreateTrackerViewController: NewHabitDelegate {
+//    func didCreateNewHabit(_ tracker: Tracker, category: String) {
+//        delegate?.didCreateNewTracker(tracker, category: category)
+//    }
+

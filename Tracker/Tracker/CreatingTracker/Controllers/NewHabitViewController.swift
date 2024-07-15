@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol NewHabitDelegate: AnyObject {
+    func didCreateNewTracker(_ tracker: Tracker, category: String)
+}
+
 final class NewHabitViewController: UIViewController {
+    
+    weak var delegate: NewHabitDelegate?
     
     var trackType: TrackType
     var countRows = [String]()
@@ -18,7 +24,7 @@ final class NewHabitViewController: UIViewController {
     private var selectedWeekDays: [Weekdays] = []
     private let scheduleLabel = "Расписание"
     
-    var category: String = ""
+    var category: String = "test"
     
     //MARK: - Private properties UI
     private var customTextField: CustomTextField = {
@@ -88,8 +94,9 @@ final class NewHabitViewController: UIViewController {
         let color = UIColor.red
         
         let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: selectedWeekDays)
-        trackerService.append(tracker)
-        NotificationCenter.default.post(name: Notification.Name("UpdateTrackersEvent"), object: nil, userInfo: nil)
+        delegate?.didCreateNewTracker(tracker, category: category)
+//        trackerService.append(tracker)
+//        NotificationCenter.default.post(name: Notification.Name("UpdateTrackersEvent"), object: nil, userInfo: nil)
         dismiss(animated: true)
     }
     
@@ -138,12 +145,13 @@ final class NewHabitViewController: UIViewController {
         if selectedСell == scheduleLabel {
             let scheduleVC = ScheduleViewController()
             scheduleVC.selectedWeekDays = selectedWeekDays
-            scheduleVC.didSelectWeekDays = { [weak self] selectedDays in
-                guard let self else { return }
-                self.selectedWeekDays = selectedDays
-                self.updateScheduleLabel()
-                self.validateForm()
-            }
+//            scheduleVC.didSelectWeekDays = { [weak self] selectedDays in
+//                guard let self else { return }
+//                self.selectedWeekDays = selectedDays
+//                self.updateScheduleLabel()
+//                self.validateForm()
+//            }
+            scheduleVC.delegate = self
             navigationController?.pushViewController(scheduleVC, animated: true)
         }
     }
@@ -260,4 +268,15 @@ private extension NewHabitViewController {
             hStack.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
+}
+
+
+//MARK: - ScheduleViewControllerDelegate
+extension NewHabitViewController: ScheduleViewControllerDelegate {
+    func didSelectWeekDays(_ selectedDays: [Weekdays]) {
+        self.selectedWeekDays = selectedDays
+        self.updateScheduleLabel()
+        self.validateForm()
+    }
+    
 }
