@@ -27,6 +27,7 @@ final class ScheduleViewController: UIViewController {
     private let tableView: UITableView = .init()
     private let doneButton = CustomButton(title: "Готово", titleColor: .ypWhite, backgroundColor: .ypBlack)
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -51,6 +52,7 @@ final class ScheduleViewController: UIViewController {
     
 }
 
+//MARK: - UITableViewDataSource
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return weekDays.count
@@ -70,6 +72,7 @@ extension ScheduleViewController: UITableViewDataSource {
     }
 }
 
+//MARK: - UITableViewDelegate
 extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
@@ -88,6 +91,7 @@ extension ScheduleViewController: UITableViewDelegate {
     }
 }
 
+//MARK: - Setting View
 private extension ScheduleViewController {
     func setupView() {
         view.backgroundColor = .ypWhite

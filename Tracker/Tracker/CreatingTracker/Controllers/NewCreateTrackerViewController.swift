@@ -88,9 +88,3 @@ final class NewCreateTrackerViewController: UIViewController {
     }
 }
 
-//MARK: - NewHabitDelegate
-//extension NewCreateTrackerViewController: NewHabitDelegate {
-//    func didCreateNewHabit(_ tracker: Tracker, category: String) {
-//        delegate?.didCreateNewTracker(tracker, category: category)
-//    }
-

@@ -109,7 +109,6 @@ final class TrackersViewController: UIViewController {
     private func getVisibleCategories() -> [TrackerCategory] {
         var result: [TrackerCategory] = []
         if let currentDayOfWeek = Weekdays.from(date: currentDate) {
-            print("Current day of week: \(currentDayOfWeek)")
             for category in categories {
                 var trackers: [Tracker] = []
                 for tracker in category.trackers {
@@ -121,9 +120,8 @@ final class TrackersViewController: UIViewController {
                     result.append(TrackerCategory(title: category.title, trackers: trackers))
                 }
             }
-        } else {
-            print("Error: could not determine current day of week")
         }
+        
         return result
     }
     

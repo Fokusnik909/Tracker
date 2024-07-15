@@ -31,7 +31,6 @@
 		C8A3CC8A2C43F55F0012CC42 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */; };
 		C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */; };
 		C8A3CC8F2C444C520012CC42 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC8E2C444C520012CC42 /* CategoryViewController.swift */; };
-		C8A3CC922C4549970012CC42 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC912C4549970012CC42 /* Protocols.swift */; };
 		C8A3CC942C454EC70012CC42 /* extensionDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC932C454EC70012CC42 /* extensionDate.swift */; };
 /* End PBXBuildFile section */
 
@@ -62,7 +61,6 @@
 		C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerHeader.swift; sourceTree = "<group>"; };
 		C8A3CC8E2C444C520012CC42 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
-		C8A3CC912C4549970012CC42 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		C8A3CC932C454EC70012CC42 /* extensionDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionDate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,7 +94,6 @@
 		C869D94C2C2AD764000DB992 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
-				C8A3CC902C4549620012CC42 /* Protocols */,
 				C8A3CC792C3C68DE0012CC42 /* Helper */,
 				C869D9612C2AE216000DB992 /* TabBarController */,
 				C869D9642C2AE457000DB992 /* Tracker */,
@@ -247,14 +244,6 @@
 			path = Category;
 			sourceTree = "<group>";
 		};
-		C8A3CC902C4549620012CC42 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				C8A3CC912C4549970012CC42 /* Protocols.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -326,7 +315,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C8A3CC7E2C3D51030012CC42 /* ScheduleViewController.swift in Sources */,
-				C8A3CC922C4549970012CC42 /* Protocols.swift in Sources */,
 				C8A3CC7B2C3C69300012CC42 /* CustomTextField.swift in Sources */,
 				C869D9672C2AE49E000DB992 /* TrackersViewController.swift in Sources */,
 				C8A3CC802C3D56960012CC42 /* Schedule.swift in Sources */,
