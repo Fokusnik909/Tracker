@@ -15,4 +15,14 @@ extension UIColor {
     static var ypLightGray: UIColor { UIColor(named: "LightGrayYp") ?? UIColor.lightGray}
     static var ypRed: UIColor { UIColor(named: "RedYp") ?? UIColor.red }
     static var ypWhite: UIColor { UIColor(named: "WhiteYp") ?? UIColor.white}
+    
+    
+    func randomColor() -> UIColor {
+        let randomRed = CGFloat.random(in: 0...1)
+        let randomGreen = CGFloat.random(in: 0...1)
+        let randomBlue = CGFloat.random(in: 0...1)
+        
+        return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+    }
+    
 }

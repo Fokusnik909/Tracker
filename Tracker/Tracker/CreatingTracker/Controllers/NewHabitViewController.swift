@@ -23,7 +23,7 @@ final class NewHabitViewController: UIViewController {
     private var selectedWeekDays: [Weekdays] = []
     private let scheduleLabel = "Расписание"
     
-    var category: String = "test"
+    var category: String = "Домашний уют"
     
     //MARK: - Private properties UI
     private var customTextField: CustomTextField = {
@@ -90,9 +90,10 @@ final class NewHabitViewController: UIViewController {
         
         
         let emoji = Emojis.randomEmoji()
-        let color = UIColor.red
+        let color = UIColor()
+        let randomColor = color.randomColor()
         
-        let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: selectedWeekDays)
+        let tracker = Tracker(id: UUID(), name: name, color: randomColor, emoji: emoji, schedule: selectedWeekDays)
         delegate?.didCreateNewTracker(tracker, category: category)
 //        trackerService.append(tracker)
 //        NotificationCenter.default.post(name: Notification.Name("UpdateTrackersEvent"), object: nil, userInfo: nil)

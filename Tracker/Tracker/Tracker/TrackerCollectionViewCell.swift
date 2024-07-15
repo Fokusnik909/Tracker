@@ -30,14 +30,17 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     private let emojiLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 24)
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 12
         return label
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         label.textColor = .ypWhite
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -96,6 +99,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             
             emojiLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
             emojiLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            emojiLabel.widthAnchor.constraint(equalToConstant: 24),
+            emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             
             titleLabel.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
@@ -122,6 +127,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         isSelectedButton(completeButton, trackerColor: tracker.color)
 
         emojiLabel.text = tracker.emoji
+        emojiLabel.backgroundColor = tracker.color.withAlphaComponent(0.3)
+        
         titleLabel.text = tracker.name
         containerView.backgroundColor = tracker.color
         daysLabel.text = "\(completionCount) \(completionCount == 1 ? "день" : "дня")"

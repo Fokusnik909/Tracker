@@ -84,7 +84,6 @@ final class TrackersViewController: UIViewController {
         currentDate = sender.date
         updateVisibleCategories()
         collectionView.reloadData()
-        print("Выбранная дата: \(formattedDate)")
     }
     
     private func updateVisibleCategories() {
@@ -220,7 +219,6 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.frame.width - params.paddingWidth
         let cellWidth =  availableWidth / CGFloat(params.cellCount)
-        print(cellWidth * 2 / 2)
         return CGSize(width: cellWidth, height: 148)
     }
     
@@ -293,7 +291,7 @@ extension TrackersViewController {
         let plantWatering = Tracker(
             id: UUID(),
             name: "Поливать растения",
-            color: UIColor.green, emoji: "❤️",
+            color: UIColor.systemGreen, emoji: "❤️",
             schedule: Weekdays.allCases
         )
         
@@ -301,7 +299,7 @@ extension TrackersViewController {
             id: UUID(),
             name: "Кошка заслонила камеру на созвоне",
             color: UIColor.orange,
-            emoji: "❤️",
+            emoji: "😻",
             schedule: Weekdays.allCases
         )
         
@@ -309,7 +307,7 @@ extension TrackersViewController {
             id: UUID(),
             name: "Бабушка прислала открытку в вотсапе",
             color: UIColor.red,
-            emoji: "❤️",
+            emoji: "🌺",
             schedule: Weekdays.allCases
         )
         
