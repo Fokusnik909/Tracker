@@ -10,7 +10,7 @@ import UIKit
  
 struct Tracker: Identifiable {
     let id: UUID
-    var name: String
+    let name: String
     let color: UIColor
     let emoji: String
     let schedule: [Weekdays]
@@ -18,7 +18,7 @@ struct Tracker: Identifiable {
 
 struct TrackerCategory {
     let title: String
-    var trackers: [Tracker]
+    let trackers: [Tracker]
 }
 
 struct TrackerRecord: Identifiable {

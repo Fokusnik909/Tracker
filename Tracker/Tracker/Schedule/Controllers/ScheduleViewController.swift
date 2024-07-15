@@ -53,8 +53,7 @@ extension ScheduleViewController: UITableViewDataSource {
         cell.switchChanged = { [weak self] isOn in
             self?.weekDays[indexPath.row].isSelected = isOn
         }
-        print(weekDays)
-        print("--------------")
+
         return cell
     }
 }

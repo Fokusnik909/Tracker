@@ -61,5 +61,3 @@ final class ScheduleCell: UITableViewCell {
         daySwitch.isOn = model.isSelected
     }
 }
-
-

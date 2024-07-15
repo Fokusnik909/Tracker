@@ -91,6 +91,7 @@ final class TrackersViewController: UIViewController {
     func fetchTrackers() {
         visibleCategories = trackerService.categories
         completedTrackers = trackerService.completedTrackers
+        print(visibleCategories)
         
         if visibleCategories.isEmpty {
             imageStar.isHidden = false

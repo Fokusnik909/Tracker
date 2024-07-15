@@ -139,7 +139,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         guard let tracker else { return }
         
-        sender.isSelected = !sender.isSelected
+        completeButton.isSelected = !sender.isSelected
         
         isSelectedButton(sender)
         
