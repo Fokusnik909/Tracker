@@ -78,50 +78,32 @@ final class TrackersViewController: UIViewController {
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        currentDate = sender.date
+        currentDate = selectedDate
         updateVisibleCategories()
-        collectionView.reloadData()
     }
     
     private func updateVisibleCategories() {
         visibleCategories = getVisibleCategories()
-        if visibleCategories.isEmpty {
-            showEmptyState()
-        } else {
-            hideEmptyState()
-        }
+        updateEmptyState()
+        collectionView.reloadData()
     }
-
-    private func showEmptyState() {
-        imageStar.isHidden = false
-        logoLabel.isHidden = false
-    }
-
-    private func hideEmptyState() {
-        imageStar.isHidden = true
-        logoLabel.isHidden = true
+    
+    private func updateEmptyState() {
+        let isEmpty = visibleCategories.isEmpty
+        imageStar.isHidden = !isEmpty
+        logoLabel.isHidden = !isEmpty
     }
     
     private func getVisibleCategories() -> [TrackerCategory] {
-        var result: [TrackerCategory] = []
-        if let currentDayOfWeek = Weekdays.from(date: currentDate) {
-            for category in categories {
-                var trackers: [Tracker] = []
-                for tracker in category.trackers {
-                    if tracker.schedule.contains(currentDayOfWeek) {
-                        trackers.append(tracker)
-                    }
-                }
-                if !trackers.isEmpty {
-                    result.append(TrackerCategory(title: category.title, trackers: trackers))
-                }
-            }
+        guard let currentDayOfWeek = Weekdays.from(date: currentDate) else {
+            return []
         }
         
-        return result
+        return categories.compactMap { category in
+            let trackers = category.trackers.filter { $0.schedule.contains(currentDayOfWeek) }
+            
+            return trackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: trackers)
+        }
     }
     
     private func setupNavigationBar() {
