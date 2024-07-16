@@ -308,13 +308,3 @@ extension TrackersViewController {
         updateVisibleCategories()
     }
 }
-
-extension String {
-    func toDateFormatted(with string: String)-> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d/M/yy"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = string
-        return formatter.date(from: self)
-    }
-}

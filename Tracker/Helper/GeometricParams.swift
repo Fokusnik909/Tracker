@@ -11,7 +11,6 @@ struct GeometricParams {
     let leftInset: CGFloat
     let rightInset: CGFloat
     let cellSpacing: CGFloat
-    // Параметр вычисляется уже при создании, что экономит время на вычислениях при отрисовке коллекции.
     let paddingWidth: CGFloat
     
     init(cellCount: Int, leftInset: CGFloat, rightInset: CGFloat, cellSpacing: CGFloat) {

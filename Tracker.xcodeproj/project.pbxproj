@@ -27,10 +27,10 @@
 		C8A3CC802C3D56960012CC42 /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC7F2C3D56960012CC42 /* Schedule.swift */; };
 		C8A3CC842C3D581F0012CC42 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */; };
 		C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */; };
-		C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */; };
 		C8A3CC8A2C43F55F0012CC42 /* GeometricParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */; };
 		C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */; };
 		C8A3CC942C454EC70012CC42 /* extensionDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC932C454EC70012CC42 /* extensionDate.swift */; };
+		C8A3CC962C46E4A80012CC42 /* extensionhideKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,10 +56,10 @@
 		C8A3CC7F2C3D56960012CC42 /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		C8A3CC832C3D581F0012CC42 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
-		C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerService.swift; sourceTree = "<group>"; };
 		C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeometricParams.swift; sourceTree = "<group>"; };
 		C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerHeader.swift; sourceTree = "<group>"; };
 		C8A3CC932C454EC70012CC42 /* extensionDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionDate.swift; sourceTree = "<group>"; };
+		C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionhideKeyboard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,7 +138,6 @@
 			children = (
 				C869D9D32C2FDBCA000DB992 /* Tracker.swift */,
 				C8A3CC7F2C3D56960012CC42 /* Schedule.swift */,
-				C8A3CC872C3EE3B00012CC42 /* TrackerService.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -204,6 +203,7 @@
 				C8A3CC852C3EA76D0012CC42 /* CustomButton.swift */,
 				C8A3CC892C43F55F0012CC42 /* GeometricParams.swift */,
 				C8A3CC932C454EC70012CC42 /* extensionDate.swift */,
+				C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -303,6 +303,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8A3CC962C46E4A80012CC42 /* extensionhideKeyboard.swift in Sources */,
 				C8A3CC7E2C3D51030012CC42 /* ScheduleViewController.swift in Sources */,
 				C8A3CC7B2C3C69300012CC42 /* CustomTextField.swift in Sources */,
 				C869D9672C2AE49E000DB992 /* TrackersViewController.swift in Sources */,
@@ -322,7 +323,6 @@
 				C8A3CC942C454EC70012CC42 /* extensionDate.swift in Sources */,
 				C8A3CC782C3A45F90012CC42 /* TrackType.swift in Sources */,
 				C869D9D42C2FDBCA000DB992 /* Tracker.swift in Sources */,
-				C8A3CC882C3EE3B00012CC42 /* TrackerService.swift in Sources */,
 				C8A3CC752C39B3A30012CC42 /* NewHabitCell.swift in Sources */,
 				C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */,
 			);

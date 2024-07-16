@@ -78,6 +78,7 @@ final class NewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        addTapGestureToHideKeyboard()
     }
     
     @objc private func habitTextField(_ textField: UITextField) {
@@ -95,8 +96,6 @@ final class NewHabitViewController: UIViewController {
         
         let tracker = Tracker(id: UUID(), name: name, color: randomColor, emoji: emoji, schedule: selectedWeekDays)
         delegate?.didCreateNewTracker(tracker, category: category)
-//        trackerService.append(tracker)
-//        NotificationCenter.default.post(name: Notification.Name("UpdateTrackersEvent"), object: nil, userInfo: nil)
         dismiss(animated: true)
     }
     
@@ -145,12 +144,6 @@ final class NewHabitViewController: UIViewController {
         if selectedСell == scheduleLabel {
             let scheduleVC = ScheduleViewController()
             scheduleVC.selectedWeekDays = selectedWeekDays
-//            scheduleVC.didSelectWeekDays = { [weak self] selectedDays in
-//                guard let self else { return }
-//                self.selectedWeekDays = selectedDays
-//                self.updateScheduleLabel()
-//                self.validateForm()
-//            }
             scheduleVC.delegate = self
             navigationController?.pushViewController(scheduleVC, animated: true)
         }
