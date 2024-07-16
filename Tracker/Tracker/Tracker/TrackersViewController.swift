@@ -34,9 +34,11 @@ final class TrackersViewController: UIViewController {
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
-        datePicker.locale = .current
         datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.preferredDatePickerStyle = .compact
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        datePicker.widthAnchor.constraint(equalToConstant: 100).isActive = true
         return datePicker
     }()
     
@@ -64,8 +66,6 @@ final class TrackersViewController: UIViewController {
         setupCollectionView()
         // MOCK DATA
         createMockData()
-        
-//        NotificationCenter.default.addObserver(self, selector: #selector(update), name: Notification.Name("UpdateTrackersEvent"), object: nil)
     }
     
     //MARK: - Private Methods

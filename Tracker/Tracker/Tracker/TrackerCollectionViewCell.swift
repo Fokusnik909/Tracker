@@ -59,6 +59,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         button.setImage(UIImage(named: "addButton"), for: .normal)
         button.tintColor = .black
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.masksToBounds = true
         return button
     }()
     
@@ -71,7 +72,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         setupViews()
         setupLayout()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -135,11 +135,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     private func isSelectedButton(_ sender: UIButton, trackerColor: UIColor) {
-        guard calendarDate < Date() else {
-            sender.layer.opacity = 0.3
-            return
-        }
-        
         if sender.isSelected {
             sender.setImage(UIImage(named: "done"), for: .normal)
             sender.tintColor = trackerColor
@@ -162,9 +157,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         isSelectedButton(sender, trackerColor: tracker.color)
 
         let buttonStatus = sender.isSelected
-
-        completeButton.layer.cornerRadius = completeButton.frame.size.width / 2
-        completeButton.layer.masksToBounds = true
 
         delegate?.didTapCompleteButton(tracker: tracker, isCompleted: buttonStatus)
     }
