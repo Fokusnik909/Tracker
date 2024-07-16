@@ -35,7 +35,7 @@ final class TrackersViewController: UIViewController {
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = Locale(identifier: "ru_DE")
         datePicker.preferredDatePickerStyle = .compact
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.widthAnchor.constraint(equalToConstant: 100).isActive = true
@@ -306,5 +306,15 @@ extension TrackersViewController {
         
         categories = [homeComfort, joyfulLittleThings]
         updateVisibleCategories()
+    }
+}
+
+extension String {
+    func toDateFormatted(with string: String)-> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d/M/yy"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = string
+        return formatter.date(from: self)
     }
 }
