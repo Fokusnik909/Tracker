@@ -59,6 +59,8 @@ final class NewHabitViewController: UIViewController {
         return stack
     }()
     
+    private lazy var scrollView = UIScrollView()
+    private lazy var contentView = UIView()
     private let tableView: UITableView = .init()
     
     //MARK: - Init
@@ -78,7 +80,7 @@ final class NewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        addTapGestureToHideKeyboard()
+//        addTapGestureToHideKeyboard()
     }
     
     @objc private func habitTextField(_ textField: UITextField) {
@@ -217,11 +219,15 @@ private extension NewHabitViewController {
     }
     
     func addSubViews() {
-        view.addSubview(customTextField)
-        view.addSubview(tableView)
-        view.addSubview(hStack)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
         hStack.addArrangedSubview(cancelButton)
         hStack.addArrangedSubview(createButton)
+        
+        contentView.addSubview(customTextField)
+        contentView.addSubview(tableView)
+//        contentView.addSubview(hStack)
     }
     
     private func setupTableView() {
@@ -241,24 +247,36 @@ private extension NewHabitViewController {
     }
     
     func setupLayout() {
-        [customTextField, tableView, hStack, cancelButton, createButton].forEach {
+        [scrollView, contentView, customTextField, tableView, hStack, cancelButton, createButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
+        contentView.backgroundColor = .red
+        
         NSLayoutConstraint.activate([
-            customTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            customTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            customTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.trailingAnchor),
+            
+            customTextField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
+            customTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            customTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
             tableView.topAnchor.constraint(equalTo: customTextField.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: heightTableView),
             
-            hStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            hStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            hStack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -34),
-            hStack.heightAnchor.constraint(equalToConstant: 60)
+//            hStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+//            hStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+//            hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -34),
+//            hStack.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
 }
