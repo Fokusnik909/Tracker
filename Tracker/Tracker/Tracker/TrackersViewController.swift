@@ -133,6 +133,8 @@ final class TrackersViewController: UIViewController {
             self.view.addSubview(view)
         }
         
+        //TO DO: - подумать над версткой 
+        
         NSLayoutConstraint.activate([
             logoLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -220),
             logoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),

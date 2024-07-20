@@ -107,8 +107,6 @@ final class NewHabitViewController: UIViewController {
         guard let selectedColor else { return }
         guard let selectedEmoji else { return }
         
-    
-        
         let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: selectedWeekDays)
         delegate?.didCreateNewTracker(tracker, category: category)
         dismiss(animated: true)
@@ -252,6 +250,20 @@ extension NewHabitViewController: UICollectionViewDataSource {
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        guard let viewHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: EmojiAndColorHeader.identifier, for: indexPath) as? EmojiAndColorHeader else {
+            return UICollectionReusableView()
+        }
+        
+        if indexPath.section == 0 {
+            viewHeader.configure("Emoji")
+        } else {
+            viewHeader.configure("Цвет")
+        }
+        return viewHeader
+    }
+    
 }
 
 //MARK: - UICollectionViewDelegateFlowLayout
@@ -287,20 +299,26 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
         }
         
         validateForm()
+
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: params.leftInset, bottom: 0, right: params.rightInset)
+        if section == 0 {
+            return UIEdgeInsets(top: 16, left: params.leftInset, bottom: 40, right: params.rightInset)
+        } else {
+            return UIEdgeInsets(top: 16, left: params.leftInset, bottom: 800, right: params.rightInset)
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         params.cellSpacing
     }
     
-    //Header
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        return CGSize(width: collectionView.frame.width, height: 18)
-//    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: 30)
+    }
     
 }
 
@@ -315,7 +333,6 @@ private extension NewHabitViewController {
         view.backgroundColor = .ypWhite
         navigationItem.title = "Новая привычка"
         navigationItem.setHidesBackButton(true, animated: true)
-        print(emojiCollectionView.collectionViewLayout.collectionViewContentSize.height)
     }
     
     func addSubViews() {
@@ -342,10 +359,13 @@ private extension NewHabitViewController {
     }
     
     private func setupCollectionView() {
+        emojiCollectionView.register(EmojiAndColorHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: EmojiAndColorHeader.identifier)
+
         emojiCollectionView.register(EmojiAndColorsCell.self, forCellWithReuseIdentifier: EmojiAndColorsCell.identifier)
         emojiCollectionView.dataSource = self
         emojiCollectionView.delegate = self
         emojiCollectionView.isScrollEnabled = false
+        
         
     }
     
@@ -360,6 +380,7 @@ private extension NewHabitViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
+        //TO DO: - подумать над версткой
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -381,13 +402,13 @@ private extension NewHabitViewController {
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: heightTableView),
             
-            emojiCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 50),
+            emojiCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
             emojiCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             emojiCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            emojiCollectionView.heightAnchor.constraint(equalToConstant: 450),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 540),
             
             
-            hStack.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 50),
+            hStack.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
             hStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             hStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),

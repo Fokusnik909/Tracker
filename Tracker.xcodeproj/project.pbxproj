@@ -33,6 +33,7 @@
 		C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */; };
 		C8A3CC942C454EC70012CC42 /* extensionDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC932C454EC70012CC42 /* extensionDate.swift */; };
 		C8A3CC962C46E4A80012CC42 /* extensionhideKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */; };
+		C8BF136B2C4A8A6500367B46 /* EmojiAndColorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BF136A2C4A8A6500367B46 /* EmojiAndColorHeader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerHeader.swift; sourceTree = "<group>"; };
 		C8A3CC932C454EC70012CC42 /* extensionDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionDate.swift; sourceTree = "<group>"; };
 		C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionhideKeyboard.swift; sourceTree = "<group>"; };
+		C8BF136A2C4A8A6500367B46 /* EmojiAndColorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorHeader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +192,7 @@
 			children = (
 				C8A3CC742C39B3A30012CC42 /* NewHabitCell.swift */,
 				C821D2A12C493FD400FBBA75 /* EmojiAndColorsCell.swift */,
+				C8BF136A2C4A8A6500367B46 /* EmojiAndColorHeader.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				C869D9D42C2FDBCA000DB992 /* Tracker.swift in Sources */,
 				C8A3CC752C39B3A30012CC42 /* NewHabitCell.swift in Sources */,
 				C8A3CC8C2C4401720012CC42 /* TrackerHeader.swift in Sources */,
+				C8BF136B2C4A8A6500367B46 /* EmojiAndColorHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
