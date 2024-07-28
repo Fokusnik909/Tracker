@@ -14,15 +14,8 @@ protocol ScheduleViewControllerDelegate: AnyObject {
 final class ScheduleViewController: UIViewController {
     
     weak var delegate: ScheduleViewControllerDelegate?
-    
-    private var weekDays = Weekdays.allCases.map { WeekDayModel(day: $0, isSelected: false)}
-    var selectedWeekDays: [Weekdays] = [] {
-            didSet {
-                for (index, weekDay) in weekDays.enumerated() {
-                    weekDays[index].isSelected = selectedWeekDays.contains(weekDay.day)
-                }
-            }
-        }
+    private var weekDays = Weekdays.allCases
+    var selectedWeekDays = Set<Weekdays>()
     
     private let tableView: UITableView = .init()
     private let doneButton = CustomButton(title: "Готово", titleColor: .ypWhite, backgroundColor: .ypBlack)
@@ -31,23 +24,13 @@ final class ScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        loadSelectedDays()
         doneButton.addTarget(nil, action: #selector(doneButtonTapped), for: .touchUpInside)
     }
     
     @objc func doneButtonTapped() {
-        let selectedDays = weekDays.filter { $0.isSelected }.map { $0.day }
-//        didSelectWeekDays?(selectedDays)
-        delegate?.didSelectWeekDays(selectedDays)
+
+        delegate?.didSelectWeekDays( Array(selectedWeekDays) )
         navigationController?.popViewController(animated: true)
-    }
-    
-    private func loadSelectedDays() {
-        for selectedDay in selectedWeekDays {
-            if let index = weekDays.firstIndex(where: { $0.day == selectedDay }) {
-                weekDays[index].isSelected = true
-            }
-        }
     }
     
 }
@@ -63,10 +46,18 @@ extension ScheduleViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         let weekDay = weekDays[indexPath.row]
-        cell.configure(with: weekDay)
-        cell.switchChanged = { [weak self] isOn in
-            self?.weekDays[indexPath.row].isSelected = isOn
+        cell.configure(with: weekDay, isSelected: selectedWeekDays.contains(weekDay))
+        cell.switchChanged = { [weak self ] isOn in
+            if isOn {
+                self?.selectedWeekDays.insert(weekDay)
+            } else {
+                self?.selectedWeekDays.remove(weekDay)
+            }
         }
+//        cell.configure(with: weekDay)
+//        cell.switchChanged = { [weak self] isOn in
+//            self?.weekDays[indexPath.row].isSelected = isOn
+//        }
 
         return cell
     }

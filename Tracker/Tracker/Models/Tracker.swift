@@ -32,4 +32,5 @@ struct Emojis {
         
         return emojis.randomElement() ?? "💫"
     }
+    
 }

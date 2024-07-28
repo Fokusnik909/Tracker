@@ -57,8 +57,3 @@ enum Weekdays: Int, CaseIterable {
         }
     }
 }
-
-struct WeekDayModel {
-    let day: Weekdays
-    var isSelected: Bool
-}

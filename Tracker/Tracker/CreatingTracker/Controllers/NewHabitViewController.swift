@@ -24,7 +24,7 @@ final class NewHabitViewController: UIViewController {
     private var params = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 5)
     
     private var heightTableView: CGFloat = 0
-    private var selectedWeekDays: [Weekdays] = []
+    private var selectedWeekDays: Set<Weekdays> = []
     private let scheduleLabel = "Расписание"
     
     private var selectedEmoji: String?
@@ -107,7 +107,7 @@ final class NewHabitViewController: UIViewController {
         guard let selectedColor else { return }
         guard let selectedEmoji else { return }
         
-        let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: selectedWeekDays)
+        let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: Array(selectedWeekDays))
         delegate?.didCreateNewTracker(tracker, category: category)
         dismiss(animated: true)
     }
@@ -422,7 +422,7 @@ private extension NewHabitViewController {
 //MARK: - ScheduleViewControllerDelegate
 extension NewHabitViewController: ScheduleViewControllerDelegate {
     func didSelectWeekDays(_ selectedDays: [Weekdays]) {
-        self.selectedWeekDays = selectedDays
+        self.selectedWeekDays = Set(selectedDays)
         self.updateScheduleLabel()
         self.validateForm()
     }
