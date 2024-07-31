@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Weekdays: Int, CaseIterable {
+enum Weekdays: Int, CaseIterable, Codable {
     
     static func from(date: Date) -> Weekdays? {
         let calendar = Calendar.current
