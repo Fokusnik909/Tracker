@@ -8,6 +8,10 @@
 import CoreData
 
 final class CoreDataStack {
+    static let shared = CoreDataStack()
+    
+    private init() {}
+    
     private(set) lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "Data Model")
         container.loadPersistentStores { _, error in

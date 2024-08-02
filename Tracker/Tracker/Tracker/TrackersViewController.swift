@@ -150,7 +150,9 @@ final class TrackersViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
+    
 }
+
 
 //MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {

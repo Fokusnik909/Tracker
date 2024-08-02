@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // MARK: - Core Data stack
-    private let coreDataStack = CoreDataStack()
+    private let coreDataStack = CoreDataStack.shared
     
     var persistentContainer: NSPersistentContainer {
         return coreDataStack.persistentContainer

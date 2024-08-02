@@ -8,36 +8,105 @@
 import UIKit
 import CoreData
 
-final class TrackerCategoryStore {
-    //MARK: - Properties
+enum TrackerStoreError: Error {
+    case categoryNotFound
+    case decodingErrorInvalidData
+}
+
+class TrackerCategoryStore {
     private let context: NSManagedObjectContext
     
-    //MARK: - Init
     init(context: NSManagedObjectContext) {
         self.context = context
     }
     
-    convenience init() {
-        let context = UIApplication.shared.delegate as! AppDelegate
-        self.init(context: context.persistentContainer.viewContext)
+    func fetchCategoryCoreData(for id: UUID) throws -> TrackerCategoryCoreData {
+        let request: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id.uuidString)
+        let results = try context.fetch(request)
+        guard let categoryCoreData = results.first else {
+            throw TrackerStoreError.categoryNotFound
+        }
+        return categoryCoreData
     }
     
-    func addCategory(_ category: TrackerCategory) throws {
-        let categoryObject = TrackerCategoryCoreData(context: context)
+    func createCategory(from categoryCoreData: TrackerCategoryCoreData) throws -> TrackerCategory {
+        guard let title = categoryCoreData.title,
+              let trackersCoreData = categoryCoreData.trackers?.allObjects as? [TrackerCoreData]
+        else {
+            throw TrackerStoreError.decodingErrorInvalidData
+        }
         
-        categoryObject.title = category.title
-        let trackersSet = NSSet(array: category.trackers.map { tracker in
-            let trackerObject = TrackerCoreData(context: context)
-            trackerObject.id = tracker.id
-            trackerObject.name = tracker.name
-            trackerObject.color = UIColorMarshalling().hexString(from: tracker.color)
-            trackerObject.emoji = tracker.emoji
-            trackerObject.schedule = tracker.schedule.map { $0.rawValue } as NSObject
-            return trackerObject
-        })
-        
-        categoryObject.trackers = trackersSet
-        
-        try context.save()
+        let trackers = try trackersCoreData.map { try TrackerStore(context: context).createTracker(from: $0) }
+        return TrackerCategory(title: title, trackers: trackers)
     }
+    
+    func fetchAllCategories() throws -> [TrackerCategory] {
+        let request: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        let categoryCoreDataArray = try context.fetch(request)
+        return try categoryCoreDataArray.map { try createCategory(from: $0) }
+    }
+    
 }
+
+//enum StoreError: Error {
+//    case decodeError
+//}
+//
+//final class TrackerCategoryStore {
+//    
+//    private let context: NSManagedObjectContext
+//    
+//    var categories = [TrackerCategory]()
+//    
+//    init(context: NSManagedObjectContext) {
+//        self.context = context
+//        do {
+//            try setupCategories(with: context)
+//        } catch {
+//            print(error)
+//        }
+//    }
+//    
+//    private func setupCategories(with context: NSManagedObjectContext) throws {
+//        let categoryRequest = TrackerCategoryCoreData.fetchRequest()
+//        let categoryResult = try context.fetch(categoryRequest)
+//        
+//        if categoryResult.isEmpty {
+//            let categoriesToCreate = [
+//                TrackerCategory(title: "Домашний уют", trackers: [])
+//            ]
+//            categoriesToCreate.forEach { category in
+//                let categoryCoreData = TrackerCategoryCoreData(context: context)
+//                categoryCoreData.title = category.title
+//            }
+//            try context.save()
+//            return
+//        }
+//        
+//        categories = try categoryResult.map { try makeCategory(from: $0) }
+//    }
+//    
+//    private func makeCategory(from coreData: TrackerCategoryCoreData) throws -> TrackerCategory {
+//        guard let title = coreData.title else {
+//            throw TrackerStoreError.decodingErrorInvalidData
+//        }
+//        
+//        let trackers: [Tracker] = (coreData.trackers?.allObjects as? [TrackerCoreData])?.compactMap { try? createTracker(from: $0) } ?? []
+//        return TrackerCategory(title: title, trackers: trackers)
+//    }
+//    
+//    private func createTracker(from coreData: TrackerCoreData) throws -> Tracker {
+//        guard let id = coreData.id,
+//              let name = coreData.name,
+//              let colorHex = coreData.color,
+//              let emoji = coreData.emoji,
+//              let schedule = coreData.schedule as? [Int] else {
+//            throw TrackerStoreError.decodingErrorInvalidData
+//        }
+//        
+//        let color = UIColorMarshalling().color(from: colorHex)
+//        let weekdays = schedule.compactMap { Weekdays(rawValue: $0) }
+//        return Tracker(id: id, name: name, color: color, emoji: emoji, schedule: weekdays)
+//    }
+//}
