@@ -6,13 +6,13 @@
 //
 
 import UIKit
-import CoreData
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        DaysValueTransformer.register()
+        DataBase.connect()
         return true
     }
 
@@ -27,21 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     }
 
-    // MARK: - Core Data stack
-    private let coreDataStack = CoreDataStack.shared
-    
-    var persistentContainer: NSPersistentContainer {
-        return coreDataStack.persistentContainer
-    }
-    
-    var viewContext: NSManagedObjectContext {
-        return coreDataStack.viewContext
-    }
-    
-    // MARK: - Core Data Saving support
-    
-    func saveContext() {
-        coreDataStack.saveContext()
-    }
+   
 }
 

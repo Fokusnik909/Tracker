@@ -8,18 +8,38 @@
 import UIKit
 import CoreData
 
-//final class TrackerRecordStore {
-//    private let context: NSManagedObjectContext
-//    
-//    init(context: NSManagedObjectContext) {
-//        self.context = context
-//    }
-//    
-//    func addTrackerRecord(_ record: TrackerRecord) throws {
-//        let recordObject = TrackerRecordCoreData(context: context)
-//        recordObject.id = record.id
-//        recordObject.date = record.date
-//        
-//        try context.save()
-//    }
-//}
+final class TrackerRecordStore {
+    private let dataBase = DataBase.shared
+    
+    // Create
+    func saveRecord(trackerRecord: TrackerRecord, for tracker: TrackerCoreData) {
+        let recordData = dataBase.createEntity(entity: TrackerRecordCoreData.self)
+        recordData.id = trackerRecord.id
+        recordData.date = trackerRecord.date
+        recordData.tracker = tracker
+        dataBase.saveContext()
+    }
+    
+    // Read
+    func fetchRecords(for tracker: TrackerCoreData) -> [TrackerRecordCoreData] {
+        let predicate = NSPredicate(format: "tracker == %@", tracker)
+        return dataBase.fetchEntities(entity: TrackerRecordCoreData.self, predicate: predicate)
+    }
+    
+    func fetchAllRecords() -> [TrackerRecordCoreData] {
+        return dataBase.fetchEntities(entity: TrackerRecordCoreData.self)
+    }
+    
+    // Update
+    func update(recordCoreData: TrackerRecordCoreData, with trackerRecord: TrackerRecord) {
+        recordCoreData.id = trackerRecord.id
+        recordCoreData.date = trackerRecord.date
+        dataBase.saveContext()
+    }
+    
+    // Delete
+    func delete(record: TrackerRecordCoreData) {
+        dataBase.deleteEntity(entity: record)
+    }
+    
+}

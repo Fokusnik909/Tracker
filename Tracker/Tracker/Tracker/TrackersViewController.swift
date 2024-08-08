@@ -66,6 +66,7 @@ final class TrackersViewController: UIViewController {
         setupCollectionView()
         // MOCK DATA
         createMockData()
+        
     }
     
     //MARK: - Private Methods
