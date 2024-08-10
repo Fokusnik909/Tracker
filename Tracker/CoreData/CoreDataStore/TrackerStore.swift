@@ -10,29 +10,36 @@ import CoreData
 import UIKit
 
 
-final class TrackerStore {
+protocol DataStoreProtocol {
+    var managedObjectContext: NSManagedObjectContext? { get }
+    func save(_ tracker: Tracker) throws
+    func readTrackers() -> [TrackerCoreData]
+    func update(_ trackerCoreData: TrackerCoreData, tracker: Tracker)
+    func delete(_ tracker: TrackerCoreData) throws
+}
+
+final class TrackerStore: DataStoreProtocol {
     private let dataBase = DataBase.shared
     
-    //Create
-    func saveTracker(tracker: Tracker) {
+    var managedObjectContext: NSManagedObjectContext? {
+        return dataBase.viewContext
+    }
+
+    func save(_ tracker: Tracker) {
         let data = dataBase.createEntity(entity: TrackerCoreData.self)
         dataBase.setTrackerCoreDataValues(data, from: tracker)
         dataBase.saveContext()
     }
-    
-    //Read
+
     func readTrackers() -> [TrackerCoreData] {
-        dataBase.fetchEntities(entity: TrackerCoreData.self)
+        return dataBase.fetchEntities(entity: TrackerCoreData.self)
     }
-    
-    //Update
-    func update(trackerCoreData: TrackerCoreData, tracker: Tracker) {
+
+    func update(_ trackerCoreData: TrackerCoreData, tracker: Tracker) {
         dataBase.updateTracker(trackerCoreData, with: tracker)
     }
-    
-    //Delete
-    func delete(tracker: TrackerCoreData) {
+
+    func delete(_ tracker: TrackerCoreData) {
         dataBase.deleteEntity(entity: tracker)
     }
-    
 }

@@ -109,7 +109,7 @@ final class NewHabitViewController: UIViewController {
         guard let selectedEmoji else { return }
         
         let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: Array(selectedWeekDays))
-        trackerStore.saveTracker(tracker: tracker)
+//        trackerStore.saveTracker(tracker: tracker)
         delegate?.didCreateNewTracker(tracker, category: category)
         dismiss(animated: true)
     }
