@@ -8,12 +8,17 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
+    
     //MARK: - Private properties
     private var params = GeometricParams(cellCount: 2, leftInset: 16, rightInset: 16, cellSpacing: 9)
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate: Date = Date()
+    
+    private var trackerStoreManager: TrackerStoreManager?
+    
+
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -66,6 +71,16 @@ final class TrackersViewController: UIViewController {
         setupCollectionView()
         // MOCK DATA
         createMockData()
+        
+        do {
+            let trackerStore = TrackerStore()
+            trackerStoreManager = try TrackerStoreManager(trackerStore, delegate: self)
+            collectionView.dataSource = self
+            collectionView.delegate = self
+            
+        } catch {
+            print("Failed to initialize TrackerStoreManager: \(error)")
+        }
         
     }
     
@@ -158,26 +173,25 @@ final class TrackersViewController: UIViewController {
 //MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return visibleCategories.count
+        trackerStoreManager?.numberOfSections ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let trackerCategory = visibleCategories[section]
-        return trackerCategory.trackers.count
+        trackerStoreManager?.numberOfRowsInSection(section) ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: TrackerCollectionViewCell.identifier,
-            for: indexPath) as? TrackerCollectionViewCell
+            for: indexPath) as? TrackerCollectionViewCell,
+              let trackerCoreData = trackerStoreManager?.tracker(at: indexPath)
         else {
             return UICollectionViewCell()
         }
         
         cell.delegate = self
         
-        let trackerCategory = visibleCategories[indexPath.section]
-        let tracker = trackerCategory.trackers[indexPath.row]
+        let tracker = Tracker(from: trackerCoreData)
         let counter = completedTrackers.filter { $0.id == tracker.id }.count
         let isComplete = completedTrackers.filter { $0.id == tracker.id && $0.date == currentDate }.count > 0
         
@@ -193,8 +207,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         if kind == UICollectionView.elementKindSectionHeader {
-            let trackerCategory = visibleCategories[indexPath.section]
-            viewHeader.configure(trackerCategory.title)
+            let sectionTitle = trackerStoreManager?.sectionTitle(for: indexPath.section) ?? "Home"
+            viewHeader.configure(sectionTitle)
             return viewHeader
         }
         return viewHeader
@@ -269,6 +283,18 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             }
         }
     }
+}
+
+extension TrackersViewController: TrackerStoreDelegate {
+    func didUpdate(_ update: TrackerStoreUpdate) {
+        collectionView.performBatchUpdates({
+            collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
+            collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
+        }, completion: nil)
+        
+    }
+    
+    
 }
 
 

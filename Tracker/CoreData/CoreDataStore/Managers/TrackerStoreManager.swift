@@ -21,6 +21,7 @@ protocol TrackerDataProviderProtocol {
     var numberOfSections: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
     func tracker(at indexPath: IndexPath) -> TrackerCoreData?
+    func sectionTitle(for section: Int) -> String?
     func addTracker(_ tracker: Tracker) throws
     func deleteTracker(at indexPath: IndexPath) throws
 }
@@ -76,6 +77,11 @@ extension TrackerStoreManager: TrackerDataProviderProtocol {
     func tracker(at indexPath: IndexPath) -> TrackerCoreData? {
         fetchedResultsController.object(at: indexPath)
     }
+    
+    func sectionTitle(for section: Int) -> String? {
+        let sectionInfo = fetchedResultsController.sections?[section]
+        return sectionInfo?.name.isEmpty ?? true ? "Без категории" : sectionInfo?.name
+    }
 
     func addTracker(_ tracker: Tracker) throws {
         do {
@@ -119,11 +125,17 @@ extension TrackerStoreManager: NSFetchedResultsControllerDelegate {
         switch type {
         case .delete:
             if let indexPath = indexPath {
-                deletedIndexes?.insert(indexPath.item)
+                delegate?.didUpdate(TrackerStoreUpdate(
+                    insertedIndexes: IndexSet(),
+                    deletedIndexes: IndexSet(integer: indexPath.item)
+                ))
             }
         case .insert:
-            if let indexPath = newIndexPath {
-                insertedIndexes?.insert(indexPath.item)
+            if let newIndexPath = newIndexPath {
+                delegate?.didUpdate(TrackerStoreUpdate(
+                    insertedIndexes: IndexSet(integer: newIndexPath.item),
+                    deletedIndexes: IndexSet()
+                ))
             }
         default:
             break
