@@ -18,6 +18,9 @@ final class TrackersViewController: UIViewController {
     
     private var trackerStoreManager: TrackerStoreManager?
     
+    let trackerStore = TrackerStore()
+    let categoryStore = TrackerCategoryStore()
+    
 
     
     private let collectionView: UICollectionView = {
@@ -207,8 +210,10 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         if kind == UICollectionView.elementKindSectionHeader {
-            let sectionTitle = trackerStoreManager?.sectionTitle(for: indexPath.section) ?? "Home"
-            viewHeader.configure(sectionTitle)
+//            let sectionTitle = trackerStoreManager?.sectionTitle(for: indexPath.section) ?? "Home"
+//            viewHeader.configure(sectionTitle)
+            let trackerCategory = visibleCategories[indexPath.section]
+            viewHeader.configure(trackerCategory.title)
             return viewHeader
         }
         return viewHeader
@@ -242,17 +247,15 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 extension TrackersViewController: NewHabitDelegate {
     func didCreateNewTracker(_ tracker: Tracker, category: String) {
 
-        // Находим индекс категории
-        if let index = categories.firstIndex(where: { $0.title == category }) {
-            // Обновляем категорию с добавленным трекером
-            let updatedCategory = categories[index]
-            var updatedTrackers = updatedCategory.trackers
-            updatedTrackers.append(tracker)
-            categories[index] = TrackerCategory(title: updatedCategory.title, trackers: updatedTrackers)
+        // Сначала ищем категорию в базе данных
+        let categories = categoryStore.getCategory()
+        let existingCategory = categories.first { $0.title == category }
+        
+        if existingCategory != nil {
+            trackerStore.save(tracker)
         } else {
-            // Если категории не существует, создаем новую
-            let newCategory = TrackerCategory(title: category, trackers: [tracker])
-            categories.append(newCategory)
+            categoryStore.saveCategory(title: category)
+            trackerStore.save(tracker)
         }
         
         updateVisibleCategories()

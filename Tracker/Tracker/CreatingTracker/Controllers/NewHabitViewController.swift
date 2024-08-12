@@ -19,7 +19,6 @@ final class NewHabitViewController: UIViewController {
     var countRows = [String]()
     var regularTracker: Tracker?
     var category: String = "Домашний уют"
-    let trackerStore = TrackerStore()
     
     //MARK: - Private Property
     private var params = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 5)
@@ -109,7 +108,6 @@ final class NewHabitViewController: UIViewController {
         guard let selectedEmoji else { return }
         
         let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: Array(selectedWeekDays))
-        trackerStore.save(tracker)
         delegate?.didCreateNewTracker(tracker, category: category)
         dismiss(animated: true)
     }

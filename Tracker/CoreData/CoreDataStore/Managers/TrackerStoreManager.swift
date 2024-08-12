@@ -47,10 +47,11 @@ final class TrackerStoreManager: NSObject {
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                                   managedObjectContext: context,
-                                                                  sectionNameKeyPath: "category.title",
+                                                                  sectionNameKeyPath: #keyPath(TrackerCoreData.category.title),
                                                                   cacheName: nil)
         fetchedResultsController.delegate = self
         try? fetchedResultsController.performFetch()
+        printAllCategories()
         return fetchedResultsController
     }()
     
@@ -61,6 +62,23 @@ final class TrackerStoreManager: NSObject {
         self.delegate = delegate
         self.context = context
         self.dataStore = dataStore
+    }
+    
+    func printAllCategories() {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            for result in results {
+                if let category = result.category {
+                    print("Category title: \(category.title ?? "nil")")
+                } else {
+                    print("Category is nil for result: \(result)")
+                }
+            }
+        } catch {
+            print("Failed to fetch TrackerCoreData: \(error)")
+        }
     }
 }
 
@@ -101,6 +119,13 @@ extension TrackerStoreManager: TrackerDataProviderProtocol {
             throw error
         }
     }
+    
+    func printSectionTitles() {
+        guard let sections = fetchedResultsController.sections else { return }
+        for (index, section) in sections.enumerated() {
+            print("Section \(index): \(section.name)")
+        }
+    }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
@@ -125,17 +150,11 @@ extension TrackerStoreManager: NSFetchedResultsControllerDelegate {
         switch type {
         case .delete:
             if let indexPath = indexPath {
-                delegate?.didUpdate(TrackerStoreUpdate(
-                    insertedIndexes: IndexSet(),
-                    deletedIndexes: IndexSet(integer: indexPath.item)
-                ))
+                deletedIndexes?.insert(indexPath.item)
             }
         case .insert:
             if let newIndexPath = newIndexPath {
-                delegate?.didUpdate(TrackerStoreUpdate(
-                    insertedIndexes: IndexSet(integer: newIndexPath.item),
-                    deletedIndexes: IndexSet()
-                ))
+                insertedIndexes?.insert(newIndexPath.item)
             }
         default:
             break
