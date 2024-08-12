@@ -35,7 +35,7 @@ extension Tracker {
         if let colorHex = trackerCoreData.color {
             self.color = UIColorMarshalling().color(from: colorHex)
         } else {
-            self.color = .black //
+            self.color = .black 
         }
         if let scheduleData = trackerCoreData.schedule as? Data {
             self.schedule = (try? JSONDecoder().decode([Weekdays].self, from: scheduleData)) ?? []

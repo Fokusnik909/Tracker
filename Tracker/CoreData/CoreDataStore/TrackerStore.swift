@@ -12,7 +12,7 @@ import UIKit
 
 protocol DataStoreProtocol {
     var managedObjectContext: NSManagedObjectContext? { get }
-    func save(_ tracker: Tracker) throws
+    func addTracker(_ tracker: Tracker, title: String) throws
     func readTrackers() -> [TrackerCoreData]
     func update(_ trackerCoreData: TrackerCoreData, tracker: Tracker)
     func delete(_ tracker: TrackerCoreData) throws
@@ -25,11 +25,17 @@ final class TrackerStore: DataStoreProtocol {
         return dataBase.viewContext
     }
 
-    func save(_ tracker: Tracker) {
+    func addTracker(_ tracker: Tracker, title: String) {
         let data = dataBase.createEntity(entity: TrackerCoreData.self)
         dataBase.setTrackerCoreDataValues(data, from: tracker)
         dataBase.saveContext()
     }
+    
+//    func save(_ tracker: Tracker) {
+//        let data = dataBase.createEntity(entity: TrackerCoreData.self)
+//        dataBase.setTrackerCoreDataValues(data, from: tracker)
+//        dataBase.saveContext()
+//    }
 
     func readTrackers() -> [TrackerCoreData] {
         return dataBase.fetchEntities(entity: TrackerCoreData.self)

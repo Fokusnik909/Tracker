@@ -18,10 +18,6 @@ final class TrackersViewController: UIViewController {
     
     private var trackerStoreManager: TrackerStoreManager?
     
-    let trackerStore = TrackerStore()
-    let categoryStore = TrackerCategoryStore()
-    
-
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -84,6 +80,23 @@ final class TrackersViewController: UIViewController {
         } catch {
             print("Failed to initialize TrackerStoreManager: \(error)")
         }
+        
+        
+        
+        let plantWatering = Tracker(
+            id: UUID(),
+            name: "Поливать растения",
+            color: UIColor.systemGreen, emoji: "❤️",
+            schedule: Weekdays.allCases
+        )
+        try? trackerStoreManager?.addTracker(plantWatering, title: "Hello")
+        
+//        let delete = TrackerStore().readTrackers()
+//        
+//        delete.forEach { value in
+//            TrackerStore().delete(value)
+//        }
+     
         
     }
     
@@ -212,8 +225,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         if kind == UICollectionView.elementKindSectionHeader {
 //            let sectionTitle = trackerStoreManager?.sectionTitle(for: indexPath.section) ?? "Home"
 //            viewHeader.configure(sectionTitle)
-            let trackerCategory = visibleCategories[indexPath.section]
-            viewHeader.configure(trackerCategory.title)
+            let trackerCategory = trackerStoreManager?.sectionTitle(for: indexPath.section) ?? "Home"
+            viewHeader.configure(trackerCategory)
             return viewHeader
         }
         return viewHeader
@@ -246,17 +259,15 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - NewCreateTrackerDelegate
 extension TrackersViewController: NewHabitDelegate {
     func didCreateNewTracker(_ tracker: Tracker, category: String) {
-
-        // Сначала ищем категорию в базе данных
-        let categories = categoryStore.getCategory()
-        let existingCategory = categories.first { $0.title == category }
         
-        if existingCategory != nil {
-            trackerStore.save(tracker)
-        } else {
-            categoryStore.saveCategory(title: category)
-            trackerStore.save(tracker)
+        do {
+            try trackerStoreManager?.addTracker(tracker, title: category)
+            updateVisibleCategories()
+            collectionView.reloadData()
+        } catch {
+            print("Ошибка при добавлении трекера: \(error)")
         }
+        
         
         updateVisibleCategories()
         collectionView.reloadData()
@@ -290,14 +301,12 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 
 extension TrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
+        
         collectionView.performBatchUpdates({
             collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
             collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
         }, completion: nil)
-        
     }
-    
-    
 }
 
 

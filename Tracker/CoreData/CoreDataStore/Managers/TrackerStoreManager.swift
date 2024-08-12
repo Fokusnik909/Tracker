@@ -22,7 +22,7 @@ protocol TrackerDataProviderProtocol {
     func numberOfRowsInSection(_ section: Int) -> Int
     func tracker(at indexPath: IndexPath) -> TrackerCoreData?
     func sectionTitle(for section: Int) -> String?
-    func addTracker(_ tracker: Tracker) throws
+    func addTracker(_ tracker: Tracker, title: String) throws
     func deleteTracker(at indexPath: IndexPath) throws
 }
 
@@ -37,8 +37,8 @@ final class TrackerStoreManager: NSObject {
     
     private let context: NSManagedObjectContext
     private let dataStore: DataStoreProtocol
-    private var insertedIndexes: IndexSet?
-    private var deletedIndexes: IndexSet?
+    private var insertedIndexes: IndexSet = []
+    private var deletedIndexes: IndexSet = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
 
@@ -54,6 +54,7 @@ final class TrackerStoreManager: NSObject {
         printAllCategories()
         return fetchedResultsController
     }()
+    
     
     init(_ dataStore: DataStoreProtocol, delegate: TrackerStoreDelegate) throws {
         guard let context = dataStore.managedObjectContext else {
@@ -97,13 +98,16 @@ extension TrackerStoreManager: TrackerDataProviderProtocol {
     }
     
     func sectionTitle(for section: Int) -> String? {
-        let sectionInfo = fetchedResultsController.sections?[section]
-        return sectionInfo?.name.isEmpty ?? true ? "Без категории" : sectionInfo?.name
+        guard let sectionInfo = fetchedResultsController.sections?[section].objects?.first as? TrackerCoreData else {
+            return nil
+        }
+//        return sectionInfo?.name.isEmpty ?? true ? "Без категории" : sectionInfo?.name
+        return sectionInfo.category?.title ?? "Без категории"
     }
 
-    func addTracker(_ tracker: Tracker) throws {
+    func addTracker(_ tracker: Tracker, title: String) throws {
         do {
-            try dataStore.save(tracker)
+            try dataStore.addTracker(tracker, title: title)
         } catch {
             print("Failed to add tracker: \(error)")
             throw error
@@ -126,6 +130,12 @@ extension TrackerStoreManager: TrackerDataProviderProtocol {
             print("Section \(index): \(section.name)")
         }
     }
+    
+    private func makeTracker(from tracker: TrackerCoreData) throws -> Tracker {
+        let trackerModel = Tracker(from: tracker)
+        return trackerModel
+    }
+    
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
@@ -137,12 +147,9 @@ extension TrackerStoreManager: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.didUpdate(TrackerStoreUpdate(
-                insertedIndexes: insertedIndexes!,
-                deletedIndexes: deletedIndexes!
-            )
-        )
-        insertedIndexes = nil
-        deletedIndexes = nil
+            insertedIndexes: insertedIndexes,
+            deletedIndexes: deletedIndexes
+        ))
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
@@ -150,11 +157,11 @@ extension TrackerStoreManager: NSFetchedResultsControllerDelegate {
         switch type {
         case .delete:
             if let indexPath = indexPath {
-                deletedIndexes?.insert(indexPath.item)
+                deletedIndexes.insert(indexPath.item)
             }
         case .insert:
             if let newIndexPath = newIndexPath {
-                insertedIndexes?.insert(newIndexPath.item)
+                insertedIndexes.insert(newIndexPath.item)
             }
         default:
             break
