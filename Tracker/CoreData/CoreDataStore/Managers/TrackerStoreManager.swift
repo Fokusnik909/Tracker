@@ -17,13 +17,13 @@ protocol TrackerStoreDelegate: AnyObject {
     func didUpdate(_ update: TrackerStoreUpdate)
 }
 
-protocol TrackerDataProviderProtocol {
+protocol TrackerManagerProtocol {
     var numberOfSections: Int { get }
     func numberOfRowsInSection(_ section: Int) -> Int
-    func tracker(at indexPath: IndexPath) -> TrackerCoreData?
-    func sectionTitle(for section: Int) -> String?
-    func addTracker(_ tracker: Tracker, title: String) throws
+    func tracker(at indexPath: IndexPath) -> Tracker?
+    func addTracker(_ tracker: Tracker, category: TrackerCategory) throws
     func deleteTracker(at indexPath: IndexPath) throws
+    func deleteTrackers() throws
 }
 
 
@@ -31,32 +31,34 @@ final class TrackerStoreManager: NSObject {
 
     enum DataProviderError: Error {
         case failedToInitializeContext
+        case noTrackersFound
+        case failedToAddTracker(Error)
+        case failedToDeleteTracker(Error)
     }
     
     weak var delegate: TrackerStoreDelegate?
     
     private let context: NSManagedObjectContext
-    private let dataStore: DataStoreProtocol
+    private let dataStore: TrackerDataStoreProtocol
     private var insertedIndexes: IndexSet = []
     private var deletedIndexes: IndexSet = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
 
         let fetchRequest = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category.title", ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                                   managedObjectContext: context,
-                                                                  sectionNameKeyPath: #keyPath(TrackerCoreData.category.title),
+                                                                  sectionNameKeyPath: nil,
                                                                   cacheName: nil)
         fetchedResultsController.delegate = self
         try? fetchedResultsController.performFetch()
-        printAllCategories()
         return fetchedResultsController
     }()
     
     
-    init(_ dataStore: DataStoreProtocol, delegate: TrackerStoreDelegate) throws {
+    init(_ dataStore: TrackerDataStoreProtocol, delegate: TrackerStoreDelegate) throws {
         guard let context = dataStore.managedObjectContext else {
             throw DataProviderError.failedToInitializeContext
         }
@@ -64,27 +66,10 @@ final class TrackerStoreManager: NSObject {
         self.context = context
         self.dataStore = dataStore
     }
-    
-    func printAllCategories() {
-        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
-        
-        do {
-            let results = try context.fetch(fetchRequest)
-            for result in results {
-                if let category = result.category {
-                    print("Category title: \(category.title ?? "nil")")
-                } else {
-                    print("Category is nil for result: \(result)")
-                }
-            }
-        } catch {
-            print("Failed to fetch TrackerCoreData: \(error)")
-        }
-    }
 }
 
 // MARK: - TrackerDataProviderProtocol
-extension TrackerStoreManager: TrackerDataProviderProtocol {
+extension TrackerStoreManager: TrackerManagerProtocol {
     var numberOfSections: Int {
         fetchedResultsController.sections?.count ?? 0
     }
@@ -93,24 +78,16 @@ extension TrackerStoreManager: TrackerDataProviderProtocol {
         fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
-    func tracker(at indexPath: IndexPath) -> TrackerCoreData? {
-        fetchedResultsController.object(at: indexPath)
+    func tracker(at indexPath: IndexPath) -> Tracker? {
+        let trackerCD = fetchedResultsController.object(at: indexPath)
+        return DataBase.shared.tracker(from: trackerCD)
     }
     
-    func sectionTitle(for section: Int) -> String? {
-        guard let sectionInfo = fetchedResultsController.sections?[section].objects?.first as? TrackerCoreData else {
-            return nil
-        }
-//        return sectionInfo?.name.isEmpty ?? true ? "Без категории" : sectionInfo?.name
-        return sectionInfo.category?.title ?? "Без категории"
-    }
-
-    func addTracker(_ tracker: Tracker, title: String) throws {
+    func addTracker(_ tracker: Tracker, category: TrackerCategory) throws {
         do {
-            try dataStore.addTracker(tracker, title: title)
+            try dataStore.addTracker(tracker, category: category)
         } catch {
-            print("Failed to add tracker: \(error)")
-            throw error
+            throw DataProviderError.failedToAddTracker(error)
         }
     }
     
@@ -119,21 +96,22 @@ extension TrackerStoreManager: TrackerDataProviderProtocol {
         do {
             try dataStore.delete(tracker)
         } catch {
-            print("Failed to delete tracker: \(error)")
-            throw error
+            throw DataProviderError.failedToDeleteTracker(error)
         }
     }
     
-    func printSectionTitles() {
-        guard let sections = fetchedResultsController.sections else { return }
-        for (index, section) in sections.enumerated() {
-            print("Section \(index): \(section.name)")
+    func deleteTrackers() throws {
+        guard let trackers = fetchedResultsController.fetchedObjects else {
+            throw DataProviderError.noTrackersFound
         }
-    }
-    
-    private func makeTracker(from tracker: TrackerCoreData) throws -> Tracker {
-        let trackerModel = Tracker(from: tracker)
-        return trackerModel
+        
+        for tracker in trackers {
+            do {
+                try dataStore.delete(tracker)
+            } catch {
+                throw DataProviderError.failedToDeleteTracker(error)
+            }
+        }
     }
     
 }

@@ -37,12 +37,10 @@ extension Tracker {
         } else {
             self.color = .black 
         }
-        if let scheduleData = trackerCoreData.schedule as? Data {
-            self.schedule = (try? JSONDecoder().decode([Weekdays].self, from: scheduleData)) ?? []
-        } else {
-            self.schedule = []
-        }
+        
+        self.schedule = trackerCoreData.schedule as? [Weekdays] ?? [Weekdays.monday]
     }
+        
 }
 
 struct Emojis {

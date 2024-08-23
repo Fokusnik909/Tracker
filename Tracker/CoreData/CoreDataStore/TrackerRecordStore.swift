@@ -5,41 +5,81 @@
 //  Created by Артур  Арсланов on 25.07.2024.
 //
 
-import UIKit
+import Foundation
 import CoreData
 
-final class TrackerRecordStore {
+protocol TrackerRecordDataStore {
+    var managedObjectContext: NSManagedObjectContext? { get }
+    func add(trackerRecord: TrackerRecord) throws
+    func delete(trackerRecord: TrackerRecord) throws
+    func fetch() throws -> [TrackerRecord]
+}
+
+final class TrackerRecordStore: TrackerRecordDataStore {
+    enum TrackerRecordStoreError: Error {
+        case fetchFailed
+        case deleteFailed
+        case saveFailed
+        case contextUnavailable
+    }
+    
     private let dataBase = DataBase.shared
+
+    var managedObjectContext: NSManagedObjectContext? {
+        return dataBase.viewContext
+    }
     
-    // Create
-    func saveRecord(trackerRecord: TrackerRecord, for tracker: TrackerCoreData) {
-        let recordData = dataBase.createEntity(entity: TrackerRecordCoreData.self)
-        recordData.id = trackerRecord.id
-        recordData.date = trackerRecord.date
-        recordData.tracker = tracker
+    func add(trackerRecord: TrackerRecord) throws {
+        guard managedObjectContext != nil else {
+            throw TrackerRecordStoreError.contextUnavailable
+        }
+        
+        let entity = dataBase.createEntity(entity: TrackerRecordCoreData.self)
+        entity.id = trackerRecord.id
+        entity.date = trackerRecord.date
+        
         dataBase.saveContext()
+        
     }
-    
-    // Read
-    func fetchRecords(for tracker: TrackerCoreData) -> [TrackerRecordCoreData] {
-        let predicate = NSPredicate(format: "tracker == %@", tracker)
-        return dataBase.fetchEntities(entity: TrackerRecordCoreData.self, predicate: predicate)
+
+    func delete(trackerRecord: TrackerRecord) throws {
+        guard let context = managedObjectContext else {
+            throw TrackerRecordStoreError.contextUnavailable
+        }
+        
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@ AND date == %@", trackerRecord.id as CVarArg, trackerRecord.date as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let recordToDelete = results.first {
+                context.delete(recordToDelete)
+                do {
+                    try context.save()
+                } catch {
+                    context.rollback() 
+                    throw TrackerRecordStoreError.saveFailed
+                }
+            } else {
+                throw TrackerRecordStoreError.deleteFailed
+            }
+        } catch {
+            throw TrackerRecordStoreError.deleteFailed
+        }
     }
-    
-    func fetchAllRecords() -> [TrackerRecordCoreData] {
-        return dataBase.fetchEntities(entity: TrackerRecordCoreData.self)
+
+    func fetch() throws -> [TrackerRecord] {
+        guard let context = managedObjectContext else {
+            throw TrackerRecordStoreError.contextUnavailable
+        }
+        
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            return results.map { TrackerRecord(id: $0.id ?? UUID(), date: $0.date ?? Date()) }
+        } catch {
+            throw TrackerRecordStoreError.fetchFailed
+        }
     }
-    
-    // Update
-    func update(recordCoreData: TrackerRecordCoreData, with trackerRecord: TrackerRecord) {
-        recordCoreData.id = trackerRecord.id
-        recordCoreData.date = trackerRecord.date
-        dataBase.saveContext()
-    }
-    
-    // Delete
-    func delete(record: TrackerRecordCoreData) {
-        dataBase.deleteEntity(entity: record)
-    }
-    
 }

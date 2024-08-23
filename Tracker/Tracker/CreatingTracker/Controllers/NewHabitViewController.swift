@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NewHabitDelegate: AnyObject {
-    func didCreateNewTracker(_ tracker: Tracker, category: String)
+    func didCreateNewTracker(_ tracker: Tracker, category: TrackerCategory)
 }
 
 final class NewHabitViewController: UIViewController {
@@ -18,7 +18,6 @@ final class NewHabitViewController: UIViewController {
     var trackType: TrackType
     var countRows = [String]()
     var regularTracker: Tracker?
-    var category: String = "Домашний уют"
     
     //MARK: - Private Property
     private var params = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 5)
@@ -107,7 +106,10 @@ final class NewHabitViewController: UIViewController {
         guard let selectedColor else { return }
         guard let selectedEmoji else { return }
         
+        
         let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: Array(selectedWeekDays))
+        let category = TrackerCategory(title: "Hello", trackers: [tracker])
+        
         delegate?.didCreateNewTracker(tracker, category: category)
         dismiss(animated: true)
     }

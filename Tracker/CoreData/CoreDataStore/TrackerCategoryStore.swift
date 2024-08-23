@@ -8,38 +8,44 @@
 import UIKit
 import CoreData
 
-enum TrackerStoreError: Error {
-    case categoryNotFound
-    case decodingErrorInvalidData
+protocol TrackerCategoryDataStore {
+    var managedObjectContext: NSManagedObjectContext? { get }
+    func createCategory(_ category: TrackerCategory) throws
+    func fetchAllCategories() -> [TrackerCategory]
 }
 
-class TrackerCategoryStore {
-    private var context: NSManagedObjectContext {
+class TrackerCategoryStore: TrackerCategoryDataStore {
+    
+     var managedObjectContext: NSManagedObjectContext? {
         return DataBase.shared.viewContext
     }
     
     private let dataBase = DataBase.shared
     
     //Create
-    func saveCategory(title: String) {
+    func createCategory(_ category: TrackerCategory) throws {
         let data = dataBase.createEntity(entity: TrackerCategoryCoreData.self)
-        data.title = title
+        data.title = category.title
+        
         dataBase.saveContext()
     }
     
     //Read
-    func getCategory() -> [TrackerCategoryCoreData] {
-        dataBase.fetchEntities(entity: TrackerCategoryCoreData.self)
-    }
-    
-    //Update
-    func update(category: TrackerCategoryCoreData, title: String) {
-        dataBase.updateCategory(category: category, title: title)
+    func fetchAllCategories() -> [TrackerCategory] {
+        let coreDataCategories = dataBase.fetchEntities(entity: TrackerCategoryCoreData.self)
+        return coreDataCategories.map { convertToTrackerCategory($0) }
     }
     
     //Delete
     func delete(category: TrackerCategoryCoreData) {
         dataBase.deleteEntity(entity: category)
+    }
+    
+    private func convertToTrackerCategory(_ coreData: TrackerCategoryCoreData) -> TrackerCategory {
+        let title = coreData.title ?? ""
+        let trackers = (coreData.trackers?.allObjects as? [TrackerCoreData] ?? []).map { Tracker(from: $0) }
+        
+        return TrackerCategory(title: title, trackers: trackers)
     }
     
 }

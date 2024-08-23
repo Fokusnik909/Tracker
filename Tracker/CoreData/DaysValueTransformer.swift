@@ -19,12 +19,24 @@ final class DaysValueTransformer: ValueTransformer {
     
     override func transformedValue(_ value: Any?) -> Any? {
         guard let days = value as? [Weekdays] else { return nil }
-        return try? JSONEncoder().encode(days)
+        do {
+            let data = try JSONEncoder().encode(days)
+            return data
+        } catch {
+            print("Ошибка при кодировании: \(error)")
+            return nil
+        }
     }
     
     override func reverseTransformedValue(_ value: Any?) -> Any? {
-        guard let data = value as? NSData else { return nil }
-        return try? JSONDecoder().decode([Weekdays].self, from: data as Data)
+        guard let data = value as? Data else { return nil }
+        do {
+            let days = try JSONDecoder().decode([Weekdays].self, from: data)
+            return days
+        } catch {
+            print("Ошибка при декодировании: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     static func register() {

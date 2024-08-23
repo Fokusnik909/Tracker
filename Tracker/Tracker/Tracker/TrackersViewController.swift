@@ -16,8 +16,35 @@ final class TrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate: Date = Date()
     
-    private var trackerStoreManager: TrackerStoreManager?
+    private lazy var trackerManager: TrackerManagerProtocol? = {
+        let store = TrackerStore()
+        do {
+            return try TrackerStoreManager(store, delegate: self)
+        } catch {
+            print("Не удалось инициализировать trackerManager: \(error)")
+            return nil
+        }
+    }()
     
+    private lazy var trackerCategoryManager: TrackerCategoryManagerProtocol? = {
+       let store = TrackerCategoryStore()
+        do {
+            return try TrackerCategoryStoreManager(trackerCategoryStore: store, delegate: self)
+        } catch {
+            print("Не удалось инициализировать TrackerCategoryDataProvider: \(error)")
+            return nil
+        }
+    }()
+    
+    private lazy var trackerRecordManager: TrackerRecordManagerProtocol? = {
+        let store = TrackerRecordStore()
+        do {
+            return try TrackerRecordDataManager(trackerRecordStore: store, delegate: self)
+        } catch {
+            print("Не удалось инициализировать TrackerRecordDataProvider: \(error)")
+            return nil
+        }
+    }()
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -68,39 +95,21 @@ final class TrackersViewController: UIViewController {
         layout()
         setupNavigationBar()
         setupCollectionView()
-        // MOCK DATA
-        createMockData()
-        
-        do {
-            let trackerStore = TrackerStore()
-            trackerStoreManager = try TrackerStoreManager(trackerStore, delegate: self)
-            collectionView.dataSource = self
-            collectionView.delegate = self
-            
-        } catch {
-            print("Failed to initialize TrackerStoreManager: \(error)")
-        }
-        
-        
-        
-        let plantWatering = Tracker(
-            id: UUID(),
-            name: "Поливать растения",
-            color: UIColor.systemGreen, emoji: "❤️",
-            schedule: Weekdays.allCases
-        )
-        try? trackerStoreManager?.addTracker(plantWatering, title: "Hello")
-        
-//        let delete = TrackerStore().readTrackers()
-//        
-//        delete.forEach { value in
-//            TrackerStore().delete(value)
-//        }
-     
+        fetchData()
         
     }
     
     //MARK: - Private Methods
+    private func fetchData() {
+        do {
+            categories = trackerCategoryManager?.fetchCategories() ?? []
+            completedTrackers = try trackerRecordManager?.fetch() ?? []
+            updateVisibleCategories()
+        } catch {
+            print("Ошибка при загрузке данных: \(error)")
+        }
+    }
+    
     @objc private func addButton() {
         let newTrackerViewController = NewCreateTrackerViewController()
         newTrackerViewController.delegate = self
@@ -109,8 +118,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-        let selectedDate = sender.date
-        currentDate = selectedDate
+        currentDate = sender.date
         updateVisibleCategories()
     }
     
@@ -132,8 +140,11 @@ final class TrackersViewController: UIViewController {
         }
         
         return categories.compactMap { category in
-            let trackers = category.trackers.filter { $0.schedule.contains(currentDayOfWeek) }
-            
+            let trackers = category.trackers.filter { tracker in
+                let shouldDisplay = tracker.schedule.isEmpty || tracker.schedule.contains(currentDayOfWeek)
+                return shouldDisplay
+            }
+
             return trackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: trackers)
         }
     }
@@ -189,29 +200,29 @@ final class TrackersViewController: UIViewController {
 //MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        trackerStoreManager?.numberOfSections ?? 0
+        visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        trackerStoreManager?.numberOfRowsInSection(section) ?? 0
+        visibleCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: TrackerCollectionViewCell.identifier,
-            for: indexPath) as? TrackerCollectionViewCell,
-              let trackerCoreData = trackerStoreManager?.tracker(at: indexPath)
+            for: indexPath) as? TrackerCollectionViewCell
         else {
             return UICollectionViewCell()
         }
         
-        cell.delegate = self
+        let category = visibleCategories[indexPath.section]
+        let tracker = category.trackers[indexPath.row]
         
-        let tracker = Tracker(from: trackerCoreData)
+        let isComplete = completedTrackers.contains { $0.id == tracker.id && $0.date == currentDate }
         let counter = completedTrackers.filter { $0.id == tracker.id }.count
-        let isComplete = completedTrackers.filter { $0.id == tracker.id && $0.date == currentDate }.count > 0
         
         cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate)
+        cell.delegate = self
         
         return cell
     }
@@ -223,10 +234,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         if kind == UICollectionView.elementKindSectionHeader {
-//            let sectionTitle = trackerStoreManager?.sectionTitle(for: indexPath.section) ?? "Home"
-//            viewHeader.configure(sectionTitle)
-            let trackerCategory = trackerStoreManager?.sectionTitle(for: indexPath.section) ?? "Home"
-            viewHeader.configure(trackerCategory)
+            let sectionTitle = visibleCategories[indexPath.section].title
+            viewHeader.configure(sectionTitle)
             return viewHeader
         }
         return viewHeader
@@ -258,17 +267,13 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 //MARK: - NewCreateTrackerDelegate
 extension TrackersViewController: NewHabitDelegate {
-    func didCreateNewTracker(_ tracker: Tracker, category: String) {
-        
+    func didCreateNewTracker(_ tracker: Tracker, category: TrackerCategory) {
         do {
-            try trackerStoreManager?.addTracker(tracker, title: category)
-            updateVisibleCategories()
-            collectionView.reloadData()
+            try trackerManager?.addTracker(tracker, category: category)
+            fetchData()
         } catch {
-            print("Ошибка при добавлении трекера: \(error)")
+            print(#function, error)
         }
-        
-        
         updateVisibleCategories()
         collectionView.reloadData()
         
@@ -278,17 +283,29 @@ extension TrackersViewController: NewHabitDelegate {
 //MARK: - TrackerCollectionViewCellDelegate
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func didTapCompleteButton(tracker: Tracker, isCompleted: Bool) {
+        let trackerRecord = TrackerRecord(id: tracker.id, date: currentDate)
         if isCompleted {
-            let trackerRecord = TrackerRecord(id: tracker.id, date: currentDate)
-            completedTrackers.append(trackerRecord)
+            do {
+                try trackerRecordManager?.add(trackerRecord: trackerRecord)
+                completedTrackers.append(trackerRecord)
+            } catch {
+                print("Ошибка при добавлении завершенного трекера: \(error)")
+            }
         } else {
-            completedTrackers.removeAll { $0.id == tracker.id && $0.date == currentDate }
+            do {
+                try trackerRecordManager?.delete(trackerRecord: trackerRecord)
+                completedTrackers.removeAll { $0.id == tracker.id && $0.date == currentDate }
+            } catch {
+                print("Ошибка при удалении завершенного трекера: \(error)")
+            }
         }
         
         updateCellForTracker(tracker)
+        updateVisibleCategories()
     }
     
     private func updateCellForTracker(_ tracker: Tracker) {
+
         for section in 0..<visibleCategories.count {
             if let row = visibleCategories[section].trackers.firstIndex(where: { $0.id == tracker.id }) {
                 let indexPath = IndexPath(row: row, section: section)
@@ -306,48 +323,21 @@ extension TrackersViewController: TrackerStoreDelegate {
             collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
             collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
         }, completion: nil)
+        
     }
 }
 
-
-
-extension TrackersViewController {
-    func createMockData() {
-        let plantWatering = Tracker(
-            id: UUID(),
-            name: "Поливать растения",
-            color: UIColor.systemGreen, emoji: "❤️",
-            schedule: Weekdays.allCases
-        )
-        
-        let cat = Tracker(
-            id: UUID(),
-            name: "Кошка заслонила камеру на созвоне",
-            color: UIColor.orange,
-            emoji: "😻",
-            schedule: Weekdays.allCases
-        )
-        
-        let whatsApp = Tracker(
-            id: UUID(),
-            name: "Бабушка прислала открытку в вотсапе",
-            color: UIColor.red,
-            emoji: "🌺",
-            schedule: Weekdays.allCases
-        )
-        
-        let aprilDraw = Tracker(
-            id: UUID(),
-            name: "Свидания в апреле",
-            color: UIColor.blue,
-            emoji: "❤️",
-            schedule: Weekdays.allCases
-        )
-        
-        let homeComfort = TrackerCategory(title: "Домашний уют", trackers: [plantWatering])
-        let joyfulLittleThings = TrackerCategory(title: "Радостные мелочи", trackers: [cat, whatsApp, aprilDraw])
-        
-        categories = [homeComfort, joyfulLittleThings]
-        updateVisibleCategories()
+extension TrackersViewController: TrackerCategoryManagerDelegate {
+    func didUpdate(_ update: TrackerCategoryUpdate) {
+        fetchData()
     }
+    
 }
+
+extension TrackersViewController: TrackerRecordManagerDelegate {
+    func didUpdate(_ update: TrackerRecordStoreUpdate) {
+        fetchData()
+    }
+
+}
+

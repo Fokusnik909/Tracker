@@ -90,4 +90,20 @@ final class DataBase {
         trackerCoreData.color = UIColorMarshalling().hexString(from: tracker.color)
         trackerCoreData.schedule = tracker.schedule.map { $0.rawValue } as NSObject
     }
+    
+    func tracker(from trackerCoreData: TrackerCoreData) -> Tracker? {
+        guard let id = trackerCoreData.id,
+              let name = trackerCoreData.name,
+              let emoji = trackerCoreData.emoji,
+              let colorHex = trackerCoreData.color,
+              let scheduleData = trackerCoreData.schedule as? Data,
+              let schedule = try? JSONDecoder().decode([Weekdays].self, from: scheduleData)
+        else {
+            print("Некоторые свойства отсутствуют")
+            return nil
+        }
+        let color = UIColorMarshalling().color(from: colorHex)
+        
+        return Tracker(id: id, name: name, color: color, emoji: emoji, schedule: schedule)
+    }
 }

@@ -27,6 +27,13 @@ final class EmojiAndColorsCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var colorSelectedBorder: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "selectColor")
+        image.isHidden = true
+        return image
+    }()
+    
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,8 +46,6 @@ final class EmojiAndColorsCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        emojiLabel.isHidden = true
-//        colorView.isHidden = true
     }
     
     //MARK: - Functions
@@ -54,19 +59,19 @@ final class EmojiAndColorsCell: UICollectionViewCell {
     
     func configure(with color: UIColor, isSelected: Bool) {
         colorView.backgroundColor = color
-        colorView.isHidden = false
-        emojiLabel.isHidden = true
-        colorView.layer.borderWidth = isSelected ? 3 : 0
-        colorView.layer.borderColor = isSelected ? color.cgColor : UIColor.clear.cgColor
+        colorSelectedBorder.tintColor = color
+        colorSelectedBorder.isHidden = !isSelected
     }
     
     //MARK: - Private Function
     private func setupViews() {
         contentView.addSubview(emojiLabel)
         contentView.addSubview(colorView)
+        contentView.addSubview(colorSelectedBorder)
         
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         colorView.translatesAutoresizingMaskIntoConstraints = false
+        colorSelectedBorder.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             emojiLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -76,8 +81,13 @@ final class EmojiAndColorsCell: UICollectionViewCell {
             
             colorView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            colorView.widthAnchor.constraint(equalToConstant: 52),
-            colorView.heightAnchor.constraint(equalToConstant: 52)
+            colorView.widthAnchor.constraint(equalToConstant: frame.width - 12),
+            colorView.heightAnchor.constraint(equalToConstant: frame.height - 12),
+            
+            colorSelectedBorder.topAnchor.constraint(equalTo: contentView.topAnchor),
+            colorSelectedBorder.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            colorSelectedBorder.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            colorSelectedBorder.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
 }
