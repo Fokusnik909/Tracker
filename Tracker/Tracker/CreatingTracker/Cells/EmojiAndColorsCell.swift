@@ -46,6 +46,7 @@ final class EmojiAndColorsCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        colorSelectedBorder.isHidden = true
     }
     
     //MARK: - Functions
@@ -58,6 +59,8 @@ final class EmojiAndColorsCell: UICollectionViewCell {
     }
     
     func configure(with color: UIColor, isSelected: Bool) {
+        emojiLabel.isHidden = true
+        colorView.isHidden = false
         colorView.backgroundColor = color
         colorSelectedBorder.tintColor = color
         colorSelectedBorder.isHidden = !isSelected

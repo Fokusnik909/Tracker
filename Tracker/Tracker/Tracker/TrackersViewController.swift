@@ -96,6 +96,7 @@ final class TrackersViewController: UIViewController {
         setupNavigationBar()
         setupCollectionView()
         fetchData()
+        addTapGestureToHideKeyboard()
         
     }
     
@@ -157,6 +158,7 @@ final class TrackersViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let searchController = UISearchController(searchResultsController: nil)
+        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Поиск"
         navigationItem.searchController = searchController
     }
@@ -195,7 +197,6 @@ final class TrackersViewController: UIViewController {
     }
     
 }
-
 
 //MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {

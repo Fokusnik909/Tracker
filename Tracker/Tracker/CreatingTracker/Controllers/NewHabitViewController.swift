@@ -93,7 +93,7 @@ final class NewHabitViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-//        addTapGestureToHideKeyboard()
+        addTapGestureToHideKeyboard()
     }
     
     @objc private func habitTextField(_ textField: UITextField) {
