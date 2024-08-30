@@ -15,7 +15,7 @@ struct TrackerRecordStoreUpdate {
 
 protocol TrackerRecordManagerProtocol {
     func add(trackerRecord: TrackerRecord) throws
-    func delete(trackerRecord: TrackerRecord) throws
+    func delete(id: UUID, date: Date) throws
     func fetch() throws -> [TrackerRecord]
 }
 
@@ -83,9 +83,9 @@ extension TrackerRecordDataManager: TrackerRecordManagerProtocol {
         }
     }
     
-    func delete(trackerRecord: TrackerRecord) throws {
+    func delete(id: UUID, date: Date) throws {
         do {
-            try trackerRecordDataStore.delete(trackerRecord: trackerRecord)
+            try trackerRecordDataStore.delete(id: id, date: date)
         } catch {
             throw TrackerRecordDataManagerError.deleteFailed(error)
         }

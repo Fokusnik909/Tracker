@@ -16,6 +16,8 @@ final class TrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate: Date = Date()
     
+    private lazy var trackerRecordStore = TrackerRecordStore()
+    
     private lazy var trackerManager: TrackerManagerProtocol? = {
         let store = TrackerStore()
         do {
@@ -105,6 +107,7 @@ final class TrackersViewController: UIViewController {
         do {
             categories = trackerCategoryManager?.fetchCategories() ?? []
             completedTrackers = try trackerRecordManager?.fetch() ?? []
+            print("Completed trackers: \(completedTrackers)")
             updateVisibleCategories()
         } catch {
             print("Ошибка при загрузке данных: \(error)")
@@ -196,6 +199,9 @@ final class TrackersViewController: UIViewController {
         ])
     }
     
+    func isTrackerCompleted(id: UUID) -> Bool {
+        return trackerRecordStore.isTrackerCompleted(id: id, date: currentDate)
+    }
 }
 
 //MARK: - UICollectionViewDataSource
@@ -219,7 +225,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         let category = visibleCategories[indexPath.section]
         let tracker = category.trackers[indexPath.row]
         
-        let isComplete = completedTrackers.contains { $0.id == tracker.id && $0.date == currentDate }
+        let isComplete = isTrackerCompleted(id: tracker.id)
         let counter = completedTrackers.filter { $0.id == tracker.id }.count
         
         cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate)
@@ -285,7 +291,15 @@ extension TrackersViewController: NewHabitDelegate {
 extension TrackersViewController: TrackerCollectionViewCellDelegate {
     func didTapCompleteButton(tracker: Tracker, isCompleted: Bool) {
         let trackerRecord = TrackerRecord(id: tracker.id, date: currentDate)
+        guard currentDate <= Date() else {
+            print("Невозможно завершить трекер для будущей даты.")
+            return
+        }
+
         if isCompleted {
+            guard !completedTrackers.contains(where: { $0.id == tracker.id && $0.date == currentDate }) else {
+                return
+            }
             do {
                 try trackerRecordManager?.add(trackerRecord: trackerRecord)
                 completedTrackers.append(trackerRecord)
@@ -294,19 +308,19 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
             }
         } else {
             do {
-                try trackerRecordManager?.delete(trackerRecord: trackerRecord)
+                try trackerRecordManager?.delete(id: tracker.id, date: currentDate)
                 completedTrackers.removeAll { $0.id == tracker.id && $0.date == currentDate }
             } catch {
                 print("Ошибка при удалении завершенного трекера: \(error)")
             }
         }
-        
         updateCellForTracker(tracker)
         updateVisibleCategories()
     }
+
+
     
     private func updateCellForTracker(_ tracker: Tracker) {
-
         for section in 0..<visibleCategories.count {
             if let row = visibleCategories[section].trackers.firstIndex(where: { $0.id == tracker.id }) {
                 let indexPath = IndexPath(row: row, section: section)

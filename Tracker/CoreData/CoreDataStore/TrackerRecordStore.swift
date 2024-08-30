@@ -11,7 +11,7 @@ import CoreData
 protocol TrackerRecordDataStore {
     var managedObjectContext: NSManagedObjectContext? { get }
     func add(trackerRecord: TrackerRecord) throws
-    func delete(trackerRecord: TrackerRecord) throws
+    func delete(id: UUID, date: Date) throws
     func fetch() throws -> [TrackerRecord]
 }
 
@@ -39,32 +39,29 @@ final class TrackerRecordStore: TrackerRecordDataStore {
         entity.date = trackerRecord.date
         
         dataBase.saveContext()
-        
+        print("TrackerRecord added: \(trackerRecord)")
     }
 
-    func delete(trackerRecord: TrackerRecord) throws {
+    func delete(id: UUID, date: Date) throws {
         guard let context = managedObjectContext else {
             throw TrackerRecordStoreError.contextUnavailable
         }
         
-        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@ AND date == %@", trackerRecord.id as CVarArg, trackerRecord.date as CVarArg)
+        let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@ AND date < %@", id as NSUUID, date as NSDate)
         
         do {
-            let results = try context.fetch(fetchRequest)
-            if let recordToDelete = results.first {
+            let records = try context.fetch(request)
+            print(records.count)
+            if let recordToDelete = records.first {
                 context.delete(recordToDelete)
-                do {
-                    try context.save()
-                } catch {
-                    context.rollback() 
-                    throw TrackerRecordStoreError.saveFailed
-                }
             } else {
-                throw TrackerRecordStoreError.deleteFailed
+                print("No TrackerRecord found to delete with id: \(id) and date: \(date)")
             }
+            
+            try context.save()
         } catch {
-            throw TrackerRecordStoreError.deleteFailed
+            print("Failed to delete tracker entry: \(error)")
         }
     }
 
@@ -77,9 +74,31 @@ final class TrackerRecordStore: TrackerRecordDataStore {
 
         do {
             let results = try context.fetch(fetchRequest)
-            return results.map { TrackerRecord(id: $0.id ?? UUID(), date: $0.date ?? Date()) }
+            let fetchedRecords = results.map { TrackerRecord(id: $0.id ?? UUID(), date: $0.date ?? Date()) }
+            
+            print("Fetched TrackerRecords: \(fetchedRecords)") 
+            
+            return fetchedRecords
         } catch {
-            throw TrackerRecordStoreError.fetchFailed
+                throw TrackerRecordStoreError.fetchFailed
         }
     }
+    
+    func isTrackerCompleted(id: UUID, date: Date) -> Bool {
+        guard let context = managedObjectContext else {
+            return false
+        }
+        
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.predicate = NSPredicate(format: "id == %@ AND date < %@", id as NSUUID, date as NSDate)
+        
+        do {
+            let records = try context.fetch(request)
+            return !records.isEmpty
+        } catch {
+            print("Ошибка при проверке завершённого трекера: \(error)")
+            return false
+        }
+    }
+
 }
