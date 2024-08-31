@@ -148,7 +148,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func completeButtonTapped(_ sender: UIButton) {
-        guard calendarDate < Date() else { return }
+        guard calendarDate <= Date() else { return }
 
         guard let tracker else { return }
 

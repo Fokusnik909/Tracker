@@ -44,7 +44,10 @@ final class TrackerRecordDataManager: NSObject {
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData> = {
         let fetchRequest = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)]
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "date", ascending: true),
+            NSSortDescriptor(key: "id", ascending: true)
+        ]
         
         let fetchedResultController = NSFetchedResultsController(
             fetchRequest: fetchRequest,

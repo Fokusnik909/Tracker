@@ -48,7 +48,7 @@ final class TrackerRecordStore: TrackerRecordDataStore {
         }
         
         let request: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@ AND date < %@", id as NSUUID, date as NSDate)
+        request.predicate = NSPredicate(format: "id == %@ AND date == %@", id as NSUUID, date as NSDate)
         
         do {
             let records = try context.fetch(request)
@@ -90,7 +90,7 @@ final class TrackerRecordStore: TrackerRecordDataStore {
         }
         
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "id == %@ AND date < %@", id as NSUUID, date as NSDate)
+        request.predicate = NSPredicate(format: "id == %@ AND date == %@", id as NSUUID, date as NSDate)
         
         do {
             let records = try context.fetch(request)
