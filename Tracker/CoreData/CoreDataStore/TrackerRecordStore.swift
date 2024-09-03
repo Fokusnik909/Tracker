@@ -94,7 +94,11 @@ final class TrackerRecordStore: TrackerRecordDataStore {
         }
         
         let startDate = calendar.startOfDay(for: date)
-        let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
+        
+        guard let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) else {
+            print("Ошибка при вычислении даты окончания.")
+            return false
+        }
 
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         request.predicate = NSPredicate(format: "id == %@ AND date >= %@ AND date < %@", id as NSUUID, startDate as NSDate, endDate as NSDate)
