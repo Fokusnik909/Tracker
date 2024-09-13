@@ -25,6 +25,7 @@ final class NewHabitViewController: UIViewController {
     private var heightTableView: CGFloat = 0
     private var selectedWeekDays: Set<Weekdays> = []
     private let scheduleLabel = "Расписание"
+    private let categoriesLabel = "Категория"
     
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
@@ -161,6 +162,14 @@ final class NewHabitViewController: UIViewController {
             scheduleVC.selectedWeekDays = selectedWeekDays
             scheduleVC.delegate = self
             navigationController?.pushViewController(scheduleVC, animated: true)
+//            present(scheduleVC, animated: true)
+        }
+        
+        if selectedСell == categoriesLabel {
+            let viewModel = CategoriesViewModel()
+            let categoriesVC = CategoriesView(viewModal: viewModel)
+            navigationController?.pushViewController(categoriesVC, animated: true)
+//            present(categoriesVC, animated: true)
         }
     }
     
