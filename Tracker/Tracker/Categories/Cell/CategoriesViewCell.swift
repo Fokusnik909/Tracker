@@ -17,7 +17,6 @@ final class CategoriesViewCell: UITableViewCell {
         label.textColor = .ypBlack
         return label
     }()
-    
 
     //MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

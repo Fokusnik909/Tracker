@@ -13,13 +13,8 @@ typealias Binding<T> = (T) -> Void
 class CategoriesViewModel {
     private var trackerCategoryStore = TrackerCategoryStore()
     
-    var categories: [TrackerCategory] = [] 
+    var categories: [TrackerCategory] = []
     var selectedCategory: TrackerCategory?
-    //    {
-    //        didSet {
-    //            self.onCategoriesUpdated?(categories)
-    //        }
-    //    }
     
     var onCategoriesUpdated: Binding<[TrackerCategory]>?
     var selectCategory: Binding<TrackerCategory?>?
@@ -42,12 +37,9 @@ class CategoriesViewModel {
         do {
             try trackerCategoryStore.createCategory(TrackerCategory(title: category, trackers: []))
             fetchCategories()
-            onCategoriesUpdated?(categories)
         } catch {
             print("Ошибка при создании категории: \(error)")
         }
     }
-    
-    
 }
 

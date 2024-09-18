@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol CreateCategoriesViewDelegate: AnyObject {
+    func didSelectCategory(_ category : String)
+}
+
 final class CreateCategoriesView: UIViewController {
+
+    //MARK: - Delegate
+    weak var delegate: CreateCategoriesViewDelegate?
     
     private let viewModel: CategoriesViewModel
     
@@ -48,8 +55,8 @@ final class CreateCategoriesView: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let title = customTextField.text, !title.isEmpty else { return }
-        viewModel.addCategory(title)
-        dismiss(animated: true) 
+        delegate?.didSelectCategory(title)
+        dismiss(animated: true)
     }
     
     private func validateForm() {

@@ -28,9 +28,8 @@ final class ScheduleViewController: UIViewController {
     }
     
     @objc func doneButtonTapped() {
-
         delegate?.didSelectWeekDays( Array(selectedWeekDays) )
-        navigationController?.popViewController(animated: true)
+        dismiss(animated: true)
     }
     
 }
@@ -105,6 +104,9 @@ private extension ScheduleViewController {
     private func layout() {
         view.addSubview(tableView)
         view.addSubview(doneButton)
+        
+        title = "Расписание"
+        
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([

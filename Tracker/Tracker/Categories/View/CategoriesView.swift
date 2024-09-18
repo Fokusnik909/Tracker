@@ -7,13 +7,22 @@
 
 import UIKit
 
+protocol CategoriesViewDelegate: AnyObject {
+    func didSelectCategory(_ category: String)
+}
+
 final class CategoriesView: UIViewController {
     
+    //MARK: - Delegate
+    weak var delegate: CategoriesViewDelegate?
+    
+    //MARK: - Private Property
     private let viewModal: CategoriesViewModel
     private let tableView: UITableView = .init()
     private var heightTableView: CGFloat = 0
     private var categoriesCount = 0
     private var selectedCategory: IndexPath?
+    private var selectedCategoryTitle: String?
     
     private lazy var createButton: CustomButton = {
         let button = CustomButton(
@@ -46,6 +55,7 @@ final class CategoriesView: UIViewController {
         return label
     }()
     
+    //MARK: - Init
     init(viewModal: CategoriesViewModel) {
         self.viewModal = viewModal
         
@@ -56,7 +66,7 @@ final class CategoriesView: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
+    //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,15 +75,16 @@ final class CategoriesView: UIViewController {
         isEmptyCategory()
     }
     
+    //MARK: - Private @objc Methods
     @objc private func createButtonTapped() {
         let newCategoryViewController = CreateCategoriesView(viewModel: viewModal)
+        newCategoryViewController.delegate = self
         let navController = UINavigationController(rootViewController: newCategoryViewController)
         present(navController, animated: true)
     }
-
     
+    //MARK: - Private Methods
     private func bindViewModel() {
-        
         viewModal.onCategoriesUpdated = { [weak self] categories in
             guard let self else { return }
             self.categoriesCount = categories.count
@@ -82,7 +93,6 @@ final class CategoriesView: UIViewController {
         }
         
         viewModal.fetchCategories()
-        
     }
     
     private func isEmptyCategory() {
@@ -91,6 +101,7 @@ final class CategoriesView: UIViewController {
         labelStub.isHidden = !isEmpty
     }
     
+    //MARK: - SetupUI
     private func setupUI() {
         view.addSubview(imageStar)
         view.addSubview(createButton)
@@ -101,7 +112,9 @@ final class CategoriesView: UIViewController {
         setupTableView()
         
         navigationItem.hidesBackButton = true
+        tableView.backgroundColor = .red
         title = "Категория"
+        
         NSLayoutConstraint.activate([
             imageStar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 232),
             imageStar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -117,7 +130,7 @@ final class CategoriesView: UIViewController {
             createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             createButton.heightAnchor.constraint(equalToConstant: 60),
             
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: CGFloat(categoriesCount * 75))
@@ -127,7 +140,6 @@ final class CategoriesView: UIViewController {
     private func setupTableView() {
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
-        tableView.backgroundColor = .red
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
@@ -135,7 +147,7 @@ final class CategoriesView: UIViewController {
     }
 }
 
-
+//MARK: - UITableViewDataSource
 extension CategoriesView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         categoriesCount
@@ -150,19 +162,35 @@ extension CategoriesView: UITableViewDataSource {
         cell.configure(with: category.title, isSelected: selectedCategory == indexPath)
         return cell
     }
-    
-    
 }
 
+//MARK: - UITableViewDelegate
 extension CategoriesView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         75
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModal.selectCategory(at: indexPath.row)
-        selectedCategory = indexPath
+        let selectedCategory = viewModal.categories[indexPath.row].title
+        delegate?.didSelectCategory(selectedCategory)
+        dismiss(animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == categoriesCount - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
+    }
+
+}
+
+//MARK: - CreateCategoriesViewDelegate
+extension CategoriesView: CreateCategoriesViewDelegate {
+    func didSelectCategory(_ category: String) {
+        viewModal.addCategory(category)
         tableView.reloadData()
-        self.dismiss(animated: true)
+        isEmptyCategory()
     }
 }
