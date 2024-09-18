@@ -56,6 +56,7 @@ final class CreateCategoriesView: UIViewController {
     @objc private func createButtonTapped() {
         guard let title = customTextField.text, !title.isEmpty else { return }
         delegate?.didSelectCategory(title)
+        viewModel.onCategoryCreated?(title)
         dismiss(animated: true)
     }
     

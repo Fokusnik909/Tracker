@@ -85,6 +85,12 @@ final class CategoriesView: UIViewController {
     
     //MARK: - Private Methods
     private func bindViewModel() {
+        viewModal.onCategoryCreated = { [weak self] category in
+            guard let self = self else { return }
+            viewModal.addCategory(category)
+            self.tableView.reloadData()
+        }
+        
         viewModal.onCategoriesUpdated = { [weak self] categories in
             guard let self else { return }
             self.categoriesCount = categories.count
@@ -112,7 +118,7 @@ final class CategoriesView: UIViewController {
         setupTableView()
         
         navigationItem.hidesBackButton = true
-        tableView.backgroundColor = .red
+        
         title = "Категория"
         
         NSLayoutConstraint.activate([
@@ -189,7 +195,6 @@ extension CategoriesView: UITableViewDelegate {
 //MARK: - CreateCategoriesViewDelegate
 extension CategoriesView: CreateCategoriesViewDelegate {
     func didSelectCategory(_ category: String) {
-        viewModal.addCategory(category)
         tableView.reloadData()
         isEmptyCategory()
     }

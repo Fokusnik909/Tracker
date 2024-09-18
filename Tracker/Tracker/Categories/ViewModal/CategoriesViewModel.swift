@@ -18,9 +18,15 @@ class CategoriesViewModel {
     
     var onCategoriesUpdated: Binding<[TrackerCategory]>?
     var selectCategory: Binding<TrackerCategory?>?
+    var onCategoryCreated: ((String) -> Void)?
     
     init() {
         fetchCategories()
+        
+        onCategoryCreated = { [weak self] categoryTitle in
+            guard let self = self else { return }
+            self.addCategory(categoryTitle)
+        }
     }
     
     func fetchCategories() {
