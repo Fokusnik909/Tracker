@@ -18,11 +18,13 @@ final class CategoriesView: UIViewController {
     
     //MARK: - Private Property
     private let viewModal: CategoriesViewModel
-    private let tableView: UITableView = .init()
-    private var heightTableView: CGFloat = 0
-    private var categoriesCount = 0
     private var selectedCategory: IndexPath?
     private var selectedCategoryTitle: String?
+    
+    private let tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        return tableView
+    }()
     
     private lazy var createButton: CustomButton = {
         let button = CustomButton(
@@ -69,7 +71,6 @@ final class CategoriesView: UIViewController {
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         bindViewModel()
         setupUI()
         isEmptyCategory()
@@ -93,7 +94,6 @@ final class CategoriesView: UIViewController {
         
         viewModal.onCategoriesUpdated = { [weak self] categories in
             guard let self else { return }
-            self.categoriesCount = categories.count
             self.tableView.reloadData()
             self.isEmptyCategory()
         }
@@ -102,9 +102,10 @@ final class CategoriesView: UIViewController {
     }
     
     private func isEmptyCategory() {
-        let isEmpty = categoriesCount == 0
+        let isEmpty = viewModal.categories.isEmpty
         imageStar.isHidden = !isEmpty
         labelStub.isHidden = !isEmpty
+        tableView.isHidden = isEmpty
     }
     
     //MARK: - SetupUI
@@ -136,10 +137,10 @@ final class CategoriesView: UIViewController {
             createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             createButton.heightAnchor.constraint(equalToConstant: 60),
             
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.heightAnchor.constraint(equalToConstant: CGFloat(categoriesCount * 75))
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: createButton.topAnchor, constant: -47)
         ])
     }
     
@@ -147,6 +148,7 @@ final class CategoriesView: UIViewController {
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(CategoriesViewCell.self, forCellReuseIdentifier: "CategoryCell")
@@ -156,7 +158,7 @@ final class CategoriesView: UIViewController {
 //MARK: - UITableViewDataSource
 extension CategoriesView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categoriesCount
+        viewModal.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -183,13 +185,12 @@ extension CategoriesView: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == categoriesCount - 1 {
+        if indexPath.row == viewModal.categories.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
     }
-
 }
 
 //MARK: - CreateCategoriesViewDelegate
