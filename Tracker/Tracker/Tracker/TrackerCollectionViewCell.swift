@@ -131,7 +131,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         titleLabel.text = tracker.name
         containerView.backgroundColor = tracker.color
-        daysLabel.text = "\(completionCount) \(completionCount == 1 ? "день" : "дня")"
+        
+        let tasksString = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfTasks", comment: "Number of remaining tasks"),
+            completionCount
+        )
+        
+        daysLabel.text = tasksString
     }
     
     private func isSelectedButton(_ sender: UIButton, trackerColor: UIColor) {
