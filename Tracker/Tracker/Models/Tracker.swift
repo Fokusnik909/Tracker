@@ -33,7 +33,7 @@ extension Tracker {
         self.emoji = trackerCoreData.emoji ?? ""
         
         if let colorHex = trackerCoreData.color {
-            self.color = UIColorMarshalling().color(from: colorHex)
+            self.color = UIColorMarshalling.color(from: colorHex)
         } else {
             self.color = .black 
         }

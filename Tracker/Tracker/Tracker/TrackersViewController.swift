@@ -68,7 +68,7 @@ final class TrackersViewController: UIViewController {
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_DE")
+        datePicker.locale = Locale.current
         datePicker.preferredDatePickerStyle = .compact
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.widthAnchor.constraint(equalToConstant: 100).isActive = true
@@ -83,7 +83,7 @@ final class TrackersViewController: UIViewController {
     
     private let logoLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString(DictionaryString.mainScreenTitle, comment: "")
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 12)
         return label
@@ -156,13 +156,13 @@ final class TrackersViewController: UIViewController {
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = addBarButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        navigationItem.title = "Трекеры"
+        navigationItem.title = NSLocalizedString(DictionaryString.mainScreenLabel, comment: "")
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = NSLocalizedString(DictionaryString.mainScreenSearchPlaceholder, comment: "")
         navigationItem.searchController = searchController
     }
     
@@ -229,7 +229,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         let counter = completedTrackers.filter { $0.id == tracker.id }.count
         
         cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate)
-        cell.delegate = self
+        cell.delegate = self 
         
         return cell
     }

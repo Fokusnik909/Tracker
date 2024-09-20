@@ -17,7 +17,7 @@ final class CategoriesView: UIViewController {
     weak var delegate: CategoriesViewDelegate?
     
     //MARK: - Private Property
-    private let viewModal: CategoriesViewModel
+    private let viewModel: CategoriesViewModel
     private var selectedCategory: IndexPath?
     private var selectedCategoryTitle: String?
     
@@ -27,8 +27,9 @@ final class CategoriesView: UIViewController {
     }()
     
     private lazy var createButton: CustomButton = {
+        let title = NSLocalizedString(DictionaryString.categoryAddButton, comment: "")
         let button = CustomButton(
-            title: "Добавить категорию",
+            title: title,
             titleColor: .ypWhite,
             backgroundColor: .ypBlack
         )
@@ -45,10 +46,8 @@ final class CategoriesView: UIViewController {
     
     private let labelStub: UILabel = {
         let label = UILabel()
-        label.text = """
-                        Привычки и события можно
-                        объединить по смыслу
-                        """
+        let text = NSLocalizedString(DictionaryString.categoryEmptyStateLabel, comment: "")
+        label.text = text
         label.textColor = .black
         label.textAlignment = .center
         label.numberOfLines = 2
@@ -59,7 +58,7 @@ final class CategoriesView: UIViewController {
     
     //MARK: - Init
     init(viewModal: CategoriesViewModel) {
-        self.viewModal = viewModal
+        self.viewModel = viewModal
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -78,7 +77,7 @@ final class CategoriesView: UIViewController {
     
     //MARK: - Private @objc Methods
     @objc private func createButtonTapped() {
-        let newCategoryViewController = CreateCategoriesView(viewModel: viewModal)
+        let newCategoryViewController = CreateCategoriesView(viewModel: viewModel)
         newCategoryViewController.delegate = self
         let navController = UINavigationController(rootViewController: newCategoryViewController)
         present(navController, animated: true)
@@ -86,23 +85,21 @@ final class CategoriesView: UIViewController {
     
     //MARK: - Private Methods
     private func bindViewModel() {
-        viewModal.onCategoryCreated = { [weak self] category in
-            guard let self = self else { return }
-            viewModal.addCategory(category)
-            self.tableView.reloadData()
+        viewModel.onCategoryCreated = { [weak self] category in
+            self?.viewModel.addCategory(category)
+            self?.tableView.reloadData()
         }
         
-        viewModal.onCategoriesUpdated = { [weak self] categories in
-            guard let self else { return }
-            self.tableView.reloadData()
-            self.isEmptyCategory()
+        viewModel.onCategoriesUpdated = { [weak self] categories in
+            self?.tableView.reloadData()
+            self?.isEmptyCategory()
         }
         
-        viewModal.fetchCategories()
+        viewModel.fetchCategories()
     }
     
     private func isEmptyCategory() {
-        let isEmpty = viewModal.categories.isEmpty
+        let isEmpty = viewModel.categories.isEmpty
         imageStar.isHidden = !isEmpty
         labelStub.isHidden = !isEmpty
         tableView.isHidden = isEmpty
@@ -120,7 +117,7 @@ final class CategoriesView: UIViewController {
         
         navigationItem.hidesBackButton = true
         
-        title = "Категория"
+        title = NSLocalizedString(DictionaryString.categoryScreenTitle, comment: "")
         
         NSLayoutConstraint.activate([
             imageStar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 232),
@@ -158,7 +155,7 @@ final class CategoriesView: UIViewController {
 //MARK: - UITableViewDataSource
 extension CategoriesView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModal.categories.count
+        viewModel.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -166,7 +163,7 @@ extension CategoriesView: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let category = viewModal.categories[indexPath.row]
+        let category = viewModel.categories[indexPath.row]
         cell.configure(with: category.title, isSelected: selectedCategory == indexPath)
         return cell
     }
@@ -179,13 +176,13 @@ extension CategoriesView: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCategory = viewModal.categories[indexPath.row].title
+        let selectedCategory = viewModel.categories[indexPath.row].title
         delegate?.didSelectCategory(selectedCategory)
         dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == viewModal.categories.count - 1 {
+        if indexPath.row == viewModel.categories.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)

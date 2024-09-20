@@ -9,13 +9,13 @@ import UIKit
 
 final class PageOnboardingViewController: UIViewController {
     
-    private let imageView: UIImageView = {
+    private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    private let label: UILabel = {
+    private lazy var label: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.textColor = .ypBlack
@@ -27,7 +27,7 @@ final class PageOnboardingViewController: UIViewController {
     
     private lazy var button: CustomButton = {
         let button = CustomButton(
-            title: "Вот это технологии!",
+            title: NSLocalizedString(DictionaryString.onboardingScreenButton, comment: ""),
             titleColor: .ypWhite,
             backgroundColor: .ypBlack
         )
@@ -36,9 +36,9 @@ final class PageOnboardingViewController: UIViewController {
     }()
     
     init(label: String, image: UIImage) {
+        super.init(nibName: nil, bundle: nil)
         self.imageView.image = image
         self.label.text = label
-        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {

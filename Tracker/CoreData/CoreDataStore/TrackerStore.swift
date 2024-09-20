@@ -50,7 +50,7 @@ final class TrackerStore: TrackerDataStoreProtocol {
         trackerDB.id = tracker.id
         trackerDB.name = tracker.name
         trackerDB.emoji = tracker.emoji
-        trackerDB.color = UIColorMarshalling().hexString(from: tracker.color)
+        trackerDB.color = UIColorMarshalling.hexString(from: tracker.color)
 
         trackerDB.schedule = tracker.schedule as NSObject
 

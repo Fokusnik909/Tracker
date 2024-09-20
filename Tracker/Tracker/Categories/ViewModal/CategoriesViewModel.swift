@@ -10,7 +10,7 @@ import Foundation
 typealias Binding<T> = (T) -> Void
 
 
-class CategoriesViewModel {
+final class CategoriesViewModel {
     private var trackerCategoryStore = TrackerCategoryStore()
     
     var categories: [TrackerCategory] = []

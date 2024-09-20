@@ -19,13 +19,15 @@ final class CreateCategoriesView: UIViewController {
     private let viewModel: CategoriesViewModel
     
     private var customTextField: CustomTextField = {
-        let textField = CustomTextField(placeholder: "Введите название категории")
+        let text = NSLocalizedString(DictionaryString.newCategoryNamePlaceholder, comment: "")
+        let textField = CustomTextField(placeholder: text)
         return textField
     }()
     
     private lazy var createButton: CustomButton = {
+        let titleButton = NSLocalizedString(DictionaryString.buttonDone, comment: "")
         let button = CustomButton(
-            title: "Готово",
+            title: titleButton,
             titleColor: .ypWhite,
             backgroundColor: .ypGray
         )
@@ -77,7 +79,7 @@ final class CreateCategoriesView: UIViewController {
         customTextField.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
         
-        title = "Новая категория"
+        title = NSLocalizedString(DictionaryString.newCategoryScreenTitle, comment: "")
         
         NSLayoutConstraint.activate([
             customTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),

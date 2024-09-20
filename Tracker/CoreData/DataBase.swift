@@ -40,7 +40,7 @@ final class DataBase {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                assertionFailure("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }
@@ -87,7 +87,7 @@ final class DataBase {
         trackerCoreData.id = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.emoji = tracker.emoji
-        trackerCoreData.color = UIColorMarshalling().hexString(from: tracker.color)
+         trackerCoreData.color = UIColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.schedule = tracker.schedule.map { $0.rawValue } as NSObject
     }
     
@@ -102,7 +102,7 @@ final class DataBase {
             print("Некоторые свойства отсутствуют")
             return nil
         }
-        let color = UIColorMarshalling().color(from: colorHex)
+        let color = UIColorMarshalling.color(from: colorHex)
         
         return Tracker(id: id, name: name, color: color, emoji: emoji, schedule: schedule)
     }

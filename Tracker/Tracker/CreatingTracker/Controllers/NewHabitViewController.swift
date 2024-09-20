@@ -24,8 +24,8 @@ final class NewHabitViewController: UIViewController {
     
     private var heightTableView: CGFloat = 0
     private var selectedWeekDays: Set<Weekdays> = []
-    private let scheduleLabel = "Расписание"
-    private let categoriesLabel = "Категория"
+    private let scheduleLabel = NSLocalizedString(DictionaryString.newHabitScheduleCell, comment: "")
+    private let categoriesLabel = NSLocalizedString(DictionaryString.newHabitCategoryCell, comment: "")
     
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
@@ -35,14 +35,16 @@ final class NewHabitViewController: UIViewController {
     private let allColors = ColorsAndEmojiCells.allColors
     
     //MARK: - Private properties UI
-    private var customTextField: CustomTextField = {
-        let textField = CustomTextField(placeholder: "Введите название трекера")
+    private lazy var customTextField: CustomTextField = {
+        let text = NSLocalizedString(DictionaryString.newHabitNamePlaceholder, comment: "")
+        let textField = CustomTextField(placeholder: text)
         return textField
     }()
     
     private lazy var cancelButton: UIButton = {
+        let title = NSLocalizedString(DictionaryString.newHabitCancelButton, comment: "")
         let button = CustomButton(
-            title: "Отменить",
+            title: title,
             titleColor: .ypRed,
             backgroundColor: .ypWhite,
             borderColor: .ypRed
@@ -52,8 +54,9 @@ final class NewHabitViewController: UIViewController {
     
     
     private lazy var createButton: CustomButton = {
+        let title = NSLocalizedString(DictionaryString.newHabitCreateButton, comment: "")
         let button = CustomButton(
-            title: "Создать",
+            title: title,
             titleColor: .ypWhite,
             backgroundColor: .ypGray
         )
@@ -104,11 +107,9 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func createButtonPressed() {
-        guard let name = customTextField.text, !name.isEmpty else { return }
-        
-        guard let selectedColor else { return }
-        guard let selectedEmoji else { return }
-        
+        guard let name = customTextField.text, !name.isEmpty,
+                  let selectedColor = selectedColor,
+                  let selectedEmoji = selectedEmoji else { return }
         
         let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: Array(selectedWeekDays))
         let category = TrackerCategory(title: selectCategory ?? "without category", trackers: [tracker])
@@ -125,10 +126,10 @@ final class NewHabitViewController: UIViewController {
     private func configureRows(for trackType: TrackType) {
         switch trackType {
         case .regular:
-            countRows = ["Категория", "Расписание"]
+            countRows = [categoriesLabel, scheduleLabel]
             heightTableView = 150
         case .notRegular:
-            countRows = ["Категория"]
+            countRows = [categoriesLabel]
             heightTableView = 75
         }
     }
@@ -157,8 +158,10 @@ final class NewHabitViewController: UIViewController {
         guard let index = countRows.firstIndex(of: scheduleLabel) else { return }
         let indexPath = IndexPath(row: index, section: 0)
         
+        let stringEveryday = NSLocalizedString(DictionaryString.newHabitScheduleSubtitle, comment: "")
+        
         let daysString = selectedWeekDays.map { $0.shortName }.joined(separator: ", ")
-        let isAllDays = selectedWeekDays.count == 7 ? "Каждый день" : daysString
+        let isAllDays = selectedWeekDays.count == 7 ? stringEveryday : daysString
         
         if let cell = tableView.cellForRow(at: indexPath) as? NewHabitCell {
             cell.configure(with: scheduleLabel, detailText: isAllDays)
@@ -288,10 +291,12 @@ extension NewHabitViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
         
+        let stringColor = NSLocalizedString(DictionaryString.newHabitColor, comment: "")
+        
         if indexPath.section == 0 {
             viewHeader.configure("Emoji")
         } else {
-            viewHeader.configure("Цвет")
+            viewHeader.configure(stringColor)
         }
         return viewHeader
     }
@@ -363,7 +368,7 @@ private extension NewHabitViewController {
         settingEventButton()
         setupCollectionView()
         view.backgroundColor = .ypWhite
-        navigationItem.title = "Новая привычка"
+        navigationItem.title = NSLocalizedString(DictionaryString.newHabitScreenTitle, comment: "")
         navigationItem.setHidesBackButton(true, animated: true)
     }
     

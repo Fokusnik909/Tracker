@@ -18,7 +18,11 @@ final class ScheduleViewController: UIViewController {
     var selectedWeekDays = Set<Weekdays>()
     
     private let tableView: UITableView = .init()
-    private let doneButton = CustomButton(title: "Готово", titleColor: .ypWhite, backgroundColor: .ypBlack)
+    private let doneButton = CustomButton(
+        title: NSLocalizedString(DictionaryString.buttonDone, comment: ""),
+        titleColor: .ypWhite,
+        backgroundColor: .ypBlack
+    )
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -97,7 +101,6 @@ private extension ScheduleViewController {
     }
     
     private func setupNavigationBar() {
-        navigationItem.title = "Расписание"
         navigationItem.setHidesBackButton(true, animated: true)
     }
     
@@ -105,7 +108,7 @@ private extension ScheduleViewController {
         view.addSubview(tableView)
         view.addSubview(doneButton)
         
-        title = "Расписание"
+        title = NSLocalizedString(DictionaryString.mainScreenLabel, comment: "")
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
