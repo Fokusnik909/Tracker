@@ -61,7 +61,7 @@ final class TrackersViewController: UIViewController {
             target: self,
             action: #selector(addButton)
         )
-        button.tintColor = .black
+        button.tintColor = .ypBlack
         return button
     }()
     
@@ -84,7 +84,7 @@ final class TrackersViewController: UIViewController {
     private let logoLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString(DictionaryString.mainScreenTitle, comment: "")
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.font = UIFont.systemFont(ofSize: 12)
         return label
     }()
@@ -155,9 +155,11 @@ final class TrackersViewController: UIViewController {
     
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = addBarButton
+        
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         navigationItem.title = NSLocalizedString(DictionaryString.mainScreenLabel, comment: "")
-        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.ypBlack]
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let searchController = UISearchController(searchResultsController: nil)
@@ -167,6 +169,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupCollectionView() {
+        collectionView.backgroundColor = .ypWhite
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
@@ -174,7 +177,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func layout() {
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
         
         for view in subView {
             view.translatesAutoresizingMaskIntoConstraints = false

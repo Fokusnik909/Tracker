@@ -57,7 +57,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private let completeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "addButton"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .ypBlack
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.masksToBounds = true
         return button
@@ -147,7 +147,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             sender.layer.opacity = 0.3
         } else {
             sender.setImage(UIImage(named: "addButton"), for: .normal)
-            sender.tintColor = .white
+            sender.tintColor = .ypWhite
             sender.backgroundColor = trackerColor
             sender.layer.opacity = 1
         }

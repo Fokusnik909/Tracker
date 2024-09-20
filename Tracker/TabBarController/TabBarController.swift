@@ -9,6 +9,14 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
+    let separatorViewColor = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .dark {
+            return .ypWhite
+        } else {
+            return .ypLightGray
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -41,7 +49,8 @@ final class TabBarController: UITabBarController {
     
     private func separationLine() {
         let separatorView = UIView()
-        separatorView.backgroundColor = .ypLightGray
+        separatorView.backgroundColor = separatorViewColor
+        
         tabBar.addSubview(separatorView)
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         

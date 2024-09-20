@@ -48,7 +48,7 @@ final class CategoriesView: UIViewController {
         let label = UILabel()
         let text = NSLocalizedString(DictionaryString.categoryEmptyStateLabel, comment: "")
         label.text = text
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.textAlignment = .center
         label.numberOfLines = 2
         label.font = UIFont.systemFont(ofSize: 12)
@@ -145,7 +145,7 @@ final class CategoriesView: UIViewController {
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .ypWhite
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(CategoriesViewCell.self, forCellReuseIdentifier: "CategoryCell")
