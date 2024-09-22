@@ -14,6 +14,7 @@ final class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
+    private var searchText: String = ""
     private var currentDate: Date = Date()
     
     private lazy var trackerRecordStore = TrackerRecordStore()
@@ -145,17 +146,18 @@ final class TrackersViewController: UIViewController {
         
         return categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                let shouldDisplay = tracker.schedule.isEmpty || tracker.schedule.contains(currentDayOfWeek)
-                return shouldDisplay
+                let isScheduledForToday = tracker.schedule.isEmpty || tracker.schedule.contains(currentDayOfWeek)
+                let matchesSearchText = searchText.isEmpty || tracker.name.lowercased().contains(searchText.lowercased())
+                return isScheduledForToday && matchesSearchText
             }
-
+            
             return trackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: trackers)
         }
     }
     
+    //MARK: - setupNavigationBar
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = addBarButton
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         navigationItem.title = NSLocalizedString(DictionaryString.mainScreenLabel, comment: "")
         
@@ -165,9 +167,12 @@ final class TrackersViewController: UIViewController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = NSLocalizedString(DictionaryString.mainScreenSearchPlaceholder, comment: "")
+        searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
     }
     
+    
+    //MARK: - setupCollectionView
     private func setupCollectionView() {
         collectionView.backgroundColor = .ypWhite
         collectionView.dataSource = self
@@ -331,6 +336,14 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
                 break
             }
         }
+    }
+}
+
+//MARK: - UISearchResultsUpdating
+extension TrackersViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        searchText = searchController.searchBar.text ?? ""
+        updateVisibleCategories()
     }
 }
 

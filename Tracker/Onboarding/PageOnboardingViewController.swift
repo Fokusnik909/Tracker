@@ -18,7 +18,7 @@ final class PageOnboardingViewController: UIViewController {
     private lazy var label: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        label.textColor = .ypBlack
+        label.textColor = .black
         label.numberOfLines = 2
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -28,8 +28,8 @@ final class PageOnboardingViewController: UIViewController {
     private lazy var button: CustomButton = {
         let button = CustomButton(
             title: NSLocalizedString(DictionaryString.onboardingScreenButton, comment: ""),
-            titleColor: .ypWhite,
-            backgroundColor: .ypBlack
+            titleColor: .white,
+            backgroundColor: .black
         )
         button.addTarget(self, action: #selector(buttonPressed), for: .touchUpInside)
         return button

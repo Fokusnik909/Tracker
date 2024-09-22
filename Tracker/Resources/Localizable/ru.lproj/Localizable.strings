@@ -5,3 +5,61 @@
   Created by Артур  Арсланов on 20.09.2024.
   
 */
+// Onboarding
+"onboardingScreenButton" = "Вот это технологии!";
+"onboardingScreenFirstTitle" = "Отслеживайте только то, что хотите";
+"onboardingScreenSecondTitle" = "Даже если это \n не литры воды и йога";
+
+// TabBar
+"tabBarFirstTab" = "Трекеры";
+"tabBarSecondTab" = "Статистика";
+
+// Main screen
+"mainScreenLabel" = "Трекеры";
+"mainScreenTitle" = "Что будем отслеживать?";
+"mainScreenSearchPlaceholder" = "Поиск";
+
+// Create tracker
+"createTrackerScreenTitle" = "Создание трекера";
+"createTrackerHabitButton" = "Привычка";
+"createTrackerEventButton" = "Нерегулярные события";
+
+// New habit
+"newHabitScreenTitle" = "Новая привычка";
+"newHabitCreateButton" = "Создать";
+"newHabitCancelButton" = "Отмена";
+"newHabitNamePlaceholder" = "Введите название трекера";
+"newHabitCategoryCell" = "Категория";
+"newHabitScheduleCell" = "Расписание";
+"newHabitColor" = "Цвет";
+"newHabitScheduleSubtitle" = "Каждый день";
+
+// Category
+"categoryScreenTitle" = "Категория";
+"categoryAddButton" = "Добавить категорию";
+"categoryEmptyStateLabel" = "Привычки и события\nмогут быть объединены по смыслу\n";
+
+// New category
+"newCategoryScreenTitle" = "Новая категория";
+"newCategoryNamePlaceholder" = "Введите название категории";
+
+// Schedule
+"scheduleScreenTitle" = "Расписание";
+"scheduleMonday" = "Понедельник";
+"scheduleTuesday" = "Вторник";
+"scheduleWednesday" = "Среда";
+"scheduleThursday" = "Четверг";
+"scheduleFriday" = "Пятница";
+"scheduleSaturday" = "Суббота";
+"scheduleSunday" = "Воскресенье";
+
+// Schedule short
+"scheduleShortMonday" = "Пн";
+"scheduleShortTuesday" = "Вт";
+"scheduleShortWednesday" = "Ср";
+"scheduleShortThursday" = "Чт";
+"scheduleShortFriday" = "Пт";
+"scheduleShortSaturday" = "Сб";
+"scheduleShortSunday" = "Вс";
+
+"buttonDone" = "Готово";

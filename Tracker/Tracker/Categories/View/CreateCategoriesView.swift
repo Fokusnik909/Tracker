@@ -49,6 +49,7 @@ final class CreateCategoriesView: UIViewController {
         super.viewDidLoad()
         customTextField.addTarget(self, action: #selector(habitTextField), for: .editingChanged)
         setupUI()
+        addTapGestureToHideKeyboard()
     }
     
     @objc private func habitTextField(_ textField: UITextField) {
