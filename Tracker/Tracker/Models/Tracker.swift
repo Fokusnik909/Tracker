@@ -26,10 +26,28 @@ struct TrackerRecord: Identifiable {
     let date: Date
 }
 
+extension Tracker {
+    init(from trackerCoreData: TrackerCoreData) {
+        self.id = trackerCoreData.id ?? UUID()
+        self.name = trackerCoreData.name ?? ""
+        self.emoji = trackerCoreData.emoji ?? ""
+        
+        if let colorHex = trackerCoreData.color {
+            self.color = UIColorMarshalling().color(from: colorHex)
+        } else {
+            self.color = .black 
+        }
+        
+        self.schedule = trackerCoreData.schedule as? [Weekdays] ?? [Weekdays.monday]
+    }
+        
+}
+
 struct Emojis {
     static func randomEmoji() -> String {
         let emojis = [ "🍇", "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥬", "🥦", "🧄", "🧅", "🍄"]
         
         return emojis.randomElement() ?? "💫"
     }
+    
 }

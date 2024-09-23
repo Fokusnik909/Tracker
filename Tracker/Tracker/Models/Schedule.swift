@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Weekdays: Int, CaseIterable {
+enum Weekdays: Int, CaseIterable, Codable {
     
     static func from(date: Date) -> Weekdays? {
         let calendar = Calendar.current
@@ -56,9 +56,4 @@ enum Weekdays: Int, CaseIterable {
         case .sunday: return "Вс"
         }
     }
-}
-
-struct WeekDayModel {
-    let day: Weekdays
-    var isSelected: Bool
 }

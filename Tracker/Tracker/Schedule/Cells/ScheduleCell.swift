@@ -56,8 +56,8 @@ final class ScheduleCell: UITableViewCell {
         switchChanged?(daySwitch.isOn)
     }
     
-    func configure(with model: WeekDayModel) {
-        dayLabel.text = model.day.description
-        daySwitch.isOn = model.isSelected
+    func configure(with day: Weekdays, isSelected: Bool) {
+        dayLabel.text = day.description
+        daySwitch.isOn = isSelected
     }
 }
