@@ -16,6 +16,7 @@ final class TrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var searchText: String = ""
     private var currentDate: Date = Date()
+    private let analyticService = AnalyticsService()
     
     private lazy var trackerRecordStore = TrackerRecordStore()
     
@@ -101,6 +102,12 @@ final class TrackersViewController: UIViewController {
         fetchData()
         addTapGestureToHideKeyboard()
         
+        analyticService.report(event: "open", params: ["screen": "Main"])
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        analyticService.report(event: "close", params: ["screen": "Main"])
     }
     
     //MARK: - Private Methods
@@ -116,6 +123,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func addButton() {
+        analyticService.report(event: "click", params: ["screen": "Main", "item": "add_track"])
         let newTrackerViewController = NewCreateTrackerViewController()
         newTrackerViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: newTrackerViewController)
