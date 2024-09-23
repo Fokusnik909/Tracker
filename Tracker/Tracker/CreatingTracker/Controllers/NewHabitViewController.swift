@@ -25,9 +25,11 @@ final class NewHabitViewController: UIViewController {
     private var heightTableView: CGFloat = 0
     private var selectedWeekDays: Set<Weekdays> = []
     private let scheduleLabel = "Расписание"
+    private let categoriesLabel = "Категория"
     
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
+    private var selectCategory: String?
     
     private let allEmoji = ColorsAndEmojiCells.allEmoji
     private let allColors = ColorsAndEmojiCells.allColors
@@ -96,6 +98,7 @@ final class NewHabitViewController: UIViewController {
         addTapGestureToHideKeyboard()
     }
     
+    //MARK: - Private @objc Methods
     @objc private func habitTextField(_ textField: UITextField) {
         validateForm()
     }
@@ -108,7 +111,7 @@ final class NewHabitViewController: UIViewController {
         
         
         let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: Array(selectedWeekDays))
-        let category = TrackerCategory(title: "Hello", trackers: [tracker])
+        let category = TrackerCategory(title: selectCategory ?? "without category", trackers: [tracker])
         
         delegate?.didCreateNewTracker(tracker, category: category)
         dismiss(animated: true)
@@ -133,15 +136,22 @@ final class NewHabitViewController: UIViewController {
     private func validateForm() {
         let isFormValid: Bool
         
+        guard let text = customTextField.text, !text.isEmpty,
+              selectedEmoji != nil, selectedColor != nil else {
+            updateCreateButtonState(false)
+            return
+        }
+        
         switch trackType {
         case .regular:
-            isFormValid = customTextField.text != "" && !selectedWeekDays.isEmpty && selectedEmoji != nil && selectedColor != nil
+            isFormValid = !selectedWeekDays.isEmpty && selectCategory != nil
         case .notRegular:
-            isFormValid = customTextField.text != "" && selectedEmoji != nil && selectedColor != nil
+            isFormValid = true
         }
         
         updateCreateButtonState(isFormValid)
     }
+
     
     private func updateScheduleLabel() {
         guard let index = countRows.firstIndex(of: scheduleLabel) else { return }
@@ -155,12 +165,32 @@ final class NewHabitViewController: UIViewController {
         }
     }
     
+    private func updateCategoryLabel() {
+        guard let index = countRows.firstIndex(of: categoriesLabel) else { return }
+        let indexPath = IndexPath(row: index, section: 0)
+        
+        let category = selectCategory
+        
+        if let cell = tableView.cellForRow(at: indexPath) as? NewHabitCell {
+            cell.configure(with: categoriesLabel, detailText: category)
+        }
+    }
+    
     private func switchingAnotherController(_ selectedСell: String) {
         if selectedСell == scheduleLabel {
             let scheduleVC = ScheduleViewController()
             scheduleVC.selectedWeekDays = selectedWeekDays
             scheduleVC.delegate = self
-            navigationController?.pushViewController(scheduleVC, animated: true)
+            let navController = UINavigationController(rootViewController: scheduleVC)
+            present(navController, animated: true)
+        }
+        
+        if selectedСell == categoriesLabel {
+            let viewModel = CategoriesViewModel()
+            let categoriesVC = CategoriesView(viewModal: viewModel)
+            categoriesVC.delegate = self
+            let navController = UINavigationController(rootViewController: categoriesVC)
+            present(navController, animated: true)
         }
     }
     
@@ -187,7 +217,7 @@ extension NewHabitViewController: UITableViewDataSource {
             let daysString = selectedWeekDays.map { $0.shortName }.joined(separator: ", ")
             cell.configure(with: text, detailText: daysString)
         } else {
-            cell.configure(with: text)
+            cell.configure(with: text, detailText: selectCategory)
         }
         
         cell.accessoryType = .disclosureIndicator
@@ -429,4 +459,13 @@ extension NewHabitViewController: ScheduleViewControllerDelegate {
         self.validateForm()
     }
     
+}
+
+
+extension NewHabitViewController: CategoriesViewDelegate {
+    func didSelectCategory(_ category: String) {
+        self.selectCategory = category
+        updateCategoryLabel()
+        validateForm()
+    }
 }
