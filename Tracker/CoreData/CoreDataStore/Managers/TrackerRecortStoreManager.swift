@@ -81,6 +81,9 @@ extension TrackerRecordDataManager: TrackerRecordManagerProtocol {
     func add(trackerRecord: TrackerRecord) throws {
         do {
             try trackerRecordDataStore.add(trackerRecord: trackerRecord)
+            
+            let currentCount = UserDefaults.standard.integer(forKey: "completedTrackers")
+            UserDefaults.standard.setValue(currentCount + 1, forKey: "completedTrackers")
         } catch {
             throw TrackerRecordDataManagerError.addFailed(error)
         }
@@ -89,6 +92,11 @@ extension TrackerRecordDataManager: TrackerRecordManagerProtocol {
     func delete(id: UUID, date: Date) throws {
         do {
             try trackerRecordDataStore.delete(id: id, date: date)
+            
+            let currentCount = UserDefaults.standard.integer(forKey: "completedTrackers")
+            if currentCount > 0 {
+                UserDefaults.standard.setValue(currentCount - 1, forKey: "completedTrackers")
+            }
         } catch {
             throw TrackerRecordDataManagerError.deleteFailed(error)
         }

@@ -27,14 +27,15 @@ final class TabBarController: UITabBarController {
         separationLine()
                 
         let trackerViewController = TrackersViewController()
-        let navigationViewController = UINavigationController(rootViewController: trackerViewController)
-        navigationViewController.tabBarItem = UITabBarItem(
+        let navVCMain = UINavigationController(rootViewController: trackerViewController)
+        navVCMain.tabBarItem = UITabBarItem(
             title: NSLocalizedString(DictionaryString.tabBarFirstTab, comment: ""),
             image: UIImage(named: "TrackerBar"),
             selectedImage: nil
         )
         
         let statisticsViewController = StatisticsViewController()
+        let navVCStatistics = UINavigationController(rootViewController: statisticsViewController)
         statisticsViewController.tabBarItem = UITabBarItem(
             title: NSLocalizedString(DictionaryString.tabBarSecondTab, comment: ""),
             image: UIImage(named: "StatisticsBar"),
@@ -44,7 +45,7 @@ final class TabBarController: UITabBarController {
         tabBar.backgroundColor = .ypWhite
         tabBar.isTranslucent = false
         
-        self.viewControllers = [navigationViewController, statisticsViewController]
+        self.viewControllers = [navVCMain, navVCStatistics]
     }
     
     private func separationLine() {

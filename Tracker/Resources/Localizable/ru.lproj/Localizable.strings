@@ -37,7 +37,7 @@
 // Category
 "categoryScreenTitle" = "Категория";
 "categoryAddButton" = "Добавить категорию";
-"categoryEmptyStateLabel" = "Привычки и события\nмогут быть объединены по смыслу\n";
+"categoryEmptyStateLabel" = "Привычки и события можно\n объединить по смыслу";
 
 // New category
 "newCategoryScreenTitle" = "Новая категория";

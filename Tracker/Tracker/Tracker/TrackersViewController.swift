@@ -246,7 +246,6 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate)
         cell.delegate = self 
-        
         return cell
     }
     

@@ -25,27 +25,78 @@ final class StatisticsViewController: UIViewController {
         return label
     }()
     
+    private var stackView = UIStackView()
+    
+    private var completedTrackers: Int {
+        return getCount()
+    }
+    
+    private var completedTrackersView: StatisticItemView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
+        completedTrackersView = StatisticItemView(number: completedTrackers, text: "Завершено")
         setupUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateBestPeriodView()
+        showStatisticsOrStub()
+    }
+    
+    private func updateBestPeriodView() {
+        completedTrackersView?.updateNumber(completedTrackers)
+        completedTrackersView?.setNeedsLayout()
+    }
+    
+    private func getCount() -> Int {
+        return UserDefaults.standard.integer(forKey: "completedTrackers")
+    }
+    
+    private func showStatisticsOrStub() {
+        let hasStatistics = completedTrackers > 0
+        stubLabel.isHidden = hasStatistics
+        stubStatisticsImageView.isHidden = hasStatistics
+        stackView.isHidden = !hasStatistics
+    }
+    
     private func setupUI() {
+        setupStackView()
         view.addSubview(stubStatisticsImageView)
         view.addSubview(stubLabel)
+        view.addSubview(stackView)
         
-        stubStatisticsImageView.translatesAutoresizingMaskIntoConstraints = false
-        stubLabel.translatesAutoresizingMaskIntoConstraints = false
+        title = "Статистика"
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.ypBlack]
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        setupConstraints()
+    }
+    
+    private func setupStackView() {
+        stackView = UIStackView(arrangedSubviews: [completedTrackersView].compactMap { $0 })
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+    }
+    
+    private func setupConstraints() {
+        [stubStatisticsImageView, stubLabel, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
         NSLayoutConstraint.activate([
             stubStatisticsImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stubStatisticsImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             stubLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stubLabel.topAnchor.constraint(equalTo: stubStatisticsImageView.bottomAnchor, constant: 8)
+            stubLabel.topAnchor.constraint(equalTo: stubStatisticsImageView.bottomAnchor, constant: 8),
+            
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
-        
     }
-}
 
+}
