@@ -12,6 +12,7 @@
 		C811202C2CA1B9AB000FE274 /* StatisticItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C811202B2CA1B9AB000FE274 /* StatisticItemView.swift */; };
 		C811202E2CA569F5000FE274 /* FilterOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C811202D2CA569F5000FE274 /* FilterOptionsViewController.swift */; };
 		C81120302CA590C9000FE274 /* DeleteActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C811202F2CA590C9000FE274 /* DeleteActionSheet.swift */; };
+		C81120322CA594ED000FE274 /* extensionString.swift in Sources */ = {isa = PBXBuildFile; fileRef = C81120312CA594ED000FE274 /* extensionString.swift */; };
 		C821D2A22C493FD400FBBA75 /* EmojiAndColorsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C821D2A12C493FD400FBBA75 /* EmojiAndColorsCell.swift */; };
 		C821D2A42C49487900FBBA75 /* EmojiAndColorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C821D2A32C49487900FBBA75 /* EmojiAndColorMock.swift */; };
 		C835997C2C9C851F00F741E5 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = C835997A2C9C851F00F741E5 /* Localizable.stringsdict */; };
@@ -69,6 +70,7 @@
 		C811202B2CA1B9AB000FE274 /* StatisticItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticItemView.swift; sourceTree = "<group>"; };
 		C811202D2CA569F5000FE274 /* FilterOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsViewController.swift; sourceTree = "<group>"; };
 		C811202F2CA590C9000FE274 /* DeleteActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteActionSheet.swift; sourceTree = "<group>"; };
+		C81120312CA594ED000FE274 /* extensionString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionString.swift; sourceTree = "<group>"; };
 		C821D2A12C493FD400FBBA75 /* EmojiAndColorsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorsCell.swift; sourceTree = "<group>"; };
 		C821D2A32C49487900FBBA75 /* EmojiAndColorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorMock.swift; sourceTree = "<group>"; };
 		C835997B2C9C851F00F741E5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 				C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */,
 				C8BF13C32C51C42800367B46 /* UIColorMarshalling.swift */,
 				C811202F2CA590C9000FE274 /* DeleteActionSheet.swift */,
+				C81120312CA594ED000FE274 /* extensionString.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -563,6 +566,7 @@
 				C8A3CC842C3D581F0012CC42 /* ScheduleCell.swift in Sources */,
 				C8A3CC6F2C3997D40012CC42 /* ColorsAppExtension.swift in Sources */,
 				C81120282CA1635A000FE274 /* AnalyticsService.swift in Sources */,
+				C81120322CA594ED000FE274 /* extensionString.swift in Sources */,
 				C8A3CC8A2C43F55F0012CC42 /* GeometricParams.swift in Sources */,
 				C8BF13C22C51BC1F00367B46 /* TrackerStore.swift in Sources */,
 				C8BF13922C4D73F500367B46 /* Data Model.xcdatamodeld in Sources */,

@@ -147,6 +147,7 @@ final class TrackersViewController: UIViewController {
             self?.applyFilter(selectedFilter)
         }
         let navVC = UINavigationController(rootViewController: filterVC)
+        analyticService.report(event: "click", params: ["screen": "Main", "item": "filter"])
         present(navVC, animated: true)
     }
     
@@ -423,6 +424,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
                 print("Ошибка при удалении завершенного трекера: \(error)")
             }
         }
+        analyticService.report(event: "click", params: ["screen": "Main", "item": "track"])
         updateCellForTracker(tracker)
         updateVisibleCategories()
     }
@@ -447,17 +449,18 @@ extension TrackersViewController: UICollectionViewDelegate {
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         
         let menuItems: [UIAction] = [
-            UIAction(title: tracker.isPinned ? "Открепить" : "Закрепить", image: nil) { [weak self] _ in
+            UIAction(title: tracker.isPinned ? "unpin".localised : "pin".localised, image: nil) { [weak self] _ in
                 self?.togglePin(for: tracker)
             },
-            UIAction(title: "Редактировать", image: nil) { [weak self] _ in
+            UIAction(title: "edit".localised, image: nil) { [weak self] _ in
                 self?.editTracker(tracker, at: indexPath)
             },
-            UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
+            
+            UIAction(title: "delete".localised, image: nil, attributes: .destructive) { [weak self] _ in
                 guard let self = self else { return }
                 let actionSheet = DeleteActionSheet(
                     title: nil,
-                    message: NSLocalizedString("Уверены, что хотите удалить трекер?", comment: ""),
+                    message: "SureDeleteTracker".localised,
                     handler: { [weak self] in
                         self?.deleteTracker(indexPath)
                     }
@@ -502,6 +505,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         editHabitVC.regularTracker = tracker
 //        editHabitVC.trackerCategory = category
         editHabitVC.delegate = self
+        analyticService.report(event: "click", params: ["screen": "Main", "item": "edit"])
         present(editHabitVC, animated: true)
     }
     
@@ -513,6 +517,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         } catch {
             print("Ошибка при удалении трекера: \(error)")
         }
+        analyticService.report(event: "click", params: ["screen": "Main", "item": "delete"])
         updateVisibleCategories()
     }
     

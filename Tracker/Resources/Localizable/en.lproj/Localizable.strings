@@ -19,6 +19,10 @@
 "mainScreenLabel" = "Trackers";
 "mainScreenTitle" = "What are we going to track?";
 "mainScreenSearchPlaceholder" = "Search";
+//contextMenu
+"unpin" = "Unpin";
+"pin" = "Pin";
+"edit" = "Edit";
 
 //Statistics
 "statisticsStubLabel" = "There is nothing to analyze yet";
@@ -70,3 +74,8 @@
 "scheduleShortSunday" = "Sun";
 
 "buttonDone" = "Done";
+
+//DeleteActionSheet
+"delete" = "Delete";
+"cancel" = "Cancel";
+"SureDeleteTracker?" = "Are you sure you want to delete the tracker?";

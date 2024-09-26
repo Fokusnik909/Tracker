@@ -13,11 +13,11 @@ final class DeleteActionSheet {
     init(title: String?, message: String?, handler: @escaping () -> Void) {
         alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
         
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Удалить", comment: ""), style: .destructive) { _ in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive) { _ in
             handler()
         })
         
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Отмена", comment: ""), style: .cancel) { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) { action in
             self.alert.dismiss(animated: true)
         })
     }

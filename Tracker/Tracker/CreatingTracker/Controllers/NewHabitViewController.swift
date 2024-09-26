@@ -31,11 +31,30 @@ final class NewHabitViewController: UIViewController {
     private var selectedEmoji: String?
     private var selectedColor: UIColor?
     private var selectCategory: String?
+    private var isEditingMode: Bool = false
     
     private let allEmoji = ColorsAndEmojiCells.allEmoji
     private let allColors = ColorsAndEmojiCells.allColors
     
+    private let trackerRecords = TrackerRecordStore()
+    
     //MARK: - Private properties UI
+    
+    private lazy var editHabitLabel: UILabel = {
+        let label = UILabel()
+        label.text = NSLocalizedString("Редактирование привычки", comment: "")
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        label.isHidden = true
+        return label
+    }()
+    
+    private lazy var daysCompletedLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.isHidden = true
+        return label
+    }()
+    
     private lazy var customTextField: CustomTextField = {
         let text = NSLocalizedString(DictionaryString.newHabitNamePlaceholder, comment: "")
         let textField = CustomTextField(placeholder: text)
@@ -98,18 +117,15 @@ final class NewHabitViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
         addTapGestureToHideKeyboard()
         
         if let tracker = regularTracker {
-            customTextField.text = tracker.name
-            selectedEmoji = tracker.emoji
-            selectedColor = tracker.color
-            selectedWeekDays = Set(tracker.schedule)
-            updateScheduleLabel()
-            updateCategoryLabel()
-            validateForm()
+            setupEditingUI(for: tracker)
+            isEditingMode = true
+        } else {
+            isEditingMode = false
         }
+        setupView()
     }
     
     //MARK: - Private @objc Methods
@@ -157,6 +173,37 @@ final class NewHabitViewController: UIViewController {
             countRows = [categoriesLabel]
             heightTableView = 75
         }
+    }
+    
+    private func getDaysCompleted(for tracker: Tracker) -> Int {
+        do {
+            let trackerRecords = try trackerRecords.fetch()
+            let filteredRecords = trackerRecords.filter { $0.id == tracker.id }
+            let uniqueDates = Set(filteredRecords.map { Calendar.current.startOfDay(for: $0.date) })
+            return uniqueDates.count
+        } catch {
+            print("Ошибка при получении записей трекера: \(error)")
+            return 0
+        }
+    }
+    
+    private func setupEditingUI(for tracker: Tracker) {
+        editHabitLabel.isHidden = false
+        daysCompletedLabel.isHidden = false
+        
+        let daysCompleted = getDaysCompleted(for: tracker)
+        
+        daysCompletedLabel.text = NSLocalizedString("\(daysCompleted) дней", comment: "")
+        
+        customTextField.text = tracker.name
+        selectedEmoji = tracker.emoji
+        selectedColor = tracker.color
+        selectedWeekDays = Set(tracker.schedule)
+        
+        updateScheduleLabel()
+        updateCategoryLabel()
+
+        validateForm()
     }
     
     private func validateForm() {
@@ -404,6 +451,9 @@ private extension NewHabitViewController {
         hStack.addArrangedSubview(cancelButton)
         hStack.addArrangedSubview(createButton)
         
+        contentView.addSubview(editHabitLabel)
+        contentView.addSubview(daysCompletedLabel)
+        
         contentView.addSubview(customTextField)
         contentView.addSubview(tableView)
         contentView.addSubview(hStack)
@@ -438,11 +488,11 @@ private extension NewHabitViewController {
     }
     
     func setupLayout() {
-        [scrollView, contentView, customTextField, tableView, emojiCollectionView, hStack, cancelButton, createButton].forEach {
+        [scrollView, contentView, customTextField, tableView, emojiCollectionView, hStack, cancelButton, createButton, editHabitLabel, daysCompletedLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        //TO DO: - подумать над версткой
+        // Общие констрейны, которые не зависят от режима
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -455,30 +505,53 @@ private extension NewHabitViewController {
             contentView.trailingAnchor.constraint(equalTo: scrollView.frameLayoutGuide.trailingAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
             
-            customTextField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
             customTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             customTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
-            tableView.topAnchor.constraint(equalTo: customTextField.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: heightTableView),
             
-            emojiCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
             emojiCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             emojiCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             emojiCollectionView.heightAnchor.constraint(equalToConstant: 540),
             
-            
-            hStack.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16),
             hStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             hStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            hStack.heightAnchor.constraint(equalToConstant: 60)
+            hStack.heightAnchor.constraint(equalToConstant: 60),
+            hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
+        if isEditingMode {
+            NSLayoutConstraint.activate([
+                editHabitLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 16),
+                editHabitLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+                
+                daysCompletedLabel.topAnchor.constraint(equalTo: editHabitLabel.bottomAnchor, constant: 38),
+                daysCompletedLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+                
+                customTextField.topAnchor.constraint(equalTo: daysCompletedLabel.bottomAnchor, constant: 40),
+                
+                tableView.topAnchor.constraint(equalTo: customTextField.bottomAnchor, constant: 24),
+                
+                emojiCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+                
+                hStack.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                customTextField.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 24),
+                
+                tableView.topAnchor.constraint(equalTo: customTextField.bottomAnchor, constant: 24),
+                
+                emojiCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+                
+                hStack.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 16)
+            ])
+        }
     }
 }
+
 
 
 //MARK: - ScheduleViewControllerDelegate

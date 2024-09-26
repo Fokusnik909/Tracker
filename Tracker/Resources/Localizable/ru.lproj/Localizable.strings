@@ -18,6 +18,10 @@
 "mainScreenLabel" = "Трекеры";
 "mainScreenTitle" = "Что будем отслеживать?";
 "mainScreenSearchPlaceholder" = "Поиск";
+//contextMenu
+"unpin" = "Открепить";
+"pin" = "Закрепить";
+"edit" = "Редактировать";
 
 //Statistics
 "statisticsStubLabel" = "Анализировать пока нечего";
@@ -68,3 +72,9 @@
 "scheduleShortSunday" = "Вс";
 
 "buttonDone" = "Готово";
+
+
+//DeleteActionSheet
+"delete" = "Удалить";
+"cancel" = "Отмена";
+"SureDeleteTracker?" = "Уверены, что хотите удалить трекер?";
