@@ -42,7 +42,7 @@ final class NewHabitViewController: UIViewController {
     
     private lazy var editHabitLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("Редактирование привычки", comment: "")
+        label.text = "editTrackerLabel".localised
         label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         label.isHidden = true
         return label
@@ -62,7 +62,7 @@ final class NewHabitViewController: UIViewController {
     }()
     
     private lazy var cancelButton: UIButton = {
-        let title = NSLocalizedString(DictionaryString.newHabitCancelButton, comment: "")
+        let title = "cancel".localised
         let button = CustomButton(
             title: title,
             titleColor: .ypRed,
@@ -74,7 +74,7 @@ final class NewHabitViewController: UIViewController {
     
     
     private lazy var createButton: CustomButton = {
-        let title = regularTracker != nil ? NSLocalizedString("Save", comment: "") : NSLocalizedString("Create", comment: "")
+        let title = regularTracker != nil ? "buttonSave".localised : "createButton".localised
         let button = CustomButton(
             title: title,
             titleColor: .ypWhite,
@@ -193,7 +193,12 @@ final class NewHabitViewController: UIViewController {
         
         let daysCompleted = getDaysCompleted(for: tracker)
         
-        daysCompletedLabel.text = NSLocalizedString("\(daysCompleted) дней", comment: "")
+        let tasksString = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfTasks", comment: "Number of remaining tasks"),
+            daysCompleted
+        )
+        
+        daysCompletedLabel.text = tasksString
         
         customTextField.text = tracker.name
         selectedEmoji = tracker.emoji
@@ -492,7 +497,6 @@ private extension NewHabitViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        // Общие констрейны, которые не зависят от режима
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),

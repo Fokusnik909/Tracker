@@ -33,11 +33,11 @@
 "createTrackerScreenTitle" = "Creating a tracker";
 "createTrackerHabitButton" = "Habit";
 "createTrackerEventButton" = "Irregular events";
+//EditMode
+"editTrackerLabel" = "Editing a habit";
 
 // New habit
 "newHabitScreenTitle" = "A new habit";
-"newHabitCreateButton" = "Create";
-"newHabitCancelButton" = "Cancel";
 "newHabitNamePlaceholder" = "Enter the name of the tracker";
 "newHabitCategoryCell" = "Category";
 "newHabitScheduleCell" = "Schedule";
@@ -73,7 +73,10 @@
 "scheduleShortSaturday" = "Sat";
 "scheduleShortSunday" = "Sun";
 
+//Buttons
+"createButton" = "Create";
 "buttonDone" = "Done";
+"buttonSave" = "Save";
 
 //DeleteActionSheet
 "delete" = "Delete";

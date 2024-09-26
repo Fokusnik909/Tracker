@@ -32,6 +32,8 @@
 "createTrackerScreenTitle" = "Создание трекера";
 "createTrackerHabitButton" = "Привычка";
 "createTrackerEventButton" = "Нерегулярные события";
+//EditMode
+"editTrackerLabel" = "Редактирование привычки";
 
 // New habit
 "newHabitScreenTitle" = "Новая привычка";
@@ -71,7 +73,10 @@
 "scheduleShortSaturday" = "Сб";
 "scheduleShortSunday" = "Вс";
 
+//Buttons
+"createButton" = "Создать";
 "buttonDone" = "Готово";
+"buttonSave" = "Сохранить";
 
 
 //DeleteActionSheet
