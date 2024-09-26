@@ -22,6 +22,11 @@ enum DictionaryString {
     static let mainScreenTitle = "mainScreenTitle"
     static let mainScreenSearchPlaceholder = "mainScreenSearchPlaceholder"
     
+    //Statistics
+    static let statisticsStubLabel = "statisticsStubLabel"
+    static let statisticsCompletedTrackers = "statisticsCompletedTrackers"
+    static let statisticsTitle = "statisticsTitle"
+    
     // Create tracker
     static let createTrackerScreenTitle = "createTrackerScreenTitle"
     static let createTrackerHabitButton = "createTrackerHabitButton"

@@ -58,9 +58,26 @@ final class CreateCategoriesView: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let title = customTextField.text, !title.isEmpty else { return }
+        
+        if viewModel.categories.contains(where: { $0.title == title }) {
+            showDuplicateCategoryAlert()
+            return
+        }
+        
         delegate?.didSelectCategory(title)
         viewModel.onCategoryCreated?(title)
         dismiss(animated: true)
+    }
+    
+    private func showDuplicateCategoryAlert() {
+        let alert = UIAlertController(
+            title: "222",
+            message: "333",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "444", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
     
     private func validateForm() {

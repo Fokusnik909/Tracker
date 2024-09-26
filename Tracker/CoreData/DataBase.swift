@@ -64,12 +64,13 @@ final class DataBase {
     }
     
     //Update
-    
     //update tracker
     func updateTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
         setTrackerCoreDataValues(trackerCoreData, from: tracker)
         saveContext()
     }
+    
+    
     
     //update category
     func updateCategory(category: TrackerCategoryCoreData, title: String) {
@@ -83,14 +84,22 @@ final class DataBase {
         saveContext()
     }
     
-     func setTrackerCoreDataValues(_ trackerCoreData: TrackerCoreData, from tracker: Tracker) {
+    
+    func setTrackerCoreDataValues(_ trackerCoreData: TrackerCoreData, from tracker: Tracker) {
         trackerCoreData.id = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.emoji = tracker.emoji
-         trackerCoreData.color = UIColorMarshalling.hexString(from: tracker.color)
-        trackerCoreData.schedule = tracker.schedule.map { $0.rawValue } as NSObject
+        trackerCoreData.color = UIColorMarshalling.hexString(from: tracker.color)
+        trackerCoreData.isPinned = tracker.isPinned
+        
+        do {
+            let scheduleData = try JSONEncoder().encode(tracker.schedule)
+            trackerCoreData.schedule = scheduleData as NSData
+        } catch {
+            print("Ошибка при сериализации расписания: \(error.localizedDescription)")
+        }
     }
-    
+
     func tracker(from trackerCoreData: TrackerCoreData) -> Tracker? {
         guard let id = trackerCoreData.id,
               let name = trackerCoreData.name,
@@ -103,7 +112,8 @@ final class DataBase {
             return nil
         }
         let color = UIColorMarshalling.color(from: colorHex)
+        let isPinned = trackerCoreData.isPinned
         
-        return Tracker(id: id, name: name, color: color, emoji: emoji, schedule: schedule)
+        return Tracker(id: id, name: name, color: color, emoji: emoji, schedule: schedule, isPinned: isPinned)
     }
 }

@@ -18,7 +18,7 @@ final class StatisticsViewController: UIViewController {
     
     private lazy var stubLabel: UILabel = {
         let label = UILabel()
-        label.text = "Анализировать пока нечего"
+        label.text = NSLocalizedString(DictionaryString.statisticsStubLabel, comment: "")
         label.font = .systemFont(ofSize: .init(12), weight: .semibold)
         label.textColor = .ypBlack
         label.textAlignment = .center
@@ -36,8 +36,10 @@ final class StatisticsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypWhite
-        completedTrackersView = StatisticItemView(number: completedTrackers, text: "Завершено")
+        let completedTrackersLabel = NSLocalizedString(DictionaryString.statisticsCompletedTrackers, comment: "")
+        completedTrackersView = StatisticItemView(number: completedTrackers, text: completedTrackersLabel)
         setupUI()
+        print(getCount())
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,7 +70,7 @@ final class StatisticsViewController: UIViewController {
         view.addSubview(stubLabel)
         view.addSubview(stackView)
         
-        title = "Статистика"
+        title = NSLocalizedString(DictionaryString.statisticsTitle, comment: "")
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.ypBlack]
         navigationController?.navigationBar.prefersLargeTitles = true
         

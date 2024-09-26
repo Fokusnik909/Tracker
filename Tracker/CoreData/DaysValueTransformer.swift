@@ -29,7 +29,10 @@ final class DaysValueTransformer: ValueTransformer {
     }
     
     override func reverseTransformedValue(_ value: Any?) -> Any? {
-        guard let data = value as? Data else { return nil }
+        guard let data = value as? Data else {
+            print("Ошибка: данные отсутствуют или неверного типа")
+            return nil
+        }
         do {
             let days = try JSONDecoder().decode([Weekdays].self, from: data)
             return days

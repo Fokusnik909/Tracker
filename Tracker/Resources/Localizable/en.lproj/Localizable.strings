@@ -20,6 +20,11 @@
 "mainScreenTitle" = "What are we going to track?";
 "mainScreenSearchPlaceholder" = "Search";
 
+//Statistics
+"statisticsStubLabel" = "There is nothing to analyze yet";
+"statisticsCompletedTrackers" = "Completed";
+"statisticsTitle" = "Statistics";
+
 // Create tracker
 "createTrackerScreenTitle" = "Creating a tracker";
 "createTrackerHabitButton" = "Habit";

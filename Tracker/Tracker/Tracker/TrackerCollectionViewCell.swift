@@ -63,6 +63,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
+    private let pinImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName:"pin.fill")
+        imageView.tintColor = .ypWhite
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     //    Или в данной ситуации лучше было использовать замыкание вместо делагатов?
     
     //    var completionHandler: ((Tracker, Bool)->Void)?
@@ -84,44 +92,18 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(daysLabel)
         contentView.addSubview(completeButton)
+        contentView.addSubview(pinImageView)
         
         completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
     }
     
-    private func setupLayout() {
-        let sizeButton = CGFloat(34)
-        
-        NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            containerView.heightAnchor.constraint(equalToConstant: 90),
-            
-            emojiLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
-            emojiLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-            emojiLabel.widthAnchor.constraint(equalToConstant: 24),
-            emojiLabel.heightAnchor.constraint(equalToConstant: 24),
-            
-            titleLabel.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
-            titleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12),
-            
-            daysLabel.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 16),
-            daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            
-            completeButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 8),
-            completeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
-            completeButton.widthAnchor.constraint(equalToConstant: sizeButton),
-            completeButton.heightAnchor.constraint(equalToConstant: sizeButton)
-        ])
-        completeButton.layer.cornerRadius = sizeButton / 2
-    }
     
-    func configure(with tracker: Tracker, isCompleted: Bool, completionCount: Int, calendar: Date) {
+    
+    func configure(with tracker: Tracker, isCompleted: Bool, completionCount: Int, calendar: Date, isPinned: Bool) {
         self.isComplete = isCompleted
         self.calendarDate = calendar
         self.tracker = tracker
+        self.pinImageView.isHidden = !isPinned
 
         completeButton.isSelected = isCompleted
         isSelectedButton(completeButton, trackerColor: tracker.color)
@@ -163,5 +145,40 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         isSelectedButton(sender, trackerColor: tracker.color)
 
         delegate?.didTapCompleteButton(tracker: tracker, isCompleted: sender.isSelected)
+    }
+    
+    private func setupLayout() {
+        let sizeButton = CGFloat(34)
+        
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            containerView.heightAnchor.constraint(equalToConstant: 90),
+            
+            emojiLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
+            emojiLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            emojiLabel.widthAnchor.constraint(equalToConstant: 24),
+            emojiLabel.heightAnchor.constraint(equalToConstant: 24),
+            
+            titleLabel.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 8),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
+            titleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12),
+            
+            daysLabel.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 16),
+            daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            
+            completeButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 8),
+            completeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            completeButton.widthAnchor.constraint(equalToConstant: sizeButton),
+            completeButton.heightAnchor.constraint(equalToConstant: sizeButton),
+            
+            pinImageView.heightAnchor.constraint(equalToConstant: 14),
+            pinImageView.widthAnchor.constraint(equalToConstant: 12),
+            pinImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 18),
+            pinImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
+        ])
+        completeButton.layer.cornerRadius = sizeButton / 2
     }
 }

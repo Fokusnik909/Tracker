@@ -22,8 +22,10 @@ protocol TrackerManagerProtocol {
     func numberOfRowsInSection(_ section: Int) -> Int
     func tracker(at indexPath: IndexPath) -> Tracker?
     func addTracker(_ tracker: Tracker, category: TrackerCategory) throws
+    func updateTracker(_ tracker: Tracker, category: String) throws
     func deleteTracker(at indexPath: IndexPath) throws
     func deleteTrackers() throws
+    func togglePin(for tracker: Tracker) throws
 }
 
 
@@ -34,6 +36,8 @@ final class TrackerStoreManager: NSObject {
         case noTrackersFound
         case failedToAddTracker(Error)
         case failedToDeleteTracker(Error)
+        case failedToUpdateTracker(Error)
+        case failedToTogglePin(Error)
     }
     
     weak var delegate: TrackerStoreDelegate?
@@ -91,6 +95,25 @@ extension TrackerStoreManager: TrackerManagerProtocol {
         }
     }
     
+    func updateTracker(_ tracker: Tracker, category: String) throws {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
+            throw DataProviderError.noTrackersFound
+        }
+        
+        dataStore.update(trackerCoreData, tracker: tracker)
+        
+        if let categoryCoreData = trackerCoreData.category {
+            
+            categoryCoreData.title = category
+        }
+        
+        do {
+            try dataStore.managedObjectContext?.save()
+        } catch {
+            throw DataProviderError.failedToUpdateTracker(error)
+        }
+    }
+    
     func deleteTracker(at indexPath: IndexPath) throws {
         let tracker = fetchedResultsController.object(at: indexPath)
         do {
@@ -111,6 +134,20 @@ extension TrackerStoreManager: TrackerManagerProtocol {
             } catch {
                 throw DataProviderError.failedToDeleteTracker(error)
             }
+        }
+    }
+    
+    func togglePin(for tracker: Tracker) throws {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
+            throw DataProviderError.noTrackersFound
+        }
+        
+        do {
+            try dataStore.togglePin(for: trackerCoreData)
+            
+            print("Состояние закрепления трекера переключено на: \(trackerCoreData.isPinned)")
+        } catch {
+            throw DataProviderError.failedToUpdateTracker(error)
         }
     }
     
@@ -136,6 +173,7 @@ extension TrackerStoreManager: NSFetchedResultsControllerDelegate {
         case .delete:
             if let indexPath = indexPath {
                 deletedIndexes.insert(indexPath.item)
+                
             }
         case .insert:
             if let newIndexPath = newIndexPath {

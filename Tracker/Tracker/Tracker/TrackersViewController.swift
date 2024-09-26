@@ -17,6 +17,8 @@ final class TrackersViewController: UIViewController {
     private var searchText: String = ""
     private var currentDate: Date = Date()
     private let analyticService = AnalyticsService()
+    private var pinnedTrackers: [Tracker] = []
+    private var unpinnedCategories: [TrackerCategory] = []
     
     private lazy var trackerRecordStore = TrackerRecordStore()
     
@@ -141,6 +143,27 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
     }
     
+    func splitPinnedTrackers(from categories: [TrackerCategory]) {
+        pinnedTrackers.removeAll()
+        unpinnedCategories = categories
+        
+        for category in categories {
+            let pinned = category.trackers.filter { $0.isPinned }
+            let unpinned = category.trackers.filter { !$0.isPinned }
+            
+            if !pinned.isEmpty {
+                pinnedTrackers.append(contentsOf: pinned)
+            }
+            
+            if !unpinned.isEmpty {
+                let updatedCategory = TrackerCategory(title: category.title, trackers: unpinned)
+                unpinnedCategories.append(updatedCategory)
+            }
+        }
+    }
+
+
+    
     private func updateEmptyState() {
         let isEmpty = visibleCategories.isEmpty
         imageStar.isHidden = !isEmpty
@@ -242,10 +265,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         let tracker = category.trackers[indexPath.row]
         
         let isComplete = isTrackerCompleted(id: tracker.id)
+        let isPinned = tracker.isPinned
         let counter = completedTrackers.filter { $0.id == tracker.id }.count
         
-        cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate)
-        cell.delegate = self 
+        cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate, isPinned: isPinned)
+        cell.delegate = self
         return cell
     }
     
@@ -289,6 +313,18 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 //MARK: - NewCreateTrackerDelegate
 extension TrackersViewController: NewHabitDelegate {
+    func didUpdateTracker(_ tracker: Tracker, category: TrackerCategory) {
+        do {
+            try trackerManager?.updateTracker(tracker, category: category.title)
+            fetchData()
+        } catch {
+            print(#function, error)
+        }
+        updateVisibleCategories()
+        collectionView.reloadData()
+    }
+    
+    
     func didCreateNewTracker(_ tracker: Tracker, category: TrackerCategory) {
         do {
             try trackerManager?.addTracker(tracker, category: category)
@@ -300,6 +336,7 @@ extension TrackersViewController: NewHabitDelegate {
         collectionView.reloadData()
         
     }
+    
 }
 
 //MARK: - TrackerCollectionViewCellDelegate
@@ -346,6 +383,64 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
     }
 }
 
+
+// MARK: - UICollectionViewDelegate
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+
+        let menuItems: [UIAction] = [
+            UIAction(title: tracker.isPinned ? "Открепить" : "Закрепить", image: nil) { [weak self] _ in
+                self?.togglePin(for: tracker)
+                
+            },
+            UIAction(title: "Редактировать", image: nil) { [weak self] _ in
+                self?.editTracker(tracker, at: indexPath)
+            },
+            UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
+                self?.deleteTracker(indexPath)
+            }
+        ]
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            return UIMenu(title: "", children: menuItems)
+        }
+    }
+    
+    private func togglePin(for tracker: Tracker) {
+        do {
+            try trackerManager?.togglePin(for: tracker)
+            fetchData()
+            updateCellForTracker(tracker)
+            updateVisibleCategories()
+            collectionView.reloadData()
+        } catch {
+            print("Ошибка при переключении закрепления трекера: \(error)")
+        }
+    }
+    
+    private func editTracker(_ tracker: Tracker, at indexPath: IndexPath) {
+        let category = visibleCategories[indexPath.section]
+        let editHabitVC = NewHabitViewController(trackType: .regular)
+        editHabitVC.regularTracker = tracker
+//        editHabitVC.trackerCategory = category
+        editHabitVC.delegate = self
+        present(editHabitVC, animated: true)
+    }
+    
+    private func deleteTracker(_ index: IndexPath) {
+        do {
+            try trackerManager?.deleteTracker(at: index)
+            fetchData() 
+            collectionView.reloadData()
+        } catch {
+            print("Ошибка при удалении трекера: \(error)")
+        }
+        updateVisibleCategories()
+    }
+
+}
+
 //MARK: - UISearchResultsUpdating
 extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
@@ -357,11 +452,10 @@ extension TrackersViewController: UISearchResultsUpdating {
 extension TrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
         
-        collectionView.performBatchUpdates({
-            collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
-            collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
-        }, completion: nil)
-        
+//        collectionView.performBatchUpdates({
+//            collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
+//            collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
+//        }, completion: nil)
     }
 }
 

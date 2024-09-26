@@ -9,6 +9,7 @@ import UIKit
 
 protocol NewHabitDelegate: AnyObject {
     func didCreateNewTracker(_ tracker: Tracker, category: TrackerCategory)
+    func didUpdateTracker(_ tracker: Tracker, category: TrackerCategory)
 }
 
 final class NewHabitViewController: UIViewController {
@@ -18,7 +19,7 @@ final class NewHabitViewController: UIViewController {
     var trackType: TrackType
     var countRows = [String]()
     var regularTracker: Tracker?
-    
+
     //MARK: - Private Property
     private var params = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 5)
     
@@ -54,7 +55,7 @@ final class NewHabitViewController: UIViewController {
     
     
     private lazy var createButton: CustomButton = {
-        let title = NSLocalizedString(DictionaryString.newHabitCreateButton, comment: "")
+        let title = regularTracker != nil ? NSLocalizedString("Save", comment: "") : NSLocalizedString("Create", comment: "")
         let button = CustomButton(
             title: title,
             titleColor: .ypWhite,
@@ -99,6 +100,16 @@ final class NewHabitViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         addTapGestureToHideKeyboard()
+        
+        if let tracker = regularTracker {
+            customTextField.text = tracker.name
+            selectedEmoji = tracker.emoji
+            selectedColor = tracker.color
+            selectedWeekDays = Set(tracker.schedule)
+            updateScheduleLabel()
+            updateCategoryLabel()
+            validateForm()
+        }
     }
     
     //MARK: - Private @objc Methods
@@ -108,15 +119,29 @@ final class NewHabitViewController: UIViewController {
     
     @objc private func createButtonPressed() {
         guard let name = customTextField.text, !name.isEmpty,
-                  let selectedColor = selectedColor,
-                  let selectedEmoji = selectedEmoji else { return }
+              let selectedColor = selectedColor,
+              let selectedEmoji = selectedEmoji else { return }
         
-        let tracker = Tracker(id: UUID(), name: name, color: selectedColor, emoji: selectedEmoji, schedule: Array(selectedWeekDays))
-        let category = TrackerCategory(title: selectCategory ?? "without category", trackers: [tracker])
+        let tracker = Tracker(
+            id: regularTracker?.id ?? UUID(),
+            name: name,
+            color: selectedColor,
+            emoji: selectedEmoji,
+            schedule: Array(selectedWeekDays),
+            isPinned: false
+        )
         
-        delegate?.didCreateNewTracker(tracker, category: category)
+        let category = TrackerCategory(title: selectCategory ?? "Без категории", trackers: [tracker])
+        
+        if let _ = regularTracker {
+            delegate?.didUpdateTracker(tracker, category: category)
+        } else {
+            delegate?.didCreateNewTracker(tracker, category: category)
+        }
+        
         dismiss(animated: true)
     }
+
     
     @objc private func cancelButtonPressed() {
         dismiss(animated: true)
