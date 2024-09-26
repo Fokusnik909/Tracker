@@ -10,6 +10,8 @@
 		97C947B2A4E46647E8EFCAB5 /* Pods_Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95824FD1413AFCA19C0920C5 /* Pods_Tracker.framework */; };
 		C81120282CA1635A000FE274 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C81120272CA1635A000FE274 /* AnalyticsService.swift */; };
 		C811202C2CA1B9AB000FE274 /* StatisticItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C811202B2CA1B9AB000FE274 /* StatisticItemView.swift */; };
+		C811202E2CA569F5000FE274 /* FilterOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C811202D2CA569F5000FE274 /* FilterOptionsViewController.swift */; };
+		C81120302CA590C9000FE274 /* DeleteActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C811202F2CA590C9000FE274 /* DeleteActionSheet.swift */; };
 		C821D2A22C493FD400FBBA75 /* EmojiAndColorsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C821D2A12C493FD400FBBA75 /* EmojiAndColorsCell.swift */; };
 		C821D2A42C49487900FBBA75 /* EmojiAndColorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C821D2A32C49487900FBBA75 /* EmojiAndColorMock.swift */; };
 		C835997C2C9C851F00F741E5 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = C835997A2C9C851F00F741E5 /* Localizable.stringsdict */; };
@@ -65,6 +67,8 @@
 		95824FD1413AFCA19C0920C5 /* Pods_Tracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C81120272CA1635A000FE274 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		C811202B2CA1B9AB000FE274 /* StatisticItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticItemView.swift; sourceTree = "<group>"; };
+		C811202D2CA569F5000FE274 /* FilterOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsViewController.swift; sourceTree = "<group>"; };
+		C811202F2CA590C9000FE274 /* DeleteActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteActionSheet.swift; sourceTree = "<group>"; };
 		C821D2A12C493FD400FBBA75 /* EmojiAndColorsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorsCell.swift; sourceTree = "<group>"; };
 		C821D2A32C49487900FBBA75 /* EmojiAndColorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorMock.swift; sourceTree = "<group>"; };
 		C835997B2C9C851F00F741E5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
@@ -262,6 +266,7 @@
 				C869D9662C2AE49E000DB992 /* TrackersViewController.swift */,
 				C869D9D52C32C035000DB992 /* TrackerCollectionViewCell.swift */,
 				C8A3CC8B2C4401720012CC42 /* TrackerHeader.swift */,
+				C811202D2CA569F5000FE274 /* FilterOptionsViewController.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -323,6 +328,7 @@
 				C8A3CC932C454EC70012CC42 /* extensionDate.swift */,
 				C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */,
 				C8BF13C32C51C42800367B46 /* UIColorMarshalling.swift */,
+				C811202F2CA590C9000FE274 /* DeleteActionSheet.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -541,6 +547,7 @@
 				C8FD498E2C9463B4003B0F67 /* CreateCategoriesView.swift in Sources */,
 				C8A3CC7E2C3D51030012CC42 /* ScheduleViewController.swift in Sources */,
 				C821D2A42C49487900FBBA75 /* EmojiAndColorMock.swift in Sources */,
+				C81120302CA590C9000FE274 /* DeleteActionSheet.swift in Sources */,
 				C8A3CC7B2C3C69300012CC42 /* CustomTextField.swift in Sources */,
 				C8BF13C62C51C65A00367B46 /* TrackerCategoryStore.swift in Sources */,
 				C869D9672C2AE49E000DB992 /* TrackersViewController.swift in Sources */,
@@ -562,6 +569,7 @@
 				C8A3CC862C3EA76D0012CC42 /* CustomButton.swift in Sources */,
 				C83599802C9C9D8C00F741E5 /* PageModel.swift in Sources */,
 				C869D9522C2AD764000DB992 /* ViewController.swift in Sources */,
+				C811202E2CA569F5000FE274 /* FilterOptionsViewController.swift in Sources */,
 				C869D9632C2AE22D000DB992 /* TabBarController.swift in Sources */,
 				C869D94E2C2AD764000DB992 /* AppDelegate.swift in Sources */,
 				C869D9692C2AE4C2000DB992 /* StatisticsViewController.swift in Sources */,

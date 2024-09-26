@@ -20,7 +20,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private var isComplete = false
     private var calendarDate = Date()
     
-    private let containerView: UIView = {
+    let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
@@ -80,6 +80,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         setupViews()
         setupLayout()
+    }
+    
+    func getContainerViewBounds() -> CGRect {
+        return containerView.bounds
     }
     
     required init?(coder: NSCoder) {
