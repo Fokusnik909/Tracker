@@ -19,6 +19,7 @@ final class NewHabitViewController: UIViewController {
     var trackType: TrackType
     var countRows = [String]()
     var regularTracker: Tracker?
+    var editTrackerCategory: TrackerCategory?
 
     //MARK: - Private Property
     private var params = GeometricParams(cellCount: 6, leftInset: 16, rightInset: 16, cellSpacing: 5)
@@ -133,6 +134,7 @@ final class NewHabitViewController: UIViewController {
         validateForm()
     }
     
+    
     @objc private func createButtonPressed() {
         guard let name = customTextField.text, !name.isEmpty,
               let selectedColor = selectedColor,
@@ -147,9 +149,9 @@ final class NewHabitViewController: UIViewController {
             isPinned: false
         )
         
-        let category = TrackerCategory(title: selectCategory ?? "Без категории", trackers: [tracker])
+        let category = TrackerCategory(title: selectCategory ?? "", trackers: [tracker])
         
-        if let _ = regularTracker {
+        if isEditingMode {
             delegate?.didUpdateTracker(tracker, category: category)
         } else {
             delegate?.didCreateNewTracker(tracker, category: category)
@@ -204,6 +206,7 @@ final class NewHabitViewController: UIViewController {
         selectedEmoji = tracker.emoji
         selectedColor = tracker.color
         selectedWeekDays = Set(tracker.schedule)
+        selectCategory = editTrackerCategory?.title
         
         updateScheduleLabel()
         updateCategoryLabel()
@@ -256,22 +259,25 @@ final class NewHabitViewController: UIViewController {
         }
     }
     
-    private func switchingAnotherController(_ selectedСell: String) {
-        if selectedСell == scheduleLabel {
+    private func switchingAnotherController(_ selectedCell: String) {
+        let viewController: UIViewController
+        
+        if selectedCell == scheduleLabel {
             let scheduleVC = ScheduleViewController()
             scheduleVC.selectedWeekDays = selectedWeekDays
             scheduleVC.delegate = self
-            let navController = UINavigationController(rootViewController: scheduleVC)
-            present(navController, animated: true)
-        }
-        
-        if selectedСell == categoriesLabel {
+            viewController = scheduleVC
+        } else if selectedCell == categoriesLabel {
             let viewModel = CategoriesViewModel()
             let categoriesVC = CategoriesView(viewModal: viewModel)
             categoriesVC.delegate = self
-            let navController = UINavigationController(rootViewController: categoriesVC)
-            present(navController, animated: true)
+            viewController = categoriesVC
+        } else {
+            return
         }
+        
+        let navController = UINavigationController(rootViewController: viewController)
+        present(navController, animated: true)
     }
     
     private func updateCreateButtonState(_ isValid: Bool) {
@@ -389,31 +395,29 @@ extension NewHabitViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            let previouslySelectedEmoji = selectedEmoji
-            selectedEmoji = allEmoji[indexPath.item]
-            
-            if let previouslySelectedEmoji = previouslySelectedEmoji,
-               let previousIndex = allEmoji.firstIndex(of: previouslySelectedEmoji) {
-                collectionView.reloadItems(at: [IndexPath(item: previousIndex, section: 0)])
+        collectionView.performBatchUpdates({
+            if indexPath.section == 0 {
+                let previouslySelectedEmoji = selectedEmoji
+                selectedEmoji = allEmoji[indexPath.item]
+                
+                if let previouslySelectedEmoji = previouslySelectedEmoji,
+                   let previousIndex = allEmoji.firstIndex(of: previouslySelectedEmoji) {
+                    collectionView.reloadItems(at: [IndexPath(item: previousIndex, section: 0)])
+                }
+            } else {
+                let previouslySelectedColor = selectedColor
+                selectedColor = allColors[indexPath.item]
+                
+                if let previouslySelectedColor = previouslySelectedColor,
+                   let previousIndex = allColors.firstIndex(of: previouslySelectedColor) {
+                    collectionView.reloadItems(at: [IndexPath(item: previousIndex, section: 1)])
+                }
             }
             
             collectionView.reloadItems(at: [indexPath])
-            
-        } else {
-            let previouslySelectedColor = selectedColor
-            selectedColor = allColors[indexPath.item]
-            
-            if let previouslySelectedColor = previouslySelectedColor,
-               let previousIndex = allColors.firstIndex(of: previouslySelectedColor) {
-                collectionView.reloadItems(at: [IndexPath(item: previousIndex, section: 1)])
-            }
-            
-            collectionView.reloadItems(at: [indexPath])
-        }
+        }, completion: nil)
         
         validateForm()
-
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -575,4 +579,5 @@ extension NewHabitViewController: CategoriesViewDelegate {
         updateCategoryLabel()
         validateForm()
     }
+    
 }

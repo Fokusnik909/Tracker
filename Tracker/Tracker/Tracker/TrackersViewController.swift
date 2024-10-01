@@ -23,36 +23,39 @@ final class TrackersViewController: UIViewController {
 
     
     private lazy var trackerRecordStore = TrackerRecordStore()
+    private var trackerManager: TrackerManagerProtocol?
+    private var trackerCategoryManager: TrackerCategoryManagerProtocol?
+    private var trackerRecordManager: TrackerRecordManagerProtocol?
     
-    private lazy var trackerManager: TrackerManagerProtocol? = {
-        let store = TrackerStore()
-        do {
-            return try TrackerStoreManager(store, delegate: self)
-        } catch {
-            print("Не удалось инициализировать trackerManager: \(error)")
-            return nil
-        }
-    }()
-    
-    private lazy var trackerCategoryManager: TrackerCategoryManagerProtocol? = {
-       let store = TrackerCategoryStore()
-        do {
-            return try TrackerCategoryStoreManager(trackerCategoryStore: store, delegate: self)
-        } catch {
-            print("Не удалось инициализировать TrackerCategoryDataProvider: \(error)")
-            return nil
-        }
-    }()
-    
-    private lazy var trackerRecordManager: TrackerRecordManagerProtocol? = {
-        let store = TrackerRecordStore()
-        do {
-            return try TrackerRecordDataManager(trackerRecordStore: store, delegate: self)
-        } catch {
-            print("Не удалось инициализировать TrackerRecordDataProvider: \(error)")
-            return nil
-        }
-    }()
+//    private lazy var trackerManager: TrackerManagerProtocol? = {
+//        let store = TrackerStore()
+//        do {
+//            return try TrackerStoreManager(store, delegate: self)
+//        } catch {
+//            print("Не удалось инициализировать trackerManager: \(error)")
+//            return nil
+//        }
+//    }()
+//    
+//    private lazy var trackerCategoryManager: TrackerCategoryManagerProtocol? = {
+//       let store = TrackerCategoryStore()
+//        do {
+//            return try TrackerCategoryStoreManager(trackerCategoryStore: store, delegate: self)
+//        } catch {
+//            print("Не удалось инициализировать TrackerCategoryDataProvider: \(error)")
+//            return nil
+//        }
+//    }()
+//    
+//    private lazy var trackerRecordManager: TrackerRecordManagerProtocol? = {
+//        let store = TrackerRecordStore()
+//        do {
+//            return try TrackerRecordDataManager(trackerRecordStore: store, delegate: self)
+//        } catch {
+//            print("Не удалось инициализировать TrackerRecordDataProvider: \(error)")
+//            return nil
+//        }
+//    }()
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -105,11 +108,9 @@ final class TrackersViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        initializeManagers()
         loadFilter()
-        layout()
-        setupFilterButton()
-        setupNavigationBar()
-        setupCollectionView()
+        setupUIComponents()
         fetchData()
         addTapGestureToHideKeyboard()
         analyticService.report(event: "open", params: ["screen": "Main"])
@@ -131,6 +132,23 @@ final class TrackersViewController: UIViewController {
         } catch {
             print("Ошибка при загрузке данных: \(error)")
         }
+    }
+    
+    private func initializeManagers() {
+        do {
+            trackerManager = try TrackerStoreManager(TrackerStore(), delegate: self)
+            trackerCategoryManager = try TrackerCategoryStoreManager(trackerCategoryStore: TrackerCategoryStore(), delegate: self)
+            trackerRecordManager = try TrackerRecordDataManager(trackerRecordStore: TrackerRecordStore(), delegate: self)
+        } catch {
+            print("Ошибка инициализации: \(error)")
+        }
+    }
+    
+    private func setupUIComponents() {
+        layout()
+        setupFilterButton()
+        setupNavigationBar()
+        setupCollectionView()
     }
     
     @objc private func addButton() {
@@ -515,10 +533,10 @@ extension TrackersViewController: UICollectionViewDelegate {
     }
     
     private func editTracker(_ tracker: Tracker, at indexPath: IndexPath) {
-//        let category = visibleCategories[indexPath.section]
+        let category = visibleCategories[indexPath.section]
         let editHabitVC = NewHabitViewController(trackType: .regular)
         editHabitVC.regularTracker = tracker
-//        editHabitVC.trackerCategory = category
+        editHabitVC.editTrackerCategory = category
         editHabitVC.delegate = self
         analyticService.report(event: "click", params: ["screen": "Main", "item": "edit"])
         present(editHabitVC, animated: true)

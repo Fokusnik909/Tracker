@@ -71,11 +71,11 @@ final class CreateCategoriesView: UIViewController {
     
     private func showDuplicateCategoryAlert() {
         let alert = UIAlertController(
-            title: "222",
-            message: "333",
+            title: "oops".localised,
+            message: "categoryExists".localised,
             preferredStyle: .alert
         )
-        let okAction = UIAlertAction(title: "444", style: .default)
+        let okAction = UIAlertAction(title: "ok".localised, style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
     }

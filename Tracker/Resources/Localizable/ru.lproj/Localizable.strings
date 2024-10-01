@@ -50,6 +50,8 @@
 "categoryScreenTitle" = "Категория";
 "categoryAddButton" = "Добавить категорию";
 "categoryEmptyStateLabel" = "Привычки и события можно\n объединить по смыслу";
+"oops" = "Упс";
+"categoryExists" = "Данная категория уже существует";
 
 // New category
 "newCategoryScreenTitle" = "Новая категория";
@@ -84,3 +86,4 @@
 "delete" = "Удалить";
 "cancel" = "Отмена";
 "SureDeleteTracker?" = "Уверены, что хотите удалить трекер?";
+"ok" = "Ок";

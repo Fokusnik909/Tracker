@@ -49,6 +49,8 @@
 "categoryScreenTitle" = "Category";
 "categoryAddButton" = "Add a category";
 "categoryEmptyStateLabel" = "Habits and events\ncan be combined in meaning\n";
+"oops" = "Oops";
+"categoryExists" = "This category already exists";
 
 // New category
 "newCategoryScreenTitle" = "New category";
@@ -83,3 +85,4 @@
 "delete" = "Delete";
 "cancel" = "Cancel";
 "SureDeleteTracker?" = "Are you sure you want to delete the tracker?";
+"ok" = "Ok";
