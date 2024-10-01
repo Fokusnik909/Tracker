@@ -27,35 +27,6 @@ final class TrackersViewController: UIViewController {
     private var trackerCategoryManager: TrackerCategoryManagerProtocol?
     private var trackerRecordManager: TrackerRecordManagerProtocol?
     
-//    private lazy var trackerManager: TrackerManagerProtocol? = {
-//        let store = TrackerStore()
-//        do {
-//            return try TrackerStoreManager(store, delegate: self)
-//        } catch {
-//            print("Не удалось инициализировать trackerManager: \(error)")
-//            return nil
-//        }
-//    }()
-//    
-//    private lazy var trackerCategoryManager: TrackerCategoryManagerProtocol? = {
-//       let store = TrackerCategoryStore()
-//        do {
-//            return try TrackerCategoryStoreManager(trackerCategoryStore: store, delegate: self)
-//        } catch {
-//            print("Не удалось инициализировать TrackerCategoryDataProvider: \(error)")
-//            return nil
-//        }
-//    }()
-//    
-//    private lazy var trackerRecordManager: TrackerRecordManagerProtocol? = {
-//        let store = TrackerRecordStore()
-//        do {
-//            return try TrackerRecordDataManager(trackerRecordStore: store, delegate: self)
-//        } catch {
-//            print("Не удалось инициализировать TrackerRecordDataProvider: \(error)")
-//            return nil
-//        }
-//    }()
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
