@@ -19,6 +19,7 @@
 "mainScreenLabel" = "Trackers";
 "mainScreenTitle" = "What are we going to track?";
 "mainScreenSearchPlaceholder" = "Search";
+"mainPinnedCategory" = "Pinned";
 //contextMenu
 "unpin" = "Unpin";
 "pin" = "Pin";

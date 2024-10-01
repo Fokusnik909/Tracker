@@ -17,6 +17,7 @@ final class TrackersViewController: UIViewController {
     private var searchText: String = ""
     private var currentDate: Date = Date()
     private let analyticService = AnalyticsService()
+    private var pinnedTrackersCategory: TrackerCategory?
     
     private var currentFilter: TrackerFilter = .allTrackers
 
@@ -194,30 +195,46 @@ final class TrackersViewController: UIViewController {
         logoLabel.isHidden = !isEmpty
     }
     
+    
     private func getVisibleCategories() -> [TrackerCategory] {
         guard let currentDayOfWeek = Weekdays.from(date: currentDate) else {
             return []
         }
         
-        return categories.compactMap { category in
+        let pinnedTrackers = categories
+            .flatMap { $0.trackers }
+            .filter { $0.isPinned }
+        
+        if !pinnedTrackers.isEmpty {
+            pinnedTrackersCategory = TrackerCategory(title: "mainPinnedCategory".localised, trackers: pinnedTrackers)
+        } else {
+            pinnedTrackersCategory = nil
+        }
+        
+        let filteredCategories = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
                 let isScheduledForToday = tracker.schedule.isEmpty || tracker.schedule.contains(currentDayOfWeek)
                 let matchesSearchText = searchText.isEmpty || tracker.name.lowercased().contains(searchText.lowercased())
                 
-                // Фильтрация по выбранному фильтру
                 switch currentFilter {
                 case .allTrackers:
-                    return isScheduledForToday && matchesSearchText
+                    return isScheduledForToday && matchesSearchText && !tracker.isPinned
                 case .todayTrackers:
-                    return isScheduledForToday && matchesSearchText && Calendar.current.isDate(currentDate, inSameDayAs: Date())
+                    return isScheduledForToday && matchesSearchText && Calendar.current.isDate(currentDate, inSameDayAs: Date()) && !tracker.isPinned
                 case .completedTrackers:
-                    return isScheduledForToday && matchesSearchText && isTrackerCompleted(id: tracker.id)
+                    return isScheduledForToday && matchesSearchText && isTrackerCompleted(id: tracker.id) && !tracker.isPinned
                 case .uncompletedTrackers:
-                    return isScheduledForToday && matchesSearchText && !isTrackerCompleted(id: tracker.id)
+                    return isScheduledForToday && matchesSearchText && !isTrackerCompleted(id: tracker.id) && !tracker.isPinned
                 }
             }
             
             return trackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: trackers)
+        }
+        
+        if let pinnedCategory = pinnedTrackersCategory {
+            return [pinnedCategory] + filteredCategories
+        } else {
+            return filteredCategories
         }
     }
     
@@ -486,12 +503,10 @@ extension TrackersViewController: UICollectionViewDelegate {
         }
     }
 
-    
     private func togglePin(for tracker: Tracker) {
         do {
             try trackerManager?.togglePin(for: tracker)
             fetchData()
-            updateCellForTracker(tracker)
             updateVisibleCategories()
             collectionView.reloadData()
         } catch {

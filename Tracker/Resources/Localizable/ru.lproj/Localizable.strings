@@ -18,6 +18,7 @@
 "mainScreenLabel" = "Трекеры";
 "mainScreenTitle" = "Что будем отслеживать?";
 "mainScreenSearchPlaceholder" = "Поиск";
+"mainPinnedCategory" = "Закрепленные";
 //contextMenu
 "unpin" = "Открепить";
 "pin" = "Закрепить";
