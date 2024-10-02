@@ -16,7 +16,7 @@ final class StatisticItemView: UIView {
     private let numberLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 34, weight: .bold)
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.textAlignment = .center
         return label
     }()
@@ -24,7 +24,7 @@ final class StatisticItemView: UIView {
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
-        label.textColor = .black
+        label.textColor = .ypBlack
         label.textAlignment = .center
         return label
     }()

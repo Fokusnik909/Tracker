@@ -30,6 +30,7 @@ extension UIColor {
     static var ypLightGray: UIColor { UIColor(named: "LightGrayYp") ?? UIColor.lightGray}
     static var ypRed: UIColor { UIColor(named: "RedYp") ?? UIColor.red }
     static var ypWhite: UIColor { UIColor(named: "WhiteYp") ?? UIColor.white}
+    static var ypPickerColor: UIColor { UIColor(named: "dataPickerColor") ?? UIColor.gray}
     
     
     func randomColor() -> UIColor {

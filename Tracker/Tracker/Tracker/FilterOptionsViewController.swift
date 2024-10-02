@@ -68,7 +68,7 @@ extension FilterOptionsViewController: UITableViewDataSource, UITableViewDelegat
         let filter = filters[indexPath.row]
         
         cell.textLabel?.text = filter.rawValue
-        cell.textLabel?.textColor = .black
+        cell.textLabel?.textColor = .ypBlack
         cell.accessoryType = (filter == currentFilter) ? .checkmark : .none
         cell.backgroundColor = .ypBackground
         
