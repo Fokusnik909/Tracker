@@ -16,7 +16,6 @@ final class TrackersViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var searchText: String = ""
     private var currentDate: Date = Date()
-    private let analyticService = AnalyticsService()
     private var pinnedTrackersCategory: TrackerCategory?
     
     private var currentFilter: TrackerFilter = .allTrackers
@@ -87,12 +86,12 @@ final class TrackersViewController: UIViewController {
         setupUIComponents()
         fetchData()
         addTapGestureToHideKeyboard()
-        analyticService.report(event: "open", params: ["screen": "Main"])
+        AnalyticsService.report(event: "open", params: ["screen": "Main"])
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        analyticService.report(event: "close", params: ["screen": "Main"])
+        AnalyticsService.report(event: "close", params: ["screen": "Main"])
     }
     
     
@@ -126,7 +125,7 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func addButton() {
-        analyticService.report(event: "click", params: ["screen": "Main", "item": "add_track"])
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "add_track"])
         let newTrackerViewController = NewCreateTrackerViewController()
         newTrackerViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: newTrackerViewController)
@@ -140,7 +139,7 @@ final class TrackersViewController: UIViewController {
             self?.applyFilter(selectedFilter)
         }
         let navVC = UINavigationController(rootViewController: filterVC)
-        analyticService.report(event: "click", params: ["screen": "Main", "item": "filter"])
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "filter"])
         present(navVC, animated: true)
     }
     
@@ -433,7 +432,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
                 print("Ошибка при удалении завершенного трекера: \(error)")
             }
         }
-        analyticService.report(event: "click", params: ["screen": "Main", "item": "track"])
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "track"])
         updateCellForTracker(tracker)
         updateVisibleCategories()
     }
@@ -467,14 +466,14 @@ extension TrackersViewController: UICollectionViewDelegate {
             
             UIAction(title: "delete".localised, image: nil, attributes: .destructive) { [weak self] _ in
                 guard let self = self else { return }
-                let actionSheet = DeleteActionSheet(
+                DeleteActionSheet.present(
+                    on: self,
                     title: nil,
                     message: "SureDeleteTracker".localised,
                     handler: { [weak self] in
                         self?.deleteTracker(indexPath)
                     }
                 )
-                actionSheet.present(self)
             }
         ]
         
@@ -512,7 +511,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         editHabitVC.regularTracker = tracker
         editHabitVC.editTrackerCategory = category
         editHabitVC.delegate = self
-        analyticService.report(event: "click", params: ["screen": "Main", "item": "edit"])
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "edit"])
         present(editHabitVC, animated: true)
     }
     
@@ -524,7 +523,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         } catch {
             print("Ошибка при удалении трекера: \(error)")
         }
-        analyticService.report(event: "click", params: ["screen": "Main", "item": "delete"])
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "delete"])
         updateVisibleCategories()
     }
     

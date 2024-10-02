@@ -10,10 +10,16 @@ import UIKit
 
 final class StatisticItemView: UIView {
     
+    enum AppColors {
+        static let blue = UIColor(hex: "#007BFA").cgColor
+        static let green = UIColor(hex: "#46E69D").cgColor
+        static let red = UIColor(hex: "#FD4C49").cgColor
+    }
+    
     private let gradientLayer = CAGradientLayer()
     private let gradientBorderLayer = CAShapeLayer()
     
-    private let numberLabel: UILabel = {
+    private lazy var numberLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 34, weight: .bold)
         label.textColor = .ypBlack
@@ -21,7 +27,7 @@ final class StatisticItemView: UIView {
         return label
     }()
     
-    private let descriptionLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12)
         label.textColor = .ypBlack
@@ -59,10 +65,11 @@ final class StatisticItemView: UIView {
     
     private func setupView() {
         gradientLayer.colors = [
-            UIColor(hex: "#007BFA").cgColor,
-            UIColor(hex: "#46E69D").cgColor,
-            UIColor(hex: "#FD4C49").cgColor
+            AppColors.blue,
+            AppColors.green,
+            AppColors.red
         ]
+        
         gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
         
@@ -72,14 +79,12 @@ final class StatisticItemView: UIView {
         gradientBorderLayer.fillColor = UIColor.clear.cgColor
         gradientBorderLayer.strokeColor = UIColor.black.cgColor
         
-        // Радиус закругления
         layer.cornerRadius = 16
         layer.masksToBounds = true
         gradientBorderLayer.cornerRadius = 16
         
         layer.addSublayer(gradientBorderLayer)
         
-        // Настройка стека для лейблов
         let stackView = UIStackView(arrangedSubviews: [numberLabel, descriptionLabel])
         stackView.axis = .vertical
         stackView.alignment = .leading

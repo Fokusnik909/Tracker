@@ -51,14 +51,11 @@ final class FilterOptionsViewController: UIViewController {
         filterTableView.register(UITableViewCell.self, forCellReuseIdentifier: "filterСell")
         filterTableView.backgroundColor = .ypWhite
     }
-    
-    
 }
 
 // MARK: - UITableViewDataSource & UITableViewDelegate
 
 extension FilterOptionsViewController: UITableViewDataSource, UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filters.count
     }

@@ -85,5 +85,5 @@
 //DeleteActionSheet
 "delete" = "Delete";
 "cancel" = "Cancel";
-"SureDeleteTracker?" = "Are you sure you want to delete the tracker?";
+"SureDeleteTracker" = "Are you sure you want to delete the tracker?";
 "ok" = "Ok";

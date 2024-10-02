@@ -86,5 +86,5 @@
 //DeleteActionSheet
 "delete" = "Удалить";
 "cancel" = "Отмена";
-"SureDeleteTracker?" = "Уверены, что хотите удалить трекер?";
+"SureDeleteTracker" = "Уверены, что хотите удалить трекер?";
 "ok" = "Ок";
