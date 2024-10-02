@@ -23,6 +23,7 @@
 "unpin" = "Открепить";
 "pin" = "Закрепить";
 "edit" = "Редактировать";
+"filters" = "Фильтры";
 
 //Statistics
 "statisticsStubLabel" = "Анализировать пока нечего";

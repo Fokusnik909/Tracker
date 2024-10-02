@@ -289,7 +289,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupFilterButton() {
-        filterButton.setTitle("Фильтры", for: .normal)
+        filterButton.setTitle("filters".localised, for: .normal)
         filterButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
         filterButton.setTitleColor(.ypWhite, for: .normal)
         filterButton.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)

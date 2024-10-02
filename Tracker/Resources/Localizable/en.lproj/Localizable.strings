@@ -24,6 +24,7 @@
 "unpin" = "Unpin";
 "pin" = "Pin";
 "edit" = "Edit";
+"filters" = "Filters";
 
 //Statistics
 "statisticsStubLabel" = "There is nothing to analyze yet";
