@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -49,6 +49,8 @@
 		C8A3CC962C46E4A80012CC42 /* extensionhideKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */; };
 		C8B59F372CB063A800CA67E9 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = C8B59F362CB063A800CA67E9 /* InlineSnapshotTesting */; };
 		C8B59F392CB063A800CA67E9 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = C8B59F382CB063A800CA67E9 /* SnapshotTesting */; };
+		C8B59F512CB0652100CA67E9 /* TrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B59F4F2CB0652100CA67E9 /* TrackerTests.swift */; };
+		C8B59F522CB0652100CA67E9 /* testMainScreen.1.png in Resources */ = {isa = PBXBuildFile; fileRef = C8B59F4C2CB0652100CA67E9 /* testMainScreen.1.png */; };
 		C8BF136B2C4A8A6500367B46 /* EmojiAndColorHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BF136A2C4A8A6500367B46 /* EmojiAndColorHeader.swift */; };
 		C8BF13922C4D73F500367B46 /* Data Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C8BF13902C4D73F500367B46 /* Data Model.xcdatamodeld */; };
 		C8BF13C22C51BC1F00367B46 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8BF13C12C51BC1F00367B46 /* TrackerStore.swift */; };
@@ -124,6 +126,8 @@
 		C8A3CC932C454EC70012CC42 /* extensionDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionDate.swift; sourceTree = "<group>"; };
 		C8A3CC952C46E4A80012CC42 /* extensionhideKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensionhideKeyboard.swift; sourceTree = "<group>"; };
 		C8B59F2D2CB0619F00CA67E9 /* TrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C8B59F4C2CB0652100CA67E9 /* testMainScreen.1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testMainScreen.1.png; sourceTree = "<group>"; };
+		C8B59F4F2CB0652100CA67E9 /* TrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTests.swift; sourceTree = "<group>"; };
 		C8BF136A2C4A8A6500367B46 /* EmojiAndColorHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiAndColorHeader.swift; sourceTree = "<group>"; };
 		C8BF13912C4D73F500367B46 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		C8BF13C12C51BC1F00367B46 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
@@ -140,10 +144,6 @@
 		C8FD49922C949F60003B0F67 /* PageOnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageOnboardingViewController.swift; sourceTree = "<group>"; };
 		D5FBFFC278D5A862BB03F9CD /* Pods-Tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker.debug.xcconfig"; path = "Target Support Files/Pods-Tracker/Pods-Tracker.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C8B59F2E2CB0619F00CA67E9 /* TrackerTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TrackerTests; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		C869D9472C2AD764000DB992 /* Frameworks */ = {
@@ -206,7 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				C869D94C2C2AD764000DB992 /* Tracker */,
-				C8B59F2E2CB0619F00CA67E9 /* TrackerTests */,
+				C8B59F502CB0652100CA67E9 /* TrackerTests */,
 				C869D94B2C2AD764000DB992 /* Products */,
 				45D6395D0831958D255F8AF0 /* Pods */,
 				209491165862B1A149DE4A6D /* Frameworks */,
@@ -389,6 +389,31 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		C8B59F4D2CB0652100CA67E9 /* TrackerTests */ = {
+			isa = PBXGroup;
+			children = (
+				C8B59F4C2CB0652100CA67E9 /* testMainScreen.1.png */,
+			);
+			path = TrackerTests;
+			sourceTree = "<group>";
+		};
+		C8B59F4E2CB0652100CA67E9 /* __Snapshots__ */ = {
+			isa = PBXGroup;
+			children = (
+				C8B59F4D2CB0652100CA67E9 /* TrackerTests */,
+			);
+			path = __Snapshots__;
+			sourceTree = "<group>";
+		};
+		C8B59F502CB0652100CA67E9 /* TrackerTests */ = {
+			isa = PBXGroup;
+			children = (
+				C8B59F4E2CB0652100CA67E9 /* __Snapshots__ */,
+				C8B59F4F2CB0652100CA67E9 /* TrackerTests.swift */,
+			);
+			path = TrackerTests;
+			sourceTree = "<group>";
+		};
 		C8BF138F2C4D73C700367B46 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -491,9 +516,6 @@
 			dependencies = (
 				C8B59F322CB0619F00CA67E9 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				C8B59F2E2CB0619F00CA67E9 /* TrackerTests */,
-			);
 			name = TrackerTests;
 			packageProductDependencies = (
 				C8B59F362CB063A800CA67E9 /* InlineSnapshotTesting */,
@@ -562,6 +584,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8B59F522CB0652100CA67E9 /* testMainScreen.1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -669,6 +692,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8B59F512CB0652100CA67E9 /* TrackerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
