@@ -23,7 +23,7 @@ protocol TrackerManagerProtocol {
     func tracker(at indexPath: IndexPath) -> Tracker?
     func addTracker(_ tracker: Tracker, category: TrackerCategory) throws
     func updateTracker(_ tracker: Tracker, category: String) throws
-    func deleteTracker(at indexPath: IndexPath) throws
+    func deleteTracker(_ tracker: Tracker) throws
     func deleteTrackers() throws
     func togglePin(for tracker: Tracker) throws
 }
@@ -90,43 +90,61 @@ extension TrackerStoreManager: TrackerManagerProtocol {
     func addTracker(_ tracker: Tracker, category: TrackerCategory) throws {
         do {
             try dataStore.addTracker(tracker, category: category)
+            try fetchedResultsController.performFetch()
         } catch {
             throw DataProviderError.failedToAddTracker(error)
         }
     }
     
+    
     func updateTracker(_ tracker: Tracker, category: String) throws {
-        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.trackerID == tracker.id }) else {
             throw DataProviderError.noTrackersFound
         }
         
         dataStore.update(trackerCoreData, tracker: tracker)
         
-        if let categoryCoreData = trackerCoreData.category {
-            
-            categoryCoreData.title = category
-        }
+        let categoryDB = try dataStore.createOrFetchCategory(withName: category)
+        trackerCoreData.category = categoryDB
         
         do {
-            try dataStore.managedObjectContext?.save()
+            try context.save()
+            try fetchedResultsController.performFetch()
         } catch {
             throw DataProviderError.failedToUpdateTracker(error)
         }
     }
     
-    func deleteTracker(at indexPath: IndexPath) throws {
-        let tracker = fetchedResultsController.object(at: indexPath)
+    private func fetchTracker(trackerId: UUID) throws -> TrackerCoreData {
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.trackerID), trackerId as CVarArg)
+        
+        let result = try context.fetch(request)
+        
+        guard let trackerCoreData = result.first else {
+            throw NSError(domain: "TrackerStoreError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Tracker not found."])
+        }
+        return trackerCoreData
+    }
+    
+    
+    func deleteTracker(_ tracker: Tracker) {
         do {
-            try dataStore.delete(tracker)
+            let trackerCoreData = try fetchTracker(trackerId: tracker.id)
+            try dataStore.delete(trackerCoreData)
+            try context.save()
         } catch {
-            throw DataProviderError.failedToDeleteTracker(error)
+            print("Ошибка при удалении трекера: \(error)")
         }
     }
+
     
     func deleteTrackers() throws {
         guard let trackers = fetchedResultsController.fetchedObjects else {
             throw DataProviderError.noTrackersFound
         }
+        
+        
         
         for tracker in trackers {
             do {
@@ -138,13 +156,13 @@ extension TrackerStoreManager: TrackerManagerProtocol {
     }
     
     func togglePin(for tracker: Tracker) throws {
-        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.trackerID == tracker.id }) else {
             throw DataProviderError.noTrackersFound
         }
         
         do {
             try dataStore.togglePin(for: trackerCoreData)
-            
+            try fetchedResultsController.performFetch()
             print("Состояние закрепления трекера переключено на: \(trackerCoreData.isPinned)")
         } catch {
             throw DataProviderError.failedToUpdateTracker(error)
@@ -173,7 +191,6 @@ extension TrackerStoreManager: NSFetchedResultsControllerDelegate {
         case .delete:
             if let indexPath = indexPath {
                 deletedIndexes.insert(indexPath.item)
-                
             }
         case .insert:
             if let newIndexPath = newIndexPath {

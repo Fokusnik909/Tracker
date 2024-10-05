@@ -102,6 +102,7 @@ final class TrackersViewController: UIViewController {
             completedTrackers = try trackerRecordManager?.fetch() ?? []
             print("Completed trackers: \(completedTrackers)")
             updateVisibleCategories()
+            collectionView.reloadData()
         } catch {
             print("Ошибка при загрузке данных: \(error)")
         }
@@ -314,7 +315,11 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        visibleCategories[section].trackers.count
+//        visibleCategories[section].trackers.count
+        guard section < visibleCategories.count else {
+            return 0
+        }
+        return visibleCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -380,14 +385,15 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - NewCreateTrackerDelegate
 extension TrackersViewController: NewHabitDelegate {
     func didUpdateTracker(_ tracker: Tracker, category: TrackerCategory) {
+        print("полученная категория \(category.title)")
         do {
             try trackerManager?.updateTracker(tracker, category: category.title)
             fetchData()
+            collectionView.reloadData()
         } catch {
             print(#function, error)
         }
         updateVisibleCategories()
-        collectionView.reloadData()
     }
     
     
@@ -395,11 +401,11 @@ extension TrackersViewController: NewHabitDelegate {
         do {
             try trackerManager?.addTracker(tracker, category: category)
             fetchData()
+            collectionView.reloadData()
         } catch {
             print(#function, error)
         }
         updateVisibleCategories()
-        collectionView.reloadData()
         
     }
     
@@ -454,6 +460,12 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
 // MARK: - UICollectionViewDelegate
 extension TrackersViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard indexPath.section < visibleCategories.count,
+              indexPath.row < visibleCategories[indexPath.section].trackers.count else {
+            return nil
+        }
+        
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         
         let menuItems: [UIAction] = [
@@ -471,7 +483,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                     title: nil,
                     message: "SureDeleteTracker".localised,
                     handler: { [weak self] in
-                        self?.deleteTracker(indexPath)
+                        self?.deleteTracker(tracker)
                     }
                 )
             }
@@ -515,10 +527,12 @@ extension TrackersViewController: UICollectionViewDelegate {
         present(editHabitVC, animated: true)
     }
     
-    private func deleteTracker(_ index: IndexPath) {
+    private func deleteTracker(_ tracker: Tracker) {
+        
+        
         do {
-            try trackerManager?.deleteTracker(at: index)
-            fetchData() 
+            try trackerManager?.deleteTracker(tracker)
+            fetchData()
             collectionView.reloadData()
         } catch {
             print("Ошибка при удалении трекера: \(error)")
@@ -548,7 +562,6 @@ extension TrackersViewController: UICollectionViewDelegate {
         return UITargetedPreview(view: cell)
     }
 
-
 }
 
 //MARK: - UISearchResultsUpdating
@@ -566,6 +579,7 @@ extension TrackersViewController: TrackerStoreDelegate {
 //            collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
 //            collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
 //        }, completion: nil)
+        collectionView.reloadData()
     }
 }
 

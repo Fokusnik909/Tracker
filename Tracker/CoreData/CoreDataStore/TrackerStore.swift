@@ -16,6 +16,7 @@ protocol TrackerDataStoreProtocol {
     func update(_ trackerCoreData: TrackerCoreData, tracker: Tracker)
     func delete(_ tracker: TrackerCoreData) throws
     func togglePin(for tracker: TrackerCoreData) throws
+    func createOrFetchCategory(withName categoryName: String) throws -> TrackerCategoryCoreData
 }
 
 
@@ -49,7 +50,7 @@ final class TrackerStore: TrackerDataStoreProtocol {
         }
         
         let trackerDB = TrackerCoreData(context: context)
-        trackerDB.id = tracker.id
+        trackerDB.trackerID = tracker.id
         trackerDB.name = tracker.name
         trackerDB.emoji = tracker.emoji
         trackerDB.color = UIColorMarshalling.hexString(from: tracker.color)
@@ -84,6 +85,25 @@ final class TrackerStore: TrackerDataStoreProtocol {
             print("Error saving updated tracker: \(error.localizedDescription)")
         }
     }
+    
+    func createOrFetchCategory(withName categoryName: String) throws -> TrackerCategoryCoreData {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", categoryName)
+        
+        do {
+            if let category = try managedObjectContext?.fetch(fetchRequest).first {
+                return category
+            } else {
+                let newCategory = TrackerCategoryCoreData(context: managedObjectContext!)
+                newCategory.title = categoryName
+                return newCategory
+            }
+        } catch {
+            print("Ошибка получения или создания категории: \(error.localizedDescription)")
+            throw error
+        }
+    }
+
     
     // Удаление трекера
     func delete(_ tracker: TrackerCoreData) throws {

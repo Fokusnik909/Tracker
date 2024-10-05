@@ -160,7 +160,6 @@ final class NewHabitViewController: UIViewController {
         dismiss(animated: true)
     }
 
-    
     @objc private func cancelButtonPressed() {
         dismiss(animated: true)
     }
