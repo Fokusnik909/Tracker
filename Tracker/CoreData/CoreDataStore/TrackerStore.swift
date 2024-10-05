@@ -50,7 +50,7 @@ final class TrackerStore: TrackerDataStoreProtocol {
         }
         
         let trackerDB = TrackerCoreData(context: context)
-        trackerDB.trackerID = tracker.id
+        trackerDB.id = tracker.id
         trackerDB.name = tracker.name
         trackerDB.emoji = tracker.emoji
         trackerDB.color = UIColorMarshalling.hexString(from: tracker.color)

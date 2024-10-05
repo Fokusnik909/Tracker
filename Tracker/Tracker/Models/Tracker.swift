@@ -29,7 +29,7 @@ struct TrackerRecord: Identifiable {
 
 extension Tracker {
     init(from trackerCoreData: TrackerCoreData) {
-        self.id = trackerCoreData.trackerID ?? UUID()
+        self.id = trackerCoreData.id ?? UUID()
         self.name = trackerCoreData.name ?? ""
         self.emoji = trackerCoreData.emoji ?? ""
         

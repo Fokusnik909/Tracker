@@ -98,7 +98,7 @@ extension TrackerStoreManager: TrackerManagerProtocol {
     
     
     func updateTracker(_ tracker: Tracker, category: String) throws {
-        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.trackerID == tracker.id }) else {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
             throw DataProviderError.noTrackersFound
         }
         
@@ -117,7 +117,8 @@ extension TrackerStoreManager: TrackerManagerProtocol {
     
     private func fetchTracker(trackerId: UUID) throws -> TrackerCoreData {
         let request = TrackerCoreData.fetchRequest()
-        request.predicate = NSPredicate(format: "%K == %@", #keyPath(TrackerCoreData.trackerID), trackerId as CVarArg)
+        
+        request.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
         
         let result = try context.fetch(request)
         
@@ -126,8 +127,7 @@ extension TrackerStoreManager: TrackerManagerProtocol {
         }
         return trackerCoreData
     }
-    
-    
+
     func deleteTracker(_ tracker: Tracker) {
         do {
             let trackerCoreData = try fetchTracker(trackerId: tracker.id)
@@ -156,7 +156,7 @@ extension TrackerStoreManager: TrackerManagerProtocol {
     }
     
     func togglePin(for tracker: Tracker) throws {
-        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.trackerID == tracker.id }) else {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
             throw DataProviderError.noTrackersFound
         }
         

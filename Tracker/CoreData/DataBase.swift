@@ -86,7 +86,7 @@ final class DataBase {
     
     
     func setTrackerCoreDataValues(_ trackerCoreData: TrackerCoreData, from tracker: Tracker) {
-        trackerCoreData.trackerID = tracker.id
+        trackerCoreData.id = tracker.id
         trackerCoreData.name = tracker.name
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.color = UIColorMarshalling.hexString(from: tracker.color)
@@ -101,7 +101,7 @@ final class DataBase {
     }
 
     func tracker(from trackerCoreData: TrackerCoreData) -> Tracker? {
-        guard let id = trackerCoreData.trackerID,
+        guard let id = trackerCoreData.id,
               let name = trackerCoreData.name,
               let emoji = trackerCoreData.emoji,
               let colorHex = trackerCoreData.color,
