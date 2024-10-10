@@ -22,13 +22,13 @@ final class OnboardingPageViewController: UIPageViewController {
     
     lazy var pages: [UIViewController] = {
         let firstPage = PageOnboardingViewController(
-            label: "Отслеживайте только то, что хотите",
-            image: UIImage(named: "page_1") ?? UIImage()
+            label: PageModel.firstPage.text,
+            image: PageModel.firstPage.image
         )
         
         let secondPage = PageOnboardingViewController(
-            label: "Даже если это \n не литры воды и йога",
-            image: UIImage(named: "page_2") ?? UIImage()
+            label: PageModel.secondPage.text,
+            image: PageModel.secondPage.image
         )
         return [firstPage, secondPage]
     }()

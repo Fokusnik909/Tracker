@@ -20,7 +20,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private var isComplete = false
     private var calendarDate = Date()
     
-    private let containerView: UIView = {
+    let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 16
@@ -57,10 +57,18 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private let completeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(named: "addButton"), for: .normal)
-        button.tintColor = .black
+        button.tintColor = .ypBlack
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.masksToBounds = true
         return button
+    }()
+    
+    private let pinImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName:"pin.fill")
+        imageView.tintColor = .ypWhite
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     //    Или в данной ситуации лучше было использовать замыкание вместо делагатов?
@@ -74,6 +82,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         setupLayout()
     }
     
+    func getContainerViewBounds() -> CGRect {
+        return containerView.bounds
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -84,8 +96,59 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(titleLabel)
         contentView.addSubview(daysLabel)
         contentView.addSubview(completeButton)
+        contentView.addSubview(pinImageView)
         
         completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
+    }
+    
+    
+    
+    func configure(with tracker: Tracker, isCompleted: Bool, completionCount: Int, calendar: Date, isPinned: Bool) {
+        self.isComplete = isCompleted
+        self.calendarDate = calendar
+        self.tracker = tracker
+        self.pinImageView.isHidden = !isPinned
+
+        completeButton.isSelected = isCompleted
+        isSelectedButton(completeButton, trackerColor: tracker.color)
+
+        emojiLabel.text = tracker.emoji
+        emojiLabel.backgroundColor = tracker.color.withAlphaComponent(0.3)
+        
+        titleLabel.text = tracker.name
+        containerView.backgroundColor = tracker.color
+        
+        let tasksString = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfTasks", comment: "Number of remaining tasks"),
+            completionCount
+        )
+        
+        daysLabel.text = tasksString
+    }
+    
+    private func isSelectedButton(_ sender: UIButton, trackerColor: UIColor) {
+        if sender.isSelected {
+            sender.setImage(UIImage(named: "done"), for: .normal)
+            sender.tintColor = trackerColor
+            sender.layer.opacity = 0.3
+        } else {
+            sender.setImage(UIImage(named: "addButton"), for: .normal)
+            sender.tintColor = .ypWhite
+            sender.backgroundColor = trackerColor
+            sender.layer.opacity = 1
+        }
+    }
+    
+    @objc private func completeButtonTapped(_ sender: UIButton) {
+        guard calendarDate <= Date() else { return }
+
+        guard let tracker else { return }
+
+        completeButton.isSelected.toggle()
+
+        isSelectedButton(sender, trackerColor: tracker.color)
+
+        delegate?.didTapCompleteButton(tracker: tracker, isCompleted: sender.isSelected)
     }
     
     private func setupLayout() {
@@ -113,49 +176,13 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             completeButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 8),
             completeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             completeButton.widthAnchor.constraint(equalToConstant: sizeButton),
-            completeButton.heightAnchor.constraint(equalToConstant: sizeButton)
+            completeButton.heightAnchor.constraint(equalToConstant: sizeButton),
+            
+            pinImageView.heightAnchor.constraint(equalToConstant: 14),
+            pinImageView.widthAnchor.constraint(equalToConstant: 12),
+            pinImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 18),
+            pinImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
         ])
         completeButton.layer.cornerRadius = sizeButton / 2
-    }
-    
-    func configure(with tracker: Tracker, isCompleted: Bool, completionCount: Int, calendar: Date) {
-        self.isComplete = isCompleted
-        self.calendarDate = calendar
-        self.tracker = tracker
-
-        completeButton.isSelected = isCompleted
-        isSelectedButton(completeButton, trackerColor: tracker.color)
-
-        emojiLabel.text = tracker.emoji
-        emojiLabel.backgroundColor = tracker.color.withAlphaComponent(0.3)
-        
-        titleLabel.text = tracker.name
-        containerView.backgroundColor = tracker.color
-        daysLabel.text = "\(completionCount) \(completionCount == 1 ? "день" : "дня")"
-    }
-    
-    private func isSelectedButton(_ sender: UIButton, trackerColor: UIColor) {
-        if sender.isSelected {
-            sender.setImage(UIImage(named: "done"), for: .normal)
-            sender.tintColor = trackerColor
-            sender.layer.opacity = 0.3
-        } else {
-            sender.setImage(UIImage(named: "addButton"), for: .normal)
-            sender.tintColor = .white
-            sender.backgroundColor = trackerColor
-            sender.layer.opacity = 1
-        }
-    }
-    
-    @objc private func completeButtonTapped(_ sender: UIButton) {
-        guard calendarDate <= Date() else { return }
-
-        guard let tracker else { return }
-
-        completeButton.isSelected.toggle()
-
-        isSelectedButton(sender, trackerColor: tracker.color)
-
-        delegate?.didTapCompleteButton(tracker: tracker, isCompleted: sender.isSelected)
     }
 }

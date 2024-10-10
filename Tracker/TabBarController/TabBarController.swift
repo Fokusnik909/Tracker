@@ -9,6 +9,14 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
+    let separatorViewColor = UIColor { (traits: UITraitCollection) -> UIColor in
+        if traits.userInterfaceStyle == .dark {
+            return .ypWhite
+        } else {
+            return .ypLightGray
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,16 +27,17 @@ final class TabBarController: UITabBarController {
         separationLine()
                 
         let trackerViewController = TrackersViewController()
-        let navigationViewController = UINavigationController(rootViewController: trackerViewController)
-        navigationViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+        let navVCMain = UINavigationController(rootViewController: trackerViewController)
+        navVCMain.tabBarItem = UITabBarItem(
+            title: NSLocalizedString(DictionaryString.tabBarFirstTab, comment: ""),
             image: UIImage(named: "TrackerBar"),
             selectedImage: nil
         )
         
         let statisticsViewController = StatisticsViewController()
+        let navVCStatistics = UINavigationController(rootViewController: statisticsViewController)
         statisticsViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString(DictionaryString.tabBarSecondTab, comment: ""),
             image: UIImage(named: "StatisticsBar"),
             selectedImage: nil
         )
@@ -36,12 +45,13 @@ final class TabBarController: UITabBarController {
         tabBar.backgroundColor = .ypWhite
         tabBar.isTranslucent = false
         
-        self.viewControllers = [navigationViewController, statisticsViewController]
+        self.viewControllers = [navVCMain, navVCStatistics]
     }
     
     private func separationLine() {
         let separatorView = UIView()
-        separatorView.backgroundColor = .ypLightGray
+        separatorView.backgroundColor = separatorViewColor
+        
         tabBar.addSubview(separatorView)
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         

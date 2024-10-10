@@ -35,25 +35,25 @@ enum Weekdays: Int, CaseIterable, Codable {
     
     var description: String {
         switch self {
-        case .monday: return "Понедельник"
-        case .tuesday: return "Вторник"
-        case .wednesday: return "Среда"
-        case .thursday: return "Четверг"
-        case .friday: return "Пятница"
-        case .saturday: return "Суббота"
-        case .sunday: return "Воскресенье"
+        case .monday: return NSLocalizedString(DictionaryString.scheduleMonday, comment: "")
+        case .tuesday: return NSLocalizedString(DictionaryString.scheduleTuesday, comment: "")
+        case .wednesday: return NSLocalizedString(DictionaryString.scheduleWednesday, comment: "")
+        case .thursday: return NSLocalizedString(DictionaryString.scheduleThursday, comment: "")
+        case .friday: return NSLocalizedString(DictionaryString.scheduleFriday, comment: "")
+        case .saturday: return NSLocalizedString(DictionaryString.scheduleSaturday, comment: "")
+        case .sunday: return NSLocalizedString(DictionaryString.scheduleSunday, comment: "")
         }
     }
     
     var shortName: String {
         switch self {
-        case .monday: return "Пн"
-        case .tuesday: return "Вт"
-        case .wednesday: return "Ср"
-        case .thursday: return "Чт"
-        case .friday: return "Пт"
-        case .saturday: return "Сб"
-        case .sunday: return "Вс"
+        case .monday: return NSLocalizedString(DictionaryString.scheduleShortMonday, comment: "")
+        case .tuesday: return NSLocalizedString(DictionaryString.scheduleShortTuesday, comment: "")
+        case .wednesday: return NSLocalizedString(DictionaryString.scheduleShortWednesday, comment: "")
+        case .thursday: return NSLocalizedString(DictionaryString.scheduleShortThursday, comment: "")
+        case .friday: return NSLocalizedString(DictionaryString.scheduleShortFriday, comment: "")
+        case .saturday: return NSLocalizedString(DictionaryString.scheduleShortSaturday, comment: "")
+        case .sunday: return NSLocalizedString(DictionaryString.scheduleShortSunday, comment: "")
         }
     }
 }

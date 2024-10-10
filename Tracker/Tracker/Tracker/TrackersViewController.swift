@@ -14,39 +14,17 @@ final class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
+    private var searchText: String = ""
     private var currentDate: Date = Date()
+    private var pinnedTrackersCategory: TrackerCategory?
+    
+    private var currentFilter: TrackerFilter = .allTrackers
+
     
     private lazy var trackerRecordStore = TrackerRecordStore()
-    
-    private lazy var trackerManager: TrackerManagerProtocol? = {
-        let store = TrackerStore()
-        do {
-            return try TrackerStoreManager(store, delegate: self)
-        } catch {
-            print("Не удалось инициализировать trackerManager: \(error)")
-            return nil
-        }
-    }()
-    
-    private lazy var trackerCategoryManager: TrackerCategoryManagerProtocol? = {
-       let store = TrackerCategoryStore()
-        do {
-            return try TrackerCategoryStoreManager(trackerCategoryStore: store, delegate: self)
-        } catch {
-            print("Не удалось инициализировать TrackerCategoryDataProvider: \(error)")
-            return nil
-        }
-    }()
-    
-    private lazy var trackerRecordManager: TrackerRecordManagerProtocol? = {
-        let store = TrackerRecordStore()
-        do {
-            return try TrackerRecordDataManager(trackerRecordStore: store, delegate: self)
-        } catch {
-            print("Не удалось инициализировать TrackerRecordDataProvider: \(error)")
-            return nil
-        }
-    }()
+    private var trackerManager: TrackerManagerProtocol?
+    private var trackerCategoryManager: TrackerCategoryManagerProtocol?
+    private var trackerRecordManager: TrackerRecordManagerProtocol?
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -61,15 +39,19 @@ final class TrackersViewController: UIViewController {
             target: self,
             action: #selector(addButton)
         )
-        button.tintColor = .black
+        button.tintColor = .ypBlack
         return button
     }()
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_DE")
+        datePicker.locale = Locale.current
+        datePicker.overrideUserInterfaceStyle = .light
+        datePicker.backgroundColor = .ypPickerColor
         datePicker.preferredDatePickerStyle = .compact
+        datePicker.layer.cornerRadius = 8
+        datePicker.layer.masksToBounds = true
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.widthAnchor.constraint(equalToConstant: 100).isActive = true
         return datePicker
@@ -83,10 +65,15 @@ final class TrackersViewController: UIViewController {
     
     private let logoLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
-        label.textColor = .black
+        label.text = NSLocalizedString(DictionaryString.mainScreenTitle, comment: "")
+        label.textColor = .ypBlack
         label.font = UIFont.systemFont(ofSize: 12)
         return label
+    }()
+    
+    private lazy var filterButton: UIButton = {
+        let button = UIButton(type: .system)
+        return button
     }()
     
     lazy private var subView: [UIView] = [self.collectionView, self.imageStar, self.logoLabel]
@@ -94,13 +81,19 @@ final class TrackersViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        layout()
-        setupNavigationBar()
-        setupCollectionView()
+        initializeManagers()
+        loadFilter()
+        setupUIComponents()
         fetchData()
         addTapGestureToHideKeyboard()
-        
+        AnalyticsService.report(event: "open", params: ["screen": "Main"])
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        AnalyticsService.report(event: "close", params: ["screen": "Main"])
+    }
+    
     
     //MARK: - Private Methods
     private func fetchData() {
@@ -109,17 +102,72 @@ final class TrackersViewController: UIViewController {
             completedTrackers = try trackerRecordManager?.fetch() ?? []
             print("Completed trackers: \(completedTrackers)")
             updateVisibleCategories()
+            collectionView.reloadData()
         } catch {
             print("Ошибка при загрузке данных: \(error)")
         }
     }
     
+    private func initializeManagers() {
+        do {
+            trackerManager = try TrackerStoreManager(TrackerStore(), delegate: self)
+            trackerCategoryManager = try TrackerCategoryStoreManager(trackerCategoryStore: TrackerCategoryStore(), delegate: self)
+            trackerRecordManager = try TrackerRecordDataManager(trackerRecordStore: TrackerRecordStore(), delegate: self)
+        } catch {
+            print("Ошибка инициализации: \(error)")
+        }
+    }
+    
+    private func setupUIComponents() {
+        layout()
+        setupFilterButton()
+        setupNavigationBar()
+        setupCollectionView()
+    }
+    
     @objc private func addButton() {
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "add_track"])
         let newTrackerViewController = NewCreateTrackerViewController()
         newTrackerViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: newTrackerViewController)
         present(navigationController, animated: true)
     }
+    
+    @objc private func didTapFilterButton() {
+        let filterVC = FilterOptionsViewController()
+        filterVC.currentFilter = currentFilter
+        filterVC.filterSelectionHandler = { [weak self] selectedFilter in
+            self?.applyFilter(selectedFilter)
+        }
+        let navVC = UINavigationController(rootViewController: filterVC)
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "filter"])
+        present(navVC, animated: true)
+    }
+    
+    private func applyFilter(_ filter: TrackerFilter) {
+        currentFilter = filter
+        saveFilter()
+        
+        if currentFilter == .todayTrackers {
+            currentDate = Date()
+            datePicker.date = currentDate
+        }
+        
+        updateVisibleCategories()
+        filterButton.setTitleColor(currentFilter == .allTrackers ? .white : .ypRed, for: .normal)
+    }
+    
+    private func loadFilter() {
+        if let savedFilter = UserDefaults.standard.string(forKey: "currentFilter"),
+           let filter = TrackerFilter(rawValue: savedFilter) {
+            currentFilter = filter
+        }
+    }
+    
+    private func saveFilter() {
+        UserDefaults.standard.set(currentFilter.rawValue, forKey: "currentFilter")
+    }
+    
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
@@ -129,6 +177,7 @@ final class TrackersViewController: UIViewController {
     private func updateVisibleCategories() {
         visibleCategories = getVisibleCategories()
         updateEmptyState()
+        filterButton.isHidden = visibleCategories.isEmpty
         collectionView.reloadData()
     }
     
@@ -138,35 +187,70 @@ final class TrackersViewController: UIViewController {
         logoLabel.isHidden = !isEmpty
     }
     
+    
     private func getVisibleCategories() -> [TrackerCategory] {
         guard let currentDayOfWeek = Weekdays.from(date: currentDate) else {
             return []
         }
         
-        return categories.compactMap { category in
+        let pinnedTrackers = categories
+            .flatMap { $0.trackers }
+            .filter { $0.isPinned }
+        
+        if !pinnedTrackers.isEmpty {
+            pinnedTrackersCategory = TrackerCategory(title: "mainPinnedCategory".localised, trackers: pinnedTrackers)
+        } else {
+            pinnedTrackersCategory = nil
+        }
+        
+        let filteredCategories = categories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                let shouldDisplay = tracker.schedule.isEmpty || tracker.schedule.contains(currentDayOfWeek)
-                return shouldDisplay
+                let isScheduledForToday = tracker.schedule.isEmpty || tracker.schedule.contains(currentDayOfWeek)
+                let matchesSearchText = searchText.isEmpty || tracker.name.lowercased().contains(searchText.lowercased())
+                
+                switch currentFilter {
+                case .allTrackers:
+                    return isScheduledForToday && matchesSearchText && !tracker.isPinned
+                case .todayTrackers:
+                    return isScheduledForToday && matchesSearchText && Calendar.current.isDate(currentDate, inSameDayAs: Date()) && !tracker.isPinned
+                case .completedTrackers:
+                    return isScheduledForToday && matchesSearchText && isTrackerCompleted(id: tracker.id) && !tracker.isPinned
+                case .uncompletedTrackers:
+                    return isScheduledForToday && matchesSearchText && !isTrackerCompleted(id: tracker.id) && !tracker.isPinned
+                }
             }
-
+            
             return trackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: trackers)
+        }
+        
+        if let pinnedCategory = pinnedTrackersCategory {
+            return [pinnedCategory] + filteredCategories
+        } else {
+            return filteredCategories
         }
     }
     
+    
+    //MARK: - setupNavigationBar
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = addBarButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        navigationItem.title = "Трекеры"
-        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        navigationItem.title = NSLocalizedString(DictionaryString.mainScreenLabel, comment: "")
+        
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.ypBlack]
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = NSLocalizedString(DictionaryString.mainScreenSearchPlaceholder, comment: "")
+        searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
     }
     
+    
+    //MARK: - setupCollectionView
     private func setupCollectionView() {
+        collectionView.backgroundColor = .ypWhite
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
@@ -174,15 +258,16 @@ final class TrackersViewController: UIViewController {
     }
     
     private func layout() {
-        view.backgroundColor = .white
+        view.backgroundColor = .ypWhite
+        collectionView.alwaysBounceVertical = true
+        collectionView.showsVerticalScrollIndicator = false
         
         for view in subView {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
         
-        //TO DO: - подумать над версткой 
-        
+        //TO DO: - подумать над версткой
         NSLayoutConstraint.activate([
             logoLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -220),
             logoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -202,6 +287,25 @@ final class TrackersViewController: UIViewController {
     func isTrackerCompleted(id: UUID) -> Bool {
         return trackerRecordStore.isTrackerCompleted(id: id, date: currentDate)
     }
+    
+    private func setupFilterButton() {
+        filterButton.setTitle("filters".localised, for: .normal)
+        filterButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        filterButton.setTitleColor(.ypWhite, for: .normal)
+        filterButton.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
+        filterButton.backgroundColor = .ypBlue
+        filterButton.layer.cornerRadius = 16
+        
+        
+        view.addSubview(filterButton)
+        filterButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            filterButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+    }
 }
 
 //MARK: - UICollectionViewDataSource
@@ -211,7 +315,11 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        visibleCategories[section].trackers.count
+//        visibleCategories[section].trackers.count
+        guard section < visibleCategories.count else {
+            return 0
+        }
+        return visibleCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -221,16 +329,16 @@ extension TrackersViewController: UICollectionViewDataSource {
         else {
             return UICollectionViewCell()
         }
-        
+                
         let category = visibleCategories[indexPath.section]
         let tracker = category.trackers[indexPath.row]
         
         let isComplete = isTrackerCompleted(id: tracker.id)
+        let isPinned = tracker.isPinned
         let counter = completedTrackers.filter { $0.id == tracker.id }.count
-        
-        cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate)
+
+        cell.configure(with: tracker, isCompleted: isComplete, completionCount: counter, calendar: currentDate, isPinned: isPinned)
         cell.delegate = self
-        
         return cell
     }
     
@@ -247,7 +355,9 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         return viewHeader
     }
+
 }
+
 
 //MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
@@ -274,17 +384,31 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 //MARK: - NewCreateTrackerDelegate
 extension TrackersViewController: NewHabitDelegate {
-    func didCreateNewTracker(_ tracker: Tracker, category: TrackerCategory) {
+    func didUpdateTracker(_ tracker: Tracker, category: TrackerCategory) {
+        print("полученная категория \(category.title)")
         do {
-            try trackerManager?.addTracker(tracker, category: category)
+            try trackerManager?.updateTracker(tracker, category: category.title)
             fetchData()
+            collectionView.reloadData()
         } catch {
             print(#function, error)
         }
         updateVisibleCategories()
-        collectionView.reloadData()
+    }
+    
+    
+    func didCreateNewTracker(_ tracker: Tracker, category: TrackerCategory) {
+        do {
+            try trackerManager?.addTracker(tracker, category: category)
+            fetchData()
+            collectionView.reloadData()
+        } catch {
+            print(#function, error)
+        }
+        updateVisibleCategories()
         
     }
+    
 }
 
 //MARK: - TrackerCollectionViewCellDelegate
@@ -314,6 +438,7 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
                 print("Ошибка при удалении завершенного трекера: \(error)")
             }
         }
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "track"])
         updateCellForTracker(tracker)
         updateVisibleCategories()
     }
@@ -331,14 +456,130 @@ extension TrackersViewController: TrackerCollectionViewCellDelegate {
     }
 }
 
+
+// MARK: - UICollectionViewDelegate
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        guard indexPath.section < visibleCategories.count,
+              indexPath.row < visibleCategories[indexPath.section].trackers.count else {
+            return nil
+        }
+        
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        
+        let menuItems: [UIAction] = [
+            UIAction(title: tracker.isPinned ? "unpin".localised : "pin".localised, image: nil) { [weak self] _ in
+                self?.togglePin(for: tracker)
+            },
+            UIAction(title: "edit".localised, image: nil) { [weak self] _ in
+                self?.editTracker(tracker, at: indexPath)
+            },
+            
+            UIAction(title: "delete".localised, image: nil, attributes: .destructive) { [weak self] _ in
+                guard let self = self else { return }
+                DeleteActionSheet.present(
+                    on: self,
+                    title: nil,
+                    message: "SureDeleteTracker".localised,
+                    handler: { [weak self] in
+                        self?.deleteTracker(tracker)
+                    }
+                )
+            }
+        ]
+        
+        return UIContextMenuConfiguration(identifier: indexPath as NSCopying, previewProvider: nil) { _ in
+            return UIMenu(title: "", children: menuItems)
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        
+        UIView.animate(withDuration: 0.5) {
+            if offsetY > 0 {
+                self.filterButton.alpha = 0.0
+            } else {
+                self.filterButton.alpha = 1.0
+            }
+        }
+    }
+
+    private func togglePin(for tracker: Tracker) {
+        do {
+            try trackerManager?.togglePin(for: tracker)
+            fetchData()
+            updateVisibleCategories()
+            collectionView.reloadData()
+        } catch {
+            print("Ошибка при переключении закрепления трекера: \(error)")
+        }
+    }
+    
+    private func editTracker(_ tracker: Tracker, at indexPath: IndexPath) {
+        let category = visibleCategories[indexPath.section]
+        let editHabitVC = NewHabitViewController(trackType: .regular)
+        editHabitVC.regularTracker = tracker
+        editHabitVC.editTrackerCategory = category
+        editHabitVC.delegate = self
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "edit"])
+        present(editHabitVC, animated: true)
+    }
+    
+    private func deleteTracker(_ tracker: Tracker) {
+        
+        
+        do {
+            try trackerManager?.deleteTracker(tracker)
+            fetchData()
+            collectionView.reloadData()
+        } catch {
+            print("Ошибка при удалении трекера: \(error)")
+        }
+        AnalyticsService.report(event: "click", params: ["screen": "Main", "item": "delete"])
+        updateVisibleCategories()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else {
+            return nil
+        }
+
+        let param = UIPreviewParameters()
+        param.visiblePath = UIBezierPath(roundedRect: cell.getContainerViewBounds(), cornerRadius: 16)
+
+        return UITargetedPreview(view: cell, parameters: param)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) else {
+            return nil
+        }
+
+        return UITargetedPreview(view: cell)
+    }
+
+}
+
+//MARK: - UISearchResultsUpdating
+extension TrackersViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        searchText = searchController.searchBar.text ?? ""
+        updateVisibleCategories()
+    }
+}
+
 extension TrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
         
-        collectionView.performBatchUpdates({
-            collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
-            collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
-        }, completion: nil)
-        
+//        collectionView.performBatchUpdates({
+//            collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
+//            collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
+//        }, completion: nil)
+        collectionView.reloadData()
     }
 }
 

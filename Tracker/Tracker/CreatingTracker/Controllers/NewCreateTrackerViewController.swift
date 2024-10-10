@@ -17,7 +17,8 @@ final class NewCreateTrackerViewController: UIViewController {
     //MARK: - Private properties UI
     private let habitButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Привычка", for: .normal)
+        let titleButton = NSLocalizedString(DictionaryString.createTrackerHabitButton, comment: "")
+        button.setTitle(titleButton, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -28,7 +29,8 @@ final class NewCreateTrackerViewController: UIViewController {
     
     private let notRegularEventButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Нерегулярные событие", for: .normal)
+        let titleButton = NSLocalizedString(DictionaryString.createTrackerEventButton, comment: "")
+        button.setTitle(titleButton, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.backgroundColor = .ypBlack
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -47,7 +49,7 @@ final class NewCreateTrackerViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = NSLocalizedString(DictionaryString.createTrackerScreenTitle, comment: "")
         layout()
     }
     

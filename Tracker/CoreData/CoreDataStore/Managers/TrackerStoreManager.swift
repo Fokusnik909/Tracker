@@ -22,8 +22,10 @@ protocol TrackerManagerProtocol {
     func numberOfRowsInSection(_ section: Int) -> Int
     func tracker(at indexPath: IndexPath) -> Tracker?
     func addTracker(_ tracker: Tracker, category: TrackerCategory) throws
-    func deleteTracker(at indexPath: IndexPath) throws
+    func updateTracker(_ tracker: Tracker, category: String) throws
+    func deleteTracker(_ tracker: Tracker) throws
     func deleteTrackers() throws
+    func togglePin(for tracker: Tracker) throws
 }
 
 
@@ -34,6 +36,8 @@ final class TrackerStoreManager: NSObject {
         case noTrackersFound
         case failedToAddTracker(Error)
         case failedToDeleteTracker(Error)
+        case failedToUpdateTracker(Error)
+        case failedToTogglePin(Error)
     }
     
     weak var delegate: TrackerStoreDelegate?
@@ -86,24 +90,61 @@ extension TrackerStoreManager: TrackerManagerProtocol {
     func addTracker(_ tracker: Tracker, category: TrackerCategory) throws {
         do {
             try dataStore.addTracker(tracker, category: category)
+            try fetchedResultsController.performFetch()
         } catch {
             throw DataProviderError.failedToAddTracker(error)
         }
     }
     
-    func deleteTracker(at indexPath: IndexPath) throws {
-        let tracker = fetchedResultsController.object(at: indexPath)
+    
+    func updateTracker(_ tracker: Tracker, category: String) throws {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
+            throw DataProviderError.noTrackersFound
+        }
+        
+        dataStore.update(trackerCoreData, tracker: tracker)
+        
+        let categoryDB = try dataStore.createOrFetchCategory(withName: category)
+        trackerCoreData.category = categoryDB
+        
         do {
-            try dataStore.delete(tracker)
+            try context.save()
+            try fetchedResultsController.performFetch()
         } catch {
-            throw DataProviderError.failedToDeleteTracker(error)
+            throw DataProviderError.failedToUpdateTracker(error)
         }
     }
+    
+    private func fetchTracker(trackerId: UUID) throws -> TrackerCoreData {
+        let request = TrackerCoreData.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "id == %@", trackerId as CVarArg)
+        
+        let result = try context.fetch(request)
+        
+        guard let trackerCoreData = result.first else {
+            throw NSError(domain: "TrackerStoreError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Tracker not found."])
+        }
+        return trackerCoreData
+    }
+
+    func deleteTracker(_ tracker: Tracker) {
+        do {
+            let trackerCoreData = try fetchTracker(trackerId: tracker.id)
+            try dataStore.delete(trackerCoreData)
+            try context.save()
+        } catch {
+            print("Ошибка при удалении трекера: \(error)")
+        }
+    }
+
     
     func deleteTrackers() throws {
         guard let trackers = fetchedResultsController.fetchedObjects else {
             throw DataProviderError.noTrackersFound
         }
+        
+        
         
         for tracker in trackers {
             do {
@@ -111,6 +152,20 @@ extension TrackerStoreManager: TrackerManagerProtocol {
             } catch {
                 throw DataProviderError.failedToDeleteTracker(error)
             }
+        }
+    }
+    
+    func togglePin(for tracker: Tracker) throws {
+        guard let trackerCoreData = fetchedResultsController.fetchedObjects?.first(where: { $0.id == tracker.id }) else {
+            throw DataProviderError.noTrackersFound
+        }
+        
+        do {
+            try dataStore.togglePin(for: trackerCoreData)
+            try fetchedResultsController.performFetch()
+            print("Состояние закрепления трекера переключено на: \(trackerCoreData.isPinned)")
+        } catch {
+            throw DataProviderError.failedToUpdateTracker(error)
         }
     }
     

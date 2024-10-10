@@ -1,0 +1,89 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Артур  Арсланов on 20.09.2024.
+  
+*/
+
+// Onboarding
+"onboardingScreenButton" = "These are the technologies!";
+"onboardingScreenFirstTitle" = "Track only what you want";
+"onboardingScreenSecondTitle" = "Even if it's \n not liters of water and yoga";
+
+// TabBar
+"tabBarFirstTab" = "Trackers";
+"tabBarSecondTab" = "Statistics";
+
+// Main screen
+"mainScreenLabel" = "Trackers";
+"mainScreenTitle" = "What are we going to track?";
+"mainScreenSearchPlaceholder" = "Search";
+"mainPinnedCategory" = "Pinned";
+//contextMenu
+"unpin" = "Unpin";
+"pin" = "Pin";
+"edit" = "Edit";
+"filters" = "Filters";
+
+//Statistics
+"statisticsStubLabel" = "There is nothing to analyze yet";
+"statisticsCompletedTrackers" = "Completed";
+"statisticsTitle" = "Statistics";
+
+// Create tracker
+"createTrackerScreenTitle" = "Creating a tracker";
+"createTrackerHabitButton" = "Habit";
+"createTrackerEventButton" = "Irregular events";
+//EditMode
+"editTrackerLabel" = "Editing a habit";
+
+// New habit
+"newHabitScreenTitle" = "A new habit";
+"newHabitNamePlaceholder" = "Enter the name of the tracker";
+"newHabitCategoryCell" = "Category";
+"newHabitScheduleCell" = "Schedule";
+"newHabitColor" = "Color";
+"newHabitScheduleSubtitle" = "Every day";
+
+// Category
+"categoryScreenTitle" = "Category";
+"categoryAddButton" = "Add a category";
+"categoryEmptyStateLabel" = "Habits and events\ncan be combined in meaning\n";
+"oops" = "Oops";
+"categoryExists" = "This category already exists";
+
+// New category
+"newCategoryScreenTitle" = "New category";
+"newCategoryNamePlaceholder" = "Enter the name of the category";
+
+
+// Schedule
+"scheduleScreenTitle" = "Schedule";
+"scheduleMonday" = "Monday";
+"scheduleTuesday" = "Tuesday";
+"scheduleWednesday" = "Wednesday";
+"scheduleThursday" = "Thursday";
+"scheduleFriday" = "Friday";
+"scheduleSaturday" = "Saturday";
+"scheduleSunday" = "Sunday";
+
+// Schedule short
+"scheduleShortMonday" = "Mon";
+"scheduleShortTuesday" = "Tue";
+"scheduleShortWednesday" = "Wed";
+"scheduleShortThursday" = "Thu";
+"scheduleShortFriday" = "Fri";
+"scheduleShortSaturday" = "Sat";
+"scheduleShortSunday" = "Sun";
+
+//Buttons
+"createButton" = "Create";
+"buttonDone" = "Done";
+"buttonSave" = "Save";
+
+//DeleteActionSheet
+"delete" = "Delete";
+"cancel" = "Cancel";
+"SureDeleteTracker" = "Are you sure you want to delete the tracker?";
+"ok" = "Ok";

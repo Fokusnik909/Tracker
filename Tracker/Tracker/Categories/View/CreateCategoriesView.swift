@@ -19,13 +19,15 @@ final class CreateCategoriesView: UIViewController {
     private let viewModel: CategoriesViewModel
     
     private var customTextField: CustomTextField = {
-        let textField = CustomTextField(placeholder: "Введите название категории")
+        let text = NSLocalizedString(DictionaryString.newCategoryNamePlaceholder, comment: "")
+        let textField = CustomTextField(placeholder: text)
         return textField
     }()
     
     private lazy var createButton: CustomButton = {
+        let titleButton = NSLocalizedString(DictionaryString.buttonDone, comment: "")
         let button = CustomButton(
-            title: "Готово",
+            title: titleButton,
             titleColor: .ypWhite,
             backgroundColor: .ypGray
         )
@@ -47,6 +49,7 @@ final class CreateCategoriesView: UIViewController {
         super.viewDidLoad()
         customTextField.addTarget(self, action: #selector(habitTextField), for: .editingChanged)
         setupUI()
+        addTapGestureToHideKeyboard()
     }
     
     @objc private func habitTextField(_ textField: UITextField) {
@@ -55,9 +58,26 @@ final class CreateCategoriesView: UIViewController {
     
     @objc private func createButtonTapped() {
         guard let title = customTextField.text, !title.isEmpty else { return }
+        
+        if viewModel.categories.contains(where: { $0.title == title }) {
+            showDuplicateCategoryAlert()
+            return
+        }
+        
         delegate?.didSelectCategory(title)
         viewModel.onCategoryCreated?(title)
         dismiss(animated: true)
+    }
+    
+    private func showDuplicateCategoryAlert() {
+        let alert = UIAlertController(
+            title: "oops".localised,
+            message: "categoryExists".localised,
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "ok".localised, style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
     
     private func validateForm() {
@@ -77,7 +97,7 @@ final class CreateCategoriesView: UIViewController {
         customTextField.translatesAutoresizingMaskIntoConstraints = false
         createButton.translatesAutoresizingMaskIntoConstraints = false
         
-        title = "Новая категория"
+        title = NSLocalizedString(DictionaryString.newCategoryScreenTitle, comment: "")
         
         NSLayoutConstraint.activate([
             customTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),

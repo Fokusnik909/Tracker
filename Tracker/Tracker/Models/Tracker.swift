@@ -14,6 +14,7 @@ struct Tracker: Identifiable {
     let color: UIColor
     let emoji: String
     let schedule: [Weekdays]
+    let isPinned: Bool
 }
 
 struct TrackerCategory {
@@ -33,14 +34,14 @@ extension Tracker {
         self.emoji = trackerCoreData.emoji ?? ""
         
         if let colorHex = trackerCoreData.color {
-            self.color = UIColorMarshalling().color(from: colorHex)
+            self.color = UIColorMarshalling.color(from: colorHex)
         } else {
-            self.color = .black 
+            self.color = .ypBlack
         }
         
         self.schedule = trackerCoreData.schedule as? [Weekdays] ?? [Weekdays.monday]
+        self.isPinned = trackerCoreData.isPinned
     }
-        
 }
 
 struct Emojis {
