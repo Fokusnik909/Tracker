@@ -92,7 +92,6 @@ final class TrackerRecordStore: TrackerRecordDataStore {
         guard let context = managedObjectContext else {
             return false
         }
-        
         let startDate = calendar.startOfDay(for: date)
         
         guard let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) else {

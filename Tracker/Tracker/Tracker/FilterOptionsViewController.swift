@@ -34,7 +34,7 @@ final class FilterOptionsViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = .ypWhite
-        title = "filers".localised
+        title = "filters".localised
         
         filterTableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(filterTableView)

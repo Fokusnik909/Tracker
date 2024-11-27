@@ -315,7 +315,6 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        visibleCategories[section].trackers.count
         guard section < visibleCategories.count else {
             return 0
         }
@@ -574,11 +573,6 @@ extension TrackersViewController: UISearchResultsUpdating {
 
 extension TrackersViewController: TrackerStoreDelegate {
     func didUpdate(_ update: TrackerStoreUpdate) {
-        
-//        collectionView.performBatchUpdates({
-//            collectionView.insertItems(at: update.insertedIndexes.map { IndexPath(item: $0, section: 0) })
-//            collectionView.deleteItems(at: update.deletedIndexes.map { IndexPath(item: $0, section: 0) })
-//        }, completion: nil)
         collectionView.reloadData()
     }
 }
